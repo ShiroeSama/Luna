@@ -1,0 +1,32 @@
+/* ---- Style des Pages d'Erreurs ---- */
+
+	.error-name
+	{
+		font-size: 50px;
+
+		color: #505050;
+		font-weight: bold;
+		text-align: center;
+	}
+
+	.error-info
+	{
+		color: #606060;
+		font-weight: bold;
+		text-align: center;
+	}
+
+	.error-message
+	{
+		margin-top: 20px;
+		font-size: 14px;
+
+		color: #983434;
+		font-weight: bold;
+		font-style: italic;
+		text-align: center;
+		
+		text-shadow: rgb(224, 224, 224) 1px 1px 0px;
+	}
+
+/* ---- END Style des Pages d'Erreurs ---- */

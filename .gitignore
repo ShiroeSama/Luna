@@ -1,0 +1,18 @@
+# -------------------------------
+# Files Exclusion
+# -------------------------------
+
+/*
+/Config/*
+
+# -------------------------------
+# Files Keep
+# -------------------------------
+
+!.gitignore
+!.htaccess
+!LICENSE
+!README.md
+!Core/*
+!*/
+!Config/configBundle.php

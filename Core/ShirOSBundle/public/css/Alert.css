@@ -1,0 +1,124 @@
+/* ---- Contenue des Pages ---- */
+	
+	.alert {
+		display: block;
+		border-radius: 0;
+		border: 1px solid transparent;
+	}
+
+	.alert > a {
+		display: block;
+		padding: 0 15px;
+
+		font-size: 20px;
+		line-height: 40px;
+		text-align: center;
+	}
+
+
+	/* -- DEFAULT -- */
+
+		.alert-default {
+			color: #ffffff;
+			background-color: #4e5d6c;
+			border-color: transparent;
+		}
+
+		.alert-default-revert {
+			color: #4e5d6c;
+			background-color: none;
+			border-color: transparent;
+		}
+
+
+	/* -- INFO -- */
+
+		.alert-info {
+			color: #ffffff;
+			background-color: #5bc0de;
+			border-color: transparent;
+		}
+
+		.alert-info-revert {
+			color: #5bc0de;
+			background-color: none;
+			border-color: transparent;
+		}
+
+
+	/* -- PRIMARY -- */
+
+		.alert-primary {
+			color: #ffffff;
+			background-color: #337ab7;
+			border-color: transparent;
+		}
+
+		.alert-primary-revert {
+			color: #337ab7;
+			background-color: none;
+			border-color: transparent;
+		}
+
+
+	/* -- SECONDARY -- */
+
+		.alert-secondary {
+			color: #FFFFFF;
+			background-color: #E67E22;
+			border-color: transparent;
+		}
+
+		.alert-secondary-revert {
+			color: #E67E22;
+			background-color: none;
+			border-color: transparent;
+		}
+
+
+	/* -- SUCCESS -- */
+
+		.alert-success {
+			color: #ffffff;
+			background-color: #5cb85c;
+			border-color: transparent;
+		}
+
+		.alert-success-revert {
+			color: #5cb85c;
+			background-color: none;
+			border-color: transparent;
+		}
+
+
+	/* -- WARNING -- */
+
+		.alert-warning {
+			color: #ffffff;
+			background-color: #f0ad4e;
+			border-color: transparent;
+		}
+
+		.alert-warning-revert {
+			color: #f0ad4e;
+			background-color: none;
+			border-color: transparent;
+		}
+
+
+	/* -- DANGER -- */
+
+		.alert-danger {
+			color: #ffffff;
+			background-color: #D44A26;
+			border-color: transparent;
+		}
+
+		.alert-danger-revert {
+			color: #D44A26;
+			background-color: none;
+			border-color: transparent;
+		}
+
+
+/* ---- END Contenue des Pages ---- */

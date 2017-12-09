@@ -66,7 +66,8 @@
 			} elseif (property_exists($this, $key)) {
 				return $this->$key;
 			} elseif (property_exists($this, ucfirst($key))) {
-				$this->$key = ucfirst($key);
+				$key = ucfirst($key);
+				return $this->$key;
 			} else {
 				$this->$key = NULL;
 			}

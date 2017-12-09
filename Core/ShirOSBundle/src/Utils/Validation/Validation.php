@@ -14,31 +14,139 @@
 	 */
 
 	namespace ShirOSBundle\Utils\Validation;
-
+	use ShirOSBundle\Utils\Exception\ValidationException;
+	use ShirOSBundle\Utils\Validation\Sanitize\Sanitize;
+	
 	/**
 	* Controller des Validation de Champs
 	*/
 
 	class Validation
 	{
-		protected const PARAM_TEL = 'Phone';
-		protected const PARAM_EMAIL = 'Email';
-		protected const PARAM_NUMBER = 'Number';
+		/**
+		 * Classe de Validation
+		 * @var ValidationBuilder
+		 */
+		protected $BuilderModule;
+		
+        /**
+         * @var array
+         */
+        protected $errors;
+
+        /**
+         * @var array
+         */
+        protected $values;
 		
 		/**
-		 * Regex pour les numéros de téléphone
-		 * @var string
+		 * @var array
 		 */
-		protected $regexTel = "#^((\d{2}?){4}\d{2})$#";
-
+		protected $rawValues;
+		
 		/**
-		 * Regex pour les nombre
+		 * @var bool
+		 */
+		protected $valid;
+		
+		/**
 		 * @var string
 		 */
-		protected $regexNumber = "#^[\d\s]*$#";
+		protected $emptyMessage = "Le champ doit être renseigné";
+		
+		/**
+		 * Validation constructor.
+		 */
+		public function __construct()
+		{
+			$this->BuilderModule = new ValidationBuilder();
+
+            $this->errors = array();
+            $this->values = array();
+			$this->rawValues = array();
+			
+			$this->valid = true;
+			$this->buildForm($this->BuilderModule);
+		}
+
+        /**
+         * Form Builder Function
+         * Allow to add differents check for the fields
+         *
+         * @param ValidationBuilder $builder
+         */
+        protected function buildForm(ValidationBuilder &$builder)
+        {
+            //TODO : Redefine in the subclass, if you want to add your check
+        }
+		
+		
+		/* ------------------------ Getter Errors / Values ------------------------ */
+		
+			/**
+			 * Return Errors
+			 *
+			 * @return array
+			 */
+			public function getErrors(): array { return $this->errors; }
+		
+			/**
+			 * Return Sanitize Values
+			 *
+			 * @return array
+			 */
+			public function getValues(): array { return $this->values; }
+		
+			/**
+			 * Return Raw Values
+			 *
+			 * @return array
+			 */
+			public function getRawValues(): array { return $this->rawValues; }
+		
+			/**
+			 * Return Sanitize Values
+			 *
+			 * @return bool
+			 */
+			public function isValid(): bool { return $this->valid; }
 
 
 		/* ------------------------ Fonctions des Tests de Champs ------------------------ */
+		
+			/**
+			 * @param array $fields
+			 * @throws ValidationException
+			 */
+			public function validateForm(array $fields)
+            {
+                if (!empty($fields)) {
+                    foreach ($fields as $key => $value) {
+
+                        if (!$this->validateField($value)) {
+                            $this->errors[$key] = $this->emptyMessage;
+                            $this->valid = false;
+                        }
+	
+	                    $type = $this->BuilderModule->getType($key);
+	                    $message = $this->BuilderModule->getMessage($key);
+                        $sanitizeType = $this->BuilderModule->getSanitizeType($key);
+	                    $sanitizeMethod = $this->BuilderModule->getSanitizeMethod($key);
+	
+	                    if (!$type->validate($value)) {
+		                    $this->errors[$key] = $message;
+		                    $this->valid = false;
+	                    }
+	                    
+	                    $this->rawValues[$key] = $value;
+		
+	                    $SanitizeModule = new Sanitize($sanitizeMethod, $sanitizeType);
+	                    $this->values[$key] = $SanitizeModule->sanitize($value);
+                    }
+                } else {
+                	throw new ValidationException();
+                }
+            }
 
 			/**
 			 * Verifie si un champ n'est pas vide
@@ -47,112 +155,13 @@
 			 *
 			 * @return bool
 			 */
-			public function validateField(string $field): bool
+			protected function validateField(string $field): bool
 			{
 				/* -- Cas où le champs ne récupére qu'un nombre entre 0 et * | Evite de retourer FALSE en cas de saisie de 0 dans ce champs -- */
 					if ($field == "0")
 						return true;
 
 				return !empty($field);
-			}
-
-			/**
-			 * Verifie si un champ n'est pas vide
-			 * Type disponible :
-			 * - tel
-			 * - email
-			 * - number
-			 *
-			 * @param string $field
-			 * @param string $type
-			 *
-			 * @return string
-			 */
-			public function validateFormat(string $field, string $type): string
-			{
-				switch ($type) {
-					case $this::PARAM_TEL:
-						return preg_match($this->regexTel,$field);
-						break;
-
-					case $this::PARAM_EMAIL:
-						return filter_var($field, FILTER_VALIDATE_EMAIL);
-						break;
-						
-					case $this::PARAM_NUMBER:
-						return preg_match($this->regexNumber,$field);
-						break;
-					
-					default:
-						return $field;
-						break;
-				}
-			}
-
-			/**
-			 * Verifie si le champ vaut l'une des valeurs souhaitées
-			 *
-			 * @param string $field
-			 * @param array $value
-			 *
-			 * @return bool
-			 */
-			public function validateValue(string $field, array $value): bool { return in_array($field, $value); }
-
-			/**
-			 * Verifie si le password correspond au champ ConfirmPassword
-			 *
-			 * @param string $pass
-			 * @param string $pass2
-			 *
-			 * @return bool
-			 */
-			public function validatePassword(string $pass, string $pass2): bool  { return $pass === $pass2; }
-		
-		
-
-		/* ------------------------ Fonctions de Sanitize des Champs ------------------------ */
-
-			/**
-			 * Nettoie les Champs de Formulaires
-			 *
-			 * @param string $field
-			 * @param string $type
-			 *
-			 * @return string
-			 */
-			public function sanitize(string $field, string $type = FILTER_SANITIZE_STRING): string { return filter_var($field, $type); }
-
-			/**
-			 * Nettoie le Champ de Recherche
-			 *
-			 * @param string $field
-			 *
-			 * @return string
-			 */
-			public function sanitizeSearch(string $field): string { return $this->sanitize($field, FILTER_SANITIZE_FULL_SPECIAL_CHARS); }
-
-			/**
-			 * Nettoie les Champs de Commentaires
-			 *
-			 * @param string $field
-			 *
-			 * @return string
-			 */
-			public function sanitizeForCommentsField(string $field): string
-			{
-				/* -- Suppression des Balises Js -- */
-					$field = preg_replace('@<script[^>]*?>.*?</script>@si', '', $field);
-
-
-				/* -- Suppression des Balises Css -- */
-					$field = preg_replace('@<link [^>]*?>@si', '', $field);
-					$field = preg_replace('@<style[^>]*?>.*?</style>@si', '', $field);
-
-				/* -- Nettoyage des Signatures -- */
-					$field = preg_replace('@<p class="signature">.*?</p>@si', '', $field);
-
-				return $field;
 			}
 	}
 ?>

@@ -17,7 +17,8 @@
 
 	use ShirOSBundle\Config;
 	use ShirOSBundle\Utils\Exception\RouteException;
-	use ShirOSBundle\View\Render;
+    use ShirOSBundle\Utils\HTTP\Request;
+    use ShirOSBundle\View\Render;
 	use ShirOSBundle\View\MetaData;
 	use ShirOSBundle\Utils\Url\Url;
 	use ShirOSBundle\ApplicationService;
@@ -60,6 +61,12 @@
 		 * @var Render
 		 */
 		protected $RenderModule;
+
+        /**
+         * Instance de la Classe de gestion des Requêtes
+         * @var Request
+         */
+        protected $RequestModule;
 		
 		
 		/**
@@ -74,6 +81,7 @@
 			
 			$this->UrlModule = new Url('Server.Homepage');
 			$this->RenderModule = new Render();
+			$this->RequestModule = new Request();
 		}
 		
 		/**

@@ -110,18 +110,7 @@
 			 *
 			 * @return null|string
 			 */
-			public function authValueFor(string $key): ?string
-			{
-				if ($this->isAuthSession()) {
-					if(!isset($_SESSION['auth'][$key]))
-						return NULL;
-					else
-						return $_SESSION['auth'][$key];
-				} else {
-					return NULL;
-				}
-				
-			}
+			public function authValueFor(string $key): ?string { return (($this->isAuthSession() && isset($_SESSION['auth'][$key])) ? $_SESSION['auth'][$key] : NULL); }
 
 
 		/* ------------------------ Fonctions de Navigation ------------------------ */

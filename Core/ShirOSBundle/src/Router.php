@@ -57,7 +57,6 @@
 		 */
 		protected $prohibitedKey = array(
 			'ROOT_FOLDER',
-			'DEFAULT_CONTROLLER'
 		);
 
 		/**
@@ -211,7 +210,7 @@
 			$SCRIPT_NAME	= $_SERVER['SCRIPT_NAME'];
 			
 			# Découpe de l'Url
-			$requestTab = $this->formatRequest($REQUEST_URI,$SCRIPT_NAME);
+			$requestTab = $this->formatRequest($REQUEST_URI, $SCRIPT_NAME);
 			
 			# Netoyage des values vides
 			$requestTab = $this->clearRoute($requestTab);
@@ -427,7 +426,11 @@
 			 *
 			 * @return string
 			 */
-			protected function createPath(array $path): string { return implode('/', $path); }
+			protected function createPath(array $path): string
+			{
+				$path = implode('/', $path);
+				return (($path === DIRECTORY_SEPARATOR) ? $path : DIRECTORY_SEPARATOR . $path);
+			}
 
 			/**
 			 * Créer la route à appeler (Controleur / Méthode / Paramètres)

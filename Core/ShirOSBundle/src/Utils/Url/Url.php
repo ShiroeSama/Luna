@@ -33,7 +33,7 @@
 		/**
 		 * Vérifie que la valeur en paramètre est dans l'énumeration
 		 *
-		 * @param String $url | Default Value = ''
+		 * @param string $url | Default Value = ''
 		 *
 		 * @return string
 		 */
@@ -44,8 +44,17 @@
 			} else {
 				$url = explode('.', $url);
 				if (is_array($url)) { $url = implode('/', $url); }
+				
+				$this->homeUrl = rtrim($this->homeUrl, '/');
 				return $this->homeUrl . '/' . $url;
 			}
 		}
+		
+		/**
+		 * Revoie l'utilisateur sur une autre page
+		 *
+		 * @param string $url
+		 */
+		public function goTo(string $url) { header('Location: ' . $url); }
 	}
 ?>

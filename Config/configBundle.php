@@ -55,7 +55,7 @@
         | ShirOS
         |--------------------------------------------------------------------------
         |
-        |   Contient toutes les variables du Bundle
+        |   Contient toutes les variables du Framework
         */
 
         'ShirOS' => [
@@ -66,11 +66,13 @@
             |--------------------------------------------------------------------------
             |
             |   Informations de connexion à/aux Base(s) de données.
-            |   Ainsi que d'autre paramètres de configuration de la Base de Données pour le Bundle
+            |   Ainsi que d'autre paramètres de configuration de la Base de Données pour le Framework
             |
             |   Contient :
+			|       - Le Type de Driver à utiliser
+			|       - Le Type de Fetch (Récupèration des données) à utiliser
             |	    - Les Indentifiants de Connexion
-            |	    - Les Noms de Colonne Utile au Bundle
+            |	    - Les Noms des Colonnes Utiles au Framework
             |
             */
 
@@ -114,6 +116,11 @@
                 |--------------------------------------------------------------------------
                 |
                 |   Identifiants de connexion à la base de données
+				|
+				|   'dbUser' => Identifiant de connexion (Username)
+				|   'dbPass' => Mot de passe
+				|   'dbHost' => Ip du serveur de base de données
+				|   'dbName' => Nom de la base de données
                 |
                 */
 
@@ -130,7 +137,7 @@
                 | Database Column
                 |--------------------------------------------------------------------------
                 |
-                |   Contient le nom des colonnes nécéssaire au fonction du Bundle
+                |   Contient le nom des colonnes nécéssaire au fonction du Framework
                 |
                 */
 
@@ -146,7 +153,9 @@
                 | Database Id Index Update
                 |--------------------------------------------------------------------------
                 |
-                |   Contient le nom des index pour la variable $id, lors d'un update
+				|   Nom des index du tableau '$id' à utiliser lors d'un update.
+				|   Permet au Framework de savoir le nom de la colonne 'Primary Key'.
+				|   Ainsi que la valeur de cette colonne pour effectuer la mise à jour des données
                 |
                 |   Exemple :
                 |	    - $id = array(
@@ -175,14 +184,14 @@
             | Les Paths
             |--------------------------------------------------------------------------
             |
-            |   Chemins nécessaires pour le Bundle
+            |   Chemins nécessaires pour le Framework
             |
             |   Namespace
             |       |- Gateway (Chemin des Gateway de l'application)
             |
-            |   Error       (Chemin des vues d'erreurs de l'application) | Exemple : '.App.View.Errors'
-            |   View        (Chemin des vues de l'application) | Exemple : '.App.View'
-            |   Template    (Chemin du/des templates de l'application) | Exemple : '.App.View.Templates'
+            |   Error       (Chemin des vues d'erreurs de l'application)    | Exemple : '.App.View.Errors'
+            |   View        (Chemin des vues de l'application)              | Exemple : '.App.View'
+            |   Template    (Chemin du/des templates de l'application)      | Exemple : '.App.View.Templates'
             |
             */
 
@@ -200,7 +209,7 @@
             | Nommage
             |--------------------------------------------------------------------------
             |
-            |   Nommage des Fichiers
+            |   Nommage des Fichiers et Classes de l'Application
             |
             |   Folder
             |       |- Namespace
@@ -208,8 +217,8 @@
             |           |- Gateway  (Nom du Dossier contenant les Gateway)
             |   File
             |       |- Namespace
-            |           |- Model    (Prefixe ou Suffixe d'un Model/Entity) Exemple: 'class UserModel {}' => 'UserModel.php'
-            |           |- Gateway  (Prefixe ou Suffixe d'une Gateway) Exemple: 'class UserGateway {}' => 'UserGateway.php'
+            |           |- Model    (Prefixe ou Suffixe d'un Model/Entity)  Exemple: 'class UserModel {}'   => 'UserModel.php'
+            |           |- Gateway  (Prefixe ou Suffixe d'une Gateway)      Exemple: 'class UserGateway {}' => 'UserGateway.php'
             |       |- Error
             |           |- NotFound             (Nom du Fichier pour la vue '404 Not Found')
             |           |- Forbidden            (Nom du Fichier pour la vue '403 Forbidden')
@@ -251,7 +260,7 @@
             | Les Namespace
             |--------------------------------------------------------------------------
             |
-            |   Permet de préciser au Bundle, l'utilisation d'un préfixe ou suffixe dans le nom de vos Models et Gateway
+            |   Permet de préciser au Framework, l'utilisation d'un préfixe ou suffixe dans le nom des Models et Gateway
             |
             |   3 Choix :
             |	    - 'None', Aucun Prefixe ou Suffixe;
@@ -310,6 +319,7 @@
             | Les Mails
             |--------------------------------------------------------------------------
             |
+			|   Utilise la fonction 'mail' de PHP
             |   Contient l'email source, celle de l'application ainsi que le template du mail
             |
             */
@@ -379,13 +389,13 @@
 
     /*
     |--------------------------------------------------------------------------
-    | Configure Var
+    | Configuration
     |--------------------------------------------------------------------------
     |
     */
-
+	
+	$Config['ShirOS']['Path']['View'] = str_replace('.', DIRECTORY_SEPARATOR, $Config['ShirOS']['Path']['View']);
     $Config['ShirOS']['Path']['Error'] = str_replace('.', DIRECTORY_SEPARATOR, $Config['ShirOS']['Path']['Error']);
-    $Config['ShirOS']['Path']['View'] = str_replace('.', DIRECTORY_SEPARATOR, $Config['ShirOS']['Path']['View']);
     $Config['ShirOS']['Path']['Template'] = str_replace('.', DIRECTORY_SEPARATOR, $Config['ShirOS']['Path']['Template']);
 
 

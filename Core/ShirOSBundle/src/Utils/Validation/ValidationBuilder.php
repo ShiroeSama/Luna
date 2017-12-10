@@ -27,6 +27,7 @@
     {
     	public const PARAM_TYPE = 'Type';
 	    public const PARAM_MESSAGE = 'Message';
+	    public const PARAM_REQUIRED = 'Required';
 	    
 	    public const PARAM_SANITIZE = 'Sanitize';
 	    public const PARAM_SANITIZE_TYPE = 'SanitizeType';
@@ -51,6 +52,17 @@
 		    {
 			    return (isset($options[self::PARAM_MESSAGE]) ? $options[self::PARAM_MESSAGE] : '');
 		    }
+	
+		    protected function optionRequired(array $options): bool
+		    {
+		    	if (isset($options[self::PARAM_REQUIRED])) {
+		    		if (is_bool($options[self::PARAM_REQUIRED])){
+		    			return $options[self::PARAM_REQUIRED];
+				    }
+			    }
+			    
+			    return true;
+		    }
 	    
 	        protected function optionSanitizeType(array $options): string
 	        {
@@ -71,7 +83,8 @@
             	    self::PARAM_TYPE => $type,
             	    self::PARAM_MESSAGE => $this->optionMessage($options),
 		            self::PARAM_SANITIZE_TYPE => $this->optionSanitizeType($options),
-		            self::PARAM_SANITIZE_METHOD => $this->optionSanitizeMethod($options)
+		            self::PARAM_SANITIZE_METHOD => $this->optionSanitizeMethod($options),
+		            self::PARAM_REQUIRED => $this->optionRequired($options)
 	            ];
             	
             	return $this;
@@ -80,6 +93,13 @@
 
 
         /* ------------------------ Checks Getter ------------------------ */
+	
+		    /**
+		     * Return Check List
+		     *
+		     * @return array
+		     */
+		    public function getCheckList(): array { return $this->checkList; }
 	
 		    /**
 		     * Return Type
@@ -92,6 +112,38 @@
 		    {
 			    if (isset($this->checkList[$key])) {
 				    return $this->checkList[$key][self::PARAM_TYPE];
+			    } else {
+				    throw new ValidationException(ValidationException::VALIDATION_UNEXIST_FIELD_CHECK_ERROR_CODE);
+			    }
+		    }
+	
+		    /**
+		     * Return Error Message
+		     *
+		     * @param $key
+		     * @return null|string
+		     * @throws ValidationException
+		     */
+		    public function getMessage(string $key): ?string
+		    {
+			    if (isset($this->checkList[$key])) {
+				    return $this->checkList[$key][self::PARAM_MESSAGE];
+			    } else {
+				    throw new ValidationException(ValidationException::VALIDATION_UNEXIST_FIELD_CHECK_ERROR_CODE);
+			    }
+		    }
+	
+		    /**
+		     * Return Required
+		     *
+		     * @param string $key
+		     * @return null|bool
+		     * @throws ValidationException
+		     */
+		    public function getRequired(string $key): ?bool
+		    {
+			    if (isset($this->checkList[$key])) {
+				    return $this->checkList[$key][self::PARAM_REQUIRED];
 			    } else {
 				    throw new ValidationException(ValidationException::VALIDATION_UNEXIST_FIELD_CHECK_ERROR_CODE);
 			    }
@@ -126,22 +178,6 @@
 				    return $this->checkList[$key][self::PARAM_SANITIZE_METHOD];
 			    } else {
 				    throw new ValidationException(ValidationException::VALIDATION_UNEXIST_FIELD_CHECK_ERROR_CODE);
-			    }
-		    }
-	
-		    /**
-		     * Return Error Message
-		     *
-		     * @param $key
-		     * @return null|string
-		     * @throws ValidationException
-		     */
-		    public function getMessage(string $key): ?string
-		    {
-		    	if (isset($this->checkList[$key])) {
-		    	    return $this->checkList[$key][self::PARAM_MESSAGE];
-			    } else {
-		    		throw new ValidationException(ValidationException::VALIDATION_UNEXIST_FIELD_CHECK_ERROR_CODE);
 			    }
 		    }
     }

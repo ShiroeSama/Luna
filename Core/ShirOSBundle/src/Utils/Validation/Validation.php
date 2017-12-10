@@ -26,6 +26,7 @@
 		/** Constante */
 		
 		public const PARAM_MESSAGE = ValidationBuilder::PARAM_MESSAGE;
+		public const PARAM_REQUIRED = ValidationBuilder::PARAM_REQUIRED;
 		
 		public const PARAM_SANITIZE = ValidationBuilder::PARAM_SANITIZE;
 		public const PARAM_SANITIZE_TYPE = ValidationBuilder::PARAM_SANITIZE_TYPE;
@@ -129,32 +130,49 @@
 			 */
 			public function validateForm(array $fields)
             {
-                if (!empty($fields)) {
-                    foreach ($fields as $key => $value) {
-
-                        if (!$this->validateField($value)) {
-                            $this->errors[$key] = $this->emptyMessage;
-                            $this->valid = false;
-                        }
-	
-	                    $type = $this->BuilderModule->getType($key);
-	                    $message = $this->BuilderModule->getMessage($key);
-                        $sanitizeType = $this->BuilderModule->getSanitizeType($key);
-	                    $sanitizeMethod = $this->BuilderModule->getSanitizeMethod($key);
-	
-	                    if (!$type->validate($value)) {
-		                    $this->errors[$key] = $message;
-		                    $this->valid = false;
-	                    }
-	                    
-	                    $this->rawValues[$key] = $value;
+	            if (!empty($fields)) {
+		            $checkList = $this->BuilderModule->getCheckList();
+		            foreach ($fields as $key => $value) {
+			
+			            $type = $this->BuilderModule->getType($key);
+			            $message = $this->BuilderModule->getMessage($key);
+			            $required = $this->BuilderModule->getRequired($key);
+			            $sanitizeType = $this->BuilderModule->getSanitizeType($key);
+			            $sanitizeMethod = $this->BuilderModule->getSanitizeMethod($key);
+			
+			            if ($required) {
+				            if ($this->isEmpty($value)) {
+					            $this->errors[$key] = $this->emptyMessage;
+					            $this->valid = false;
+				            }
+			            } else {
+				            $this->values[$key] = (empty($this->values[$key]) ?  '' : $this->values[$key]);
+				            unset($checkList[$key]);
+			            }
+			
+			            if (!$type->validate($value)) {
+				            $this->errors[$key] = $message;
+				            $this->valid = false;
+			            }
+			
+			            $this->rawValues[$key] = $value;
+			
+			            $SanitizeModule = new Sanitize($sanitizeMethod, $sanitizeType);
+			            $this->values[$key] = $SanitizeModule->sanitize($value);
+		            }
 		
-	                    $SanitizeModule = new Sanitize($sanitizeMethod, $sanitizeType);
-	                    $this->values[$key] = $SanitizeModule->sanitize($value);
-                    }
-                } else {
-                	throw new ValidationException();
-                }
+		            $diff = array_diff_key($checkList, $fields);
+		
+		            foreach ($diff as $key => $value){
+			            $required = $this->BuilderModule->getRequired($key);
+			            if ($required) {
+				            $this->errors[$key] = $this->emptyMessage;
+				            $this->valid = false;
+			            }
+		            }
+	            } else {
+		            throw new ValidationException();
+	            }
             }
 
 			/**
@@ -164,13 +182,13 @@
 			 *
 			 * @return bool
 			 */
-			protected function validateField(string $field): bool
+			protected function isEmpty(string $field): bool
 			{
 				/* -- Cas où le champs ne récupére qu'un nombre entre 0 et * | Evite de retourer FALSE en cas de saisie de 0 dans ce champs -- */
-					if ($field == "0")
-						return true;
+					if ($field === '0')
+						return false;
 
-				return !empty($field);
+				return empty($field);
 			}
 	}
 ?>

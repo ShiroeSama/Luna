@@ -15,6 +15,7 @@
 
 	namespace ShirOSBundle\Utils\Signature;
 	use ShirOSBundle\Config;
+	use ShirOSBundle\Database\Database;
 	use ShirOSBundle\Model\Model;
 	use ShirOSBundle\Database\Gateway\Manager;
 
@@ -68,13 +69,13 @@
 		public function updateSignature(Manager $manager, string $oldSignature)
 		{	
 			$id = [
-					$this->ConfigModule->get('ShirOS.Database.IdIndex.Id_Column') => $this->ConfigModule->get('ShirOS.Database.Column.Signature_Id'),
-					$this->ConfigModule->get('ShirOS.Database.IdIndex.Id_Value') => $oldSignature
+				Database::UPDATE_COLUMN => $this->ConfigModule->get('ShirOS.Database.Column.Signature_Id'),
+				Database::UPDATE_VALUE  => $oldSignature
 			];
 			
 			$value = [
 				$this->ConfigModule->get('ShirOS.Database.Column.Signature_Id') => $this->name,
-				$this->ConfigModule->get('ShirOS.Database.Column.Signature') => $this->signature
+				$this->ConfigModule->get('ShirOS.Database.Column.Signature')    => $this->signature
 			];
 
 			$NewSignature = new Model($value);

@@ -15,6 +15,7 @@
 
 	namespace ShirOSBundle\Database\Gateway;
 	use ShirOSBundle\Config;
+	use ShirOSBundle\Database\Database;
 	use ShirOSBundle\Database\MySQLDatabase;
 	use ShirOSBundle\Model\Model;
 	use ShirOSBundle\Utils\Exception\DatabaseException;
@@ -227,13 +228,13 @@
 					$SQLParts[] = "$key = ?";
 					$attributes[] = $value;
 				}
-				$attributes[] = $id[$this->ConfigModule->get('ShirOS.Database.IdIndex.Id_Value')];
+				$attributes[] = $id[Database::UPDATE_VALUE];
 
 				$SQLPart = implode(', ', $SQLParts);
 				$request =
 					"UPDATE {$this->table}
 					SET $SQLPart
-					WHERE {$id[$this->ConfigModule->get('ShirOS.Database.IdIndex.Id_Column')]}
+					WHERE {$id[Database::UPDATE_COLUMN]}
 					LIKE ?";
 				 
 				return $this->query($request, $attributes, true);

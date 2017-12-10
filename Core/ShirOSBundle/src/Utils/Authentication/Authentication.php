@@ -16,6 +16,7 @@
 	namespace ShirOSBundle\Utils\Authentication;
 	
 	use ShirOSBundle\Config;
+	use ShirOSBundle\Database\Database;
 	use ShirOSBundle\Model\Model;
 	use ShirOSBundle\Utils\Session\Session;
 	use ShirOSBundle\Database\Gateway\Manager;
@@ -151,8 +152,8 @@
 
 							/* -- Destruction du Token -- */
 								$id = array(
-									$this->ConfigModule->get('ShirOS.Database.IdIndex.Id_Column') => $this->ConfigModule->get('ShirOS.Database.Column.Auth_Login'),
-									$this->ConfigModule->get('ShirOS.Database.IdIndex.Id_Value') => $user->$login
+									Database::UPDATE_COLUMN => $this->ConfigModule->get('ShirOS.Database.Column.Auth_Login'),
+									Database::UPDATE_VALUE  => $user->$login
 								);
 
 								$tokenReset = array(

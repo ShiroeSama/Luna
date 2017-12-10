@@ -17,6 +17,9 @@
 
 	interface Database
 	{
+		public const UPDATE_COLUMN = 'ColumnName';
+		public const UPDATE_VALUE = 'Value';
+		
 		/**
 		 * Permet de construire une requête auprès de la DB
 		 *

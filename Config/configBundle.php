@@ -146,36 +146,6 @@
                     'Auth_Login_Token'  => 'token',
                     'Signature_Id'      => 'signatureId',
                     'Signature'         => 'signature',
-                ],
-
-                /*
-                |--------------------------------------------------------------------------
-                | Database Id Index Update
-                |--------------------------------------------------------------------------
-                |
-				|   Nom des index du tableau '$id' à utiliser lors d'un update.
-				|   Permet au Framework de savoir le nom de la colonne 'Primary Key'.
-				|   Ainsi que la valeur de cette colonne pour effectuer la mise à jour des données
-                |
-                |   Exemple :
-                |	    - $id = array(
-                |           $ConfigModule->get('ShirOS.Database.IdIndex.Id_Column') => 'username'
-                |           $ConfigModule->get('ShirOS.Database.IdIndex.Id_Value') => 'Shiroe_sama'
-                |       );
-                |
-                |   Pour avoir un tableau associatif :
-	            |	    - $id = array(
-	            |           'ColumnName'    => 'username'
-	            |           'Value'         => 'Shiroe_sama'
-	            |       );
-                |
-                |   Ce qui permet à la sérialisation de s'effectuer correctement
-                |
-                */
-
-                'IdIndex' => [
-                    'Id_Column' => 'ColumnName',
-                    'Id_Value'  => 'Value',
                 ]
             ],
 

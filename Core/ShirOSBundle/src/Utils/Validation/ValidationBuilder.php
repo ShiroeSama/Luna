@@ -27,6 +27,8 @@
     {
     	public const PARAM_TYPE = 'Type';
 	    public const PARAM_MESSAGE = 'Message';
+	    
+	    public const PARAM_SANITIZE = 'Sanitize';
 	    public const PARAM_SANITIZE_TYPE = 'SanitizeType';
 	    public const PARAM_SANITIZE_METHOD = 'SanitizeMethod';
     	
@@ -42,16 +44,34 @@
         {
             $this->checkList = array();
         }
+	
+	    /* ------------------------ Private Function ------------------------ */
+	
+		    protected function optionMessage(array $options): string
+		    {
+			    return (isset($options[self::PARAM_MESSAGE]) ? $options[self::PARAM_MESSAGE] : '');
+		    }
+	    
+	        protected function optionSanitizeType(array $options): string
+	        {
+		        return (isset($options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_TYPE]) ? $options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_TYPE] : FILTER_SANITIZE_STRING);
+	        }
+	
+		    protected function optionSanitizeMethod(array $options): string
+		    {
+			    return (isset($options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_METHOD]) ? $options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_METHOD] : Sanitize::SANITIZE);
+		    }
+	    
 
         /* ------------------------ Add Check ------------------------ */
 
-            public function add(Type $type, string $varName, string $message = '', string $sanitizeMethod = Sanitize::SANITIZE, string $sanitizeType = FILTER_SANITIZE_STRING): ValidationBuilder
+            public function add(Type $type, string $varName, array $options = []): ValidationBuilder
             {
-	            $this->checkList[$varName] = [
+            	$this->checkList[$varName] = [
             	    self::PARAM_TYPE => $type,
-            	    self::PARAM_MESSAGE => $message,
-		            self::PARAM_SANITIZE_TYPE => $sanitizeType,
-		            self::PARAM_SANITIZE_METHOD => $sanitizeMethod
+            	    self::PARAM_MESSAGE => $this->optionMessage($options),
+		            self::PARAM_SANITIZE_TYPE => $this->optionSanitizeType($options),
+		            self::PARAM_SANITIZE_METHOD => $this->optionSanitizeMethod($options)
 	            ];
             	
             	return $this;

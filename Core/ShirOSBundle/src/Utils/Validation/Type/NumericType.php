@@ -23,10 +23,10 @@
 		public static function type(): Type { return new NumericType(); }
 		
 		/**
-		 * Regex pour les nombre
+		 * Regex
 		 * @var string
 		 */
-		private const REGEX_NUMBER = "#^[\d\s]*$#";
+		protected const REGEX_NUMBER = "#^[\d\s]*$#";
 		
 		/**
 		 * Permet de verifier si le champ est du type de la classe

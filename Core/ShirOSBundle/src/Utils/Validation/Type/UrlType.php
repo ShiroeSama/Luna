@@ -7,30 +7,30 @@
 	 *   @Author : Alexandre Caillot
 	 *   @WebSite : https://www.shiros.fr
 	 *
-	 *   @File : NumericType.php
-	 *   @Created_at : 08/12/2017
-	 *   @Update_at : 08/12/2017
+	 *   @File : StringType.php
+	 *   @Created_at : 10/12/2017
+	 *   @Update_at : 10/12/2017
 	 * --------------------------------------------------------------------------
 	 */
 	
 	namespace ShirOSBundle\Utils\Validation\Type;
 	
-	class PhoneType implements Type
+	class UrlType implements Type
 	{
 		/**
 		 * Retour le Type
 		 */
-		public static function type(): Type { return new PhoneType(); }
+		public static function type(): Type { return new UrlType(); }
 		
 		/**
 		 * Regex
 		 * @var string
 		 */
-		protected const REGEX_PHONE = "#^((\d{2}?){4}\d{2})$#";
+		protected const REGEX_URL = "#^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$#";
 		
 		/**
 		 * Permet de verifier si le champ est du type de la classe
 		 */
-		public function validate($field) { return preg_match(self::REGEX_PHONE, $field); }
+		public function validate($field) { return preg_match(self::REGEX_URL, $field); }
 	}
-?>
+	?>

@@ -23,6 +23,15 @@
 
 	class Validation
 	{
+		/** Constante */
+		
+		public const PARAM_MESSAGE = ValidationBuilder::PARAM_MESSAGE;
+		
+		public const PARAM_SANITIZE = ValidationBuilder::PARAM_SANITIZE;
+		public const PARAM_SANITIZE_TYPE = ValidationBuilder::PARAM_SANITIZE_TYPE;
+		public const PARAM_SANITIZE_METHOD = ValidationBuilder::PARAM_SANITIZE_METHOD;
+		
+		
 		/**
 		 * Classe de Validation
 		 * @var ValidationBuilder

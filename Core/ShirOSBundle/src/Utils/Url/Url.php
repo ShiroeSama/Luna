@@ -55,6 +55,6 @@
 		 *
 		 * @param string $url
 		 */
-		public function goTo(string $url) { header('Location: ' . $url); }
+		public function goTo(string $url) { die(header('Location: ' . $url)); }
 	}
 ?>

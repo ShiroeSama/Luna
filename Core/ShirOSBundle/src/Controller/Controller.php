@@ -27,7 +27,7 @@
 	class Controller
 	{
 		/**
-		 * Instance de la Classe de gestion des Configs
+		 * Instance de la Classe de gestion de l'application
 		 * @var ApplicationService
 		 */
 		protected $ApplicationModule;

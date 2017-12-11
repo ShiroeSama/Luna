@@ -76,7 +76,7 @@
 			$this->rawValues = array();
 			
 			$this->valid = true;
-			$this->buildForm($this->BuilderModule);
+			$this->buildValidation($this->BuilderModule);
 		}
 
         /**
@@ -85,7 +85,7 @@
          *
          * @param ValidationBuilder $builder
          */
-        protected function buildForm(ValidationBuilder &$builder)
+        protected function buildValidation(ValidationBuilder $builder)
         {
             //TODO : Redefine in the subclass, if you want to add your check
         }
@@ -130,49 +130,49 @@
 			 */
 			public function validateForm(array $fields)
             {
-	            if (!empty($fields)) {
-		            $checkList = $this->BuilderModule->getCheckList();
-		            foreach ($fields as $key => $value) {
-			
-			            $type = $this->BuilderModule->getType($key);
-			            $message = $this->BuilderModule->getMessage($key);
-			            $required = $this->BuilderModule->getRequired($key);
-			            $sanitizeType = $this->BuilderModule->getSanitizeType($key);
-			            $sanitizeMethod = $this->BuilderModule->getSanitizeMethod($key);
-			
-			            if ($required) {
-				            if ($this->isEmpty($value)) {
-					            $this->errors[$key] = $this->emptyMessage;
-					            $this->valid = false;
-				            }
-			            } else {
-				            $this->values[$key] = (empty($this->values[$key]) ?  '' : $this->values[$key]);
-				            unset($checkList[$key]);
-			            }
-			
-			            if (!$type->validate($value)) {
-				            $this->errors[$key] = $message;
-				            $this->valid = false;
-			            }
-			
-			            $this->rawValues[$key] = $value;
-			
-			            $SanitizeModule = new Sanitize($sanitizeMethod, $sanitizeType);
-			            $this->values[$key] = $SanitizeModule->sanitize($value);
-		            }
+                if (!empty($fields)) {
+                	$checkList = $this->BuilderModule->getCheckList();
+                    foreach ($fields as $key => $value) {
+	
+	                    $type = $this->BuilderModule->getType($key);
+	                    $message = $this->BuilderModule->getMessage($key);
+	                    $required = $this->BuilderModule->getRequired($key);
+                        $sanitizeType = $this->BuilderModule->getSanitizeType($key);
+	                    $sanitizeMethod = $this->BuilderModule->getSanitizeMethod($key);
+	
+	                    if ($required) {
+		                    if ($this->isEmpty($value)) {
+			                    $this->errors[$key] = $this->emptyMessage;
+			                    $this->valid = false;
+		                    }
+	                    } else {
+		                    $this->values[$key] = (empty($this->values[$key]) ?  '' : $this->values[$key]);
+		                    unset($checkList[$key]);
+	                    }
+	
+	                    if (!$type->validate($value)) {
+		                    $this->errors[$key] = $message;
+		                    $this->valid = false;
+	                    }
+	                    
+	                    $this->rawValues[$key] = $value;
 		
-		            $diff = array_diff_key($checkList, $fields);
-		
-		            foreach ($diff as $key => $value){
-			            $required = $this->BuilderModule->getRequired($key);
-			            if ($required) {
-				            $this->errors[$key] = $this->emptyMessage;
-				            $this->valid = false;
-			            }
-		            }
-	            } else {
-		            throw new ValidationException();
-	            }
+	                    $SanitizeModule = new Sanitize($sanitizeMethod, $sanitizeType);
+	                    $this->values[$key] = $SanitizeModule->sanitize($value);
+                    }
+	
+	                $diff = array_diff_key($checkList, $fields);
+                    
+                    foreach ($diff as $key => $value){
+	                    $required = $this->BuilderModule->getRequired($key);
+	                    if ($required) {
+		                    $this->errors[$key] = $this->emptyMessage;
+		                    $this->valid = false;
+	                    }
+                    }
+                } else {
+                	throw new ValidationException();
+                }
             }
 
 			/**

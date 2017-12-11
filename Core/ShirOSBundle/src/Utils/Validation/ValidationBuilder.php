@@ -48,11 +48,25 @@
 	
 	    /* ------------------------ Private Function ------------------------ */
 	
+		    /**
+		     * Permet de récupèrer le message d'erreur du champ
+		     *
+		     * @param array $options
+		     *
+		     * @return string
+		     */
 		    protected function optionMessage(array $options): string
 		    {
 			    return (isset($options[self::PARAM_MESSAGE]) ? $options[self::PARAM_MESSAGE] : '');
 		    }
 	
+		    /**
+		     * Permet de récupèrer la valeur 'required' pour savoir si le champ est obligatoire ou non
+		     *
+		     * @param array $options
+		     *
+		     * @return bool
+		     */
 		    protected function optionRequired(array $options): bool
 		    {
 		    	if (isset($options[self::PARAM_REQUIRED])) {
@@ -63,12 +77,26 @@
 			    
 			    return true;
 		    }
-	    
+	
+		    /**
+		     * Permet de récupèrer le type du sanitize pour le champ
+		     *
+		     * @param array $options
+		     *
+		     * @return string
+		     */
 	        protected function optionSanitizeType(array $options): string
 	        {
 		        return (isset($options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_TYPE]) ? $options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_TYPE] : FILTER_SANITIZE_STRING);
 	        }
 	
+		    /**
+		     * Permet de récupèrer lea méthode de sanitize pour le champ
+		     *
+		     * @param array $options
+		     *
+		     * @return string
+		     */
 		    protected function optionSanitizeMethod(array $options): string
 		    {
 			    return (isset($options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_METHOD]) ? $options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_METHOD] : Sanitize::SANITIZE);
@@ -76,7 +104,16 @@
 	    
 
         /* ------------------------ Add Check ------------------------ */
-
+	
+		    /**
+		     * Ajoute une régle de validation
+		     *
+		     * @param Type $type
+		     * @param string $varName
+		     * @param array $options
+		     *
+		     * @return ValidationBuilder
+		     */
             public function add(Type $type, string $varName, array $options = []): ValidationBuilder
             {
             	$this->checkList[$varName] = [

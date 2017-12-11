@@ -70,6 +70,13 @@
 		
 		/* ------------------------ Fonctions de Sanitize des Champs ------------------------ */
 		
+		/**
+		 * Nettoie la chaine de caratère
+		 *
+		 * @param string $field
+		 *
+		 * @return string
+		 */
 		public function sanitize(string $field): string
 		{
 			$sanitizeMethod = $this->sanitizeMethod;

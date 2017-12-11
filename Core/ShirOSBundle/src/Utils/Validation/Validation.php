@@ -139,6 +139,7 @@
 	                    $required = $this->BuilderModule->getRequired($key);
                         $sanitizeType = $this->BuilderModule->getSanitizeType($key);
 	                    $sanitizeMethod = $this->BuilderModule->getSanitizeMethod($key);
+	                    $prohibitedCharacters = $this->BuilderModule->getProhibitedCharacters($key);
 	
 	                    if ($required) {
 		                    if ($this->isEmpty($value)) {
@@ -157,7 +158,7 @@
 	                    
 	                    $this->rawValues[$key] = $value;
 		
-	                    $SanitizeModule = new Sanitize($sanitizeMethod, $sanitizeType);
+	                    $SanitizeModule = new Sanitize($sanitizeMethod, $sanitizeType, $prohibitedCharacters);
 	                    $this->values[$key] = $SanitizeModule->sanitize($value);
                     }
 	

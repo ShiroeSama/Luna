@@ -32,6 +32,8 @@
 	    public const PARAM_SANITIZE = 'Sanitize';
 	    public const PARAM_SANITIZE_TYPE = 'SanitizeType';
 	    public const PARAM_SANITIZE_METHOD = 'SanitizeMethod';
+	    
+	    public const PARAM_PROHIBITED_CHARACTERS = 'ProhibitedCharacters';
     	
         /**
          * @var array
@@ -101,6 +103,18 @@
 		    {
 			    return (isset($options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_METHOD]) ? $options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_METHOD] : Sanitize::SANITIZE);
 		    }
+	
+		    /**
+		     * Permet de récupèrer lea méthode de sanitize pour le champ
+		     *
+		     * @param array $options
+		     *
+		     * @return array
+		     */
+		    protected function optionProhibitedCharacters(array $options): array 
+		    {
+			    return (isset($options[self::PARAM_SANITIZE][self::PARAM_PROHIBITED_CHARACTERS]) ? $options[self::PARAM_SANITIZE][self::PARAM_PROHIBITED_CHARACTERS] : []);
+		    }
 	    
 
         /* ------------------------ Add Check ------------------------ */
@@ -121,7 +135,8 @@
             	    self::PARAM_MESSAGE => $this->optionMessage($options),
 		            self::PARAM_SANITIZE_TYPE => $this->optionSanitizeType($options),
 		            self::PARAM_SANITIZE_METHOD => $this->optionSanitizeMethod($options),
-		            self::PARAM_REQUIRED => $this->optionRequired($options)
+		            self::PARAM_REQUIRED => $this->optionRequired($options),
+		            self::PARAM_PROHIBITED_CHARACTERS => $this->optionProhibitedCharacters($options),
 	            ];
             	
             	return $this;
@@ -213,6 +228,22 @@
 		    {
 			    if (isset($this->checkList[$key])) {
 				    return $this->checkList[$key][self::PARAM_SANITIZE_METHOD];
+			    } else {
+				    throw new ValidationException(ValidationException::VALIDATION_UNEXIST_FIELD_CHECK_ERROR_CODE);
+			    }
+		    }
+	
+		    /**
+		     * Return Sanitize Method
+		     *
+		     * @param string $key
+		     * @return null|array
+		     * @throws ValidationException
+		     */
+		    public function getProhibitedCharacters(string $key): ?array
+		    {
+			    if (isset($this->checkList[$key])) {
+				    return $this->checkList[$key][self::PARAM_PROHIBITED_CHARACTERS];
 			    } else {
 				    throw new ValidationException(ValidationException::VALIDATION_UNEXIST_FIELD_CHECK_ERROR_CODE);
 			    }

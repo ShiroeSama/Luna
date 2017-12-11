@@ -24,6 +24,7 @@
 		public const SANITIZE = 0;
 		public const SANITIZE_SEARCH = 1;
 		public const SANITIZE_COMMENTS = 2;
+		public const SANITIZE_CHARACTER = 3;
 		
 		/**
 		 * @var string $sanitizeMethod
@@ -41,12 +42,19 @@
 		protected $type;
 		
 		/**
+		 * Liste des Caratères Interdit
+		 * @var array $prohibitedCharacter
+		 */
+		protected $prohibitedCharacters;
+		
+		/**
 		 * Sanitize constructor.
 		 */
-		public function __construct(int $sanitizeCode, string $type = FILTER_SANITIZE_STRING)
+		public function __construct(int $sanitizeCode, string $type = FILTER_SANITIZE_STRING, array $prohibitedCharacters = [])
 		{
 			$this->sanitizeCode = $sanitizeCode;
 			$this->type = $type;
+			$this->prohibitedCharacters = $prohibitedCharacters;
 			
 			switch ($sanitizeCode) {
 				case self::SANITIZE :
@@ -59,6 +67,10 @@
 					
 				case self::SANITIZE_COMMENTS :
 					$this->sanitizeMethod = 'sanitizeComments';
+					break;
+				
+				case self::SANITIZE_CHARACTER :
+					$this->sanitizeMethod = 'sanitizeCharacter';
 					break;
 					
 				default:
@@ -80,12 +92,7 @@
 		public function sanitize(string $field): string
 		{
 			$sanitizeMethod = $this->sanitizeMethod;
-			
-			if ($this->sanitizeCode === self::SANITIZE) {
-				return $this->$sanitizeMethod($field, $this->type);
-			} else {
-				return $this->$sanitizeMethod($field);
-			}
+			return $this->$sanitizeMethod($field);
 		}
 		
 		/* ------------------------ Private Function ------------------------ */
@@ -98,7 +105,7 @@
 		 *
 		 * @return string
 		 */
-		protected function sanitizeField(string $field, string $type = FILTER_SANITIZE_STRING): string { return filter_var($field, $type); }
+		protected function sanitizeField(string $field): string { return filter_var($field, $this->type); }
 		
 		/**
 		 * Nettoie le Champ de Recherche
@@ -107,7 +114,11 @@
 		 *
 		 * @return string
 		 */
-		protected function sanitizeSearch(string $field): string { return $this->sanitizeField($field, FILTER_SANITIZE_FULL_SPECIAL_CHARS); }
+		protected function sanitizeSearch(string $field): string
+		{
+			$this->type = FILTER_SANITIZE_FULL_SPECIAL_CHARS;
+			return $this->sanitizeField($field);
+		}
 		
 		/**
 		 * Nettoie les Champs de Commentaires
@@ -130,6 +141,34 @@
 			$field = preg_replace('@<p class="signature">.*?</p>@si', '', $field);
 			
 			return $field;
+		}
+		
+		/**
+		 * Nettoie le Champ en suppriment ou en remplaçant les caractères voulue.
+		 *
+		 * @param string $field
+		 *
+		 * @return string
+		 */
+		protected function sanitizeCharacter(string $field): string
+		{
+			foreach ($this->prohibitedCharacters as $character) {
+				switch ($character) {
+					case '/':
+						$field = str_replace($character, ':', $field);
+						break;
+						
+					case '.':
+						$field = str_replace($character, '', $field);
+						break;
+						
+					default:
+						$field = str_replace($character, '-', $field);
+						break;
+				}
+			}
+			
+			return $this->sanitizeField($field);
 		}
 	}
 	?>

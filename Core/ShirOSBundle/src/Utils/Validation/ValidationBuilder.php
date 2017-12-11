@@ -32,7 +32,8 @@
 	    public const PARAM_SANITIZE = 'Sanitize';
 	    public const PARAM_SANITIZE_TYPE = 'SanitizeType';
 	    public const PARAM_SANITIZE_METHOD = 'SanitizeMethod';
-	    
+	
+	    public const PARAM_EQUAL_TO = 'EqualTo';
 	    public const PARAM_PROHIBITED_CHARACTERS = 'ProhibitedCharacters';
     	
         /**
@@ -48,7 +49,7 @@
             $this->checkList = array();
         }
 	
-	    /* ------------------------ Private Function ------------------------ */
+	    /* ------------------------ Get Option Parameters ------------------------ */
 	
 		    /**
 		     * Permet de récupèrer le message d'erreur du champ
@@ -109,11 +110,23 @@
 		     *
 		     * @param array $options
 		     *
+		     * @return array|bool
+		     */
+		    protected function optionEqualTo(array $options)
+		    {
+			    return (isset($options[self::PARAM_EQUAL_TO]) ? $options[self::PARAM_EQUAL_TO] : false);
+		    }
+	
+		    /**
+		     * Permet de récupèrer lea méthode de sanitize pour le champ
+		     *
+		     * @param array $options
+		     *
 		     * @return array
 		     */
 		    protected function optionProhibitedCharacters(array $options): array 
 		    {
-			    return (isset($options[self::PARAM_SANITIZE][self::PARAM_PROHIBITED_CHARACTERS]) ? $options[self::PARAM_SANITIZE][self::PARAM_PROHIBITED_CHARACTERS] : []);
+			    return (isset($options[self::PARAM_PROHIBITED_CHARACTERS]) ? $options[self::PARAM_PROHIBITED_CHARACTERS] : []);
 		    }
 	    
 
@@ -136,6 +149,7 @@
 		            self::PARAM_SANITIZE_TYPE => $this->optionSanitizeType($options),
 		            self::PARAM_SANITIZE_METHOD => $this->optionSanitizeMethod($options),
 		            self::PARAM_REQUIRED => $this->optionRequired($options),
+		            self::PARAM_EQUAL_TO => $this->optionEqualTo($options),
 		            self::PARAM_PROHIBITED_CHARACTERS => $this->optionProhibitedCharacters($options),
 	            ];
             	
@@ -234,7 +248,23 @@
 		    }
 	
 		    /**
-		     * Return Sanitize Method
+		     * Return an array of elements with which the field must match
+		     *
+		     * @param string $key
+		     * @return null|array|bool
+		     * @throws ValidationException
+		     */
+		    public function getEqualTo(string $key)
+		    {
+			    if (isset($this->checkList[$key])) {
+				    return $this->checkList[$key][self::PARAM_EQUAL_TO];
+			    } else {
+				    throw new ValidationException(ValidationException::VALIDATION_UNEXIST_FIELD_CHECK_ERROR_CODE);
+			    }
+		    }
+	
+		    /**
+		     * Return Prohibited Characters
 		     *
 		     * @param string $key
 		     * @return null|array

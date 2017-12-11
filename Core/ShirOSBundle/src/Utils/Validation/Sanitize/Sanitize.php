@@ -21,10 +21,20 @@
 	
 	class Sanitize
 	{
+		/** SANITIZE CODE */
+		
 		public const SANITIZE = 0;
 		public const SANITIZE_SEARCH = 1;
 		public const SANITIZE_COMMENTS = 2;
 		public const SANITIZE_CHARACTER = 3;
+		
+		/** PARAMETERS */
+		
+		public const PARAM_SANITIZE_TYPE = 'SanitizeType';
+		public const PARAM_SANITIZE_METHOD = 'SanitizeMethod';
+		public const PARAM_PROHIBITED_CHARACTERS = 'ProhibitedCharacters';
+		
+		/** ATTRIBUTES */
 		
 		/**
 		 * @var string $sanitizeMethod
@@ -50,13 +60,13 @@
 		/**
 		 * Sanitize constructor.
 		 */
-		public function __construct(int $sanitizeCode, string $type = FILTER_SANITIZE_STRING, array $prohibitedCharacters = [])
+		public function __construct(array $options = [])
 		{
-			$this->sanitizeCode = $sanitizeCode;
-			$this->type = $type;
-			$this->prohibitedCharacters = $prohibitedCharacters;
+			$this->type = $this->optionSanitizeType($options);
+			$this->sanitizeCode = $this->optionSanitizeMethod($options);
+			$this->prohibitedCharacters = $this->optionProhibitedCharacters($options);
 			
-			switch ($sanitizeCode) {
+			switch ($this->sanitizeCode) {
 				case self::SANITIZE :
 					$this->sanitizeMethod = 'sanitizeField';
 					break;
@@ -78,6 +88,45 @@
 					break;
 			}
 		}
+		
+		
+		/* ------------------------ Get Option Parameters ------------------------ */
+		
+			/**
+			 * Permet de récupèrer le type du sanitize pour le champ
+			 *
+			 * @param array $options
+			 *
+			 * @return string
+			 */
+			protected function optionSanitizeType(array $options): string
+			{
+				return (isset($options[self::PARAM_SANITIZE_TYPE]) ? $options[self::PARAM_SANITIZE_TYPE] : FILTER_SANITIZE_STRING);
+			}
+			
+			/**
+			 * Permet de récupèrer lea méthode de sanitize pour le champ
+			 *
+			 * @param array $options
+			 *
+			 * @return string
+			 */
+			protected function optionSanitizeMethod(array $options): string
+			{
+				return (isset($options[self::PARAM_SANITIZE_METHOD]) ? $options[self::PARAM_SANITIZE_METHOD] : Sanitize::SANITIZE);
+			}
+			
+			/**
+			 * Permet de récupèrer lea méthode de sanitize pour le champ
+			 *
+			 * @param array $options
+			 *
+			 * @return array
+			 */
+			protected function optionProhibitedCharacters(array $options): array
+			{
+				return (isset($options[self::PARAM_PROHIBITED_CHARACTERS]) ? $options[self::PARAM_PROHIBITED_CHARACTERS] : []);
+			}
 		
 		
 		/* ------------------------ Fonctions de Sanitize des Champs ------------------------ */

@@ -23,7 +23,7 @@
 
 	class Validation
 	{
-		/** Constante */
+		/** PARAMETERS */
 		
 		public const PARAM_MESSAGE = ValidationBuilder::PARAM_MESSAGE;
 		public const PARAM_REQUIRED = ValidationBuilder::PARAM_REQUIRED;
@@ -32,6 +32,17 @@
 		public const PARAM_SANITIZE_TYPE = ValidationBuilder::PARAM_SANITIZE_TYPE;
 		public const PARAM_SANITIZE_METHOD = ValidationBuilder::PARAM_SANITIZE_METHOD;
 		
+		public const PARAM_EQUAL_TO = ValidationBuilder::PARAM_EQUAL_TO;
+		public const PARAM_PROHIBITED_CHARACTERS = ValidationBuilder::PARAM_PROHIBITED_CHARACTERS;
+		
+		
+		/** DEFAULT ERROR MESSAGE */
+		
+		protected const ERROR_MESSAGE_EMPTY = "Le champ doit être renseigné";
+		protected const ERROR_MESSAGE_EQUAL_TO = "Le champ ne correspond pas avec les valeurs attendues";
+		
+		
+		/** ATTRIBUTES */
 		
 		/**
 		 * Classe de Validation
@@ -58,11 +69,6 @@
 		 * @var bool
 		 */
 		protected $valid;
-		
-		/**
-		 * @var string
-		 */
-		protected $emptyMessage = "Le champ doit être renseigné";
 		
 		/**
 		 * Validation constructor.
@@ -136,6 +142,7 @@
 	
 	                    $type = $this->BuilderModule->getType($key);
 	                    $message = $this->BuilderModule->getMessage($key);
+	                    $equalTo = $this->BuilderModule->getEqualTo($key);
 	                    $required = $this->BuilderModule->getRequired($key);
                         $sanitizeType = $this->BuilderModule->getSanitizeType($key);
 	                    $sanitizeMethod = $this->BuilderModule->getSanitizeMethod($key);
@@ -143,12 +150,19 @@
 	
 	                    if ($required) {
 		                    if ($this->isEmpty($value)) {
-			                    $this->errors[$key] = $this->emptyMessage;
+			                    $this->errors[$key] = self::ERROR_MESSAGE_EMPTY;
 			                    $this->valid = false;
 		                    }
 	                    } else {
 		                    $this->values[$key] = (empty($this->values[$key]) ?  '' : $this->values[$key]);
 		                    unset($checkList[$key]);
+	                    }
+	                    
+	                    if ($equalTo) {
+	                        if ($this->isNotEqual($value, $equalTo)) {
+		                        $this->errors[$key] = self::ERROR_MESSAGE_EQUAL_TO;
+		                        $this->valid = false;
+	                        }
 	                    }
 	
 	                    if (!$type->validate($value)) {
@@ -157,8 +171,14 @@
 	                    }
 	                    
 	                    $this->rawValues[$key] = $value;
+	                    
+	                    $options = [
+	                        Sanitize::PARAM_SANITIZE_TYPE => $sanitizeType,
+		                    Sanitize::PARAM_SANITIZE_METHOD => $sanitizeMethod,
+		                    Sanitize::PARAM_PROHIBITED_CHARACTERS => $prohibitedCharacters,
+	                    ];
 		
-	                    $SanitizeModule = new Sanitize($sanitizeMethod, $sanitizeType, $prohibitedCharacters);
+	                    $SanitizeModule = new Sanitize($options);
 	                    $this->values[$key] = $SanitizeModule->sanitize($value);
                     }
 	
@@ -167,7 +187,7 @@
                     foreach ($diff as $key => $value){
 	                    $required = $this->BuilderModule->getRequired($key);
 	                    if ($required) {
-		                    $this->errors[$key] = $this->emptyMessage;
+		                    $this->errors[$key] = self::ERROR_MESSAGE_EMPTY;
 		                    $this->valid = false;
 	                    }
                     }
@@ -190,6 +210,18 @@
 						return false;
 
 				return empty($field);
+			}
+		
+			/**
+			 * Verifie si un champ n'est pas vide
+			 *
+			 * @param string $field
+			 *
+			 * @return bool
+			 */
+			protected function isNotEqual(string $field, array $equalTo): bool
+			{
+				return !in_array($field, $equalTo, true);
 			}
 	}
 ?>

@@ -41,8 +41,41 @@
 	        if (isset($_POST)) { $this->post =& $_POST; }
         }
 
-        public function isGetRequest(): bool { return !empty($this->get) && ($this->getMethod() === self::GET); }
-        public function isPostRequest(): bool { return !empty($this->post) && ($this->getMethod() === self::POST); }
+        public function isGetRequest(string ...$params): bool
+        {
+        	$bool = true;
+        	
+        	if (!empty($this->get) && ($this->getMethod() === self::GET)) {
+		        foreach ($params as $param) {
+					if (!isset($this->get[$param])) {
+						$bool = false;
+						break;
+					}
+		        }
+	        } else {
+        		$bool = false;
+	        }
+        	
+        	return $bool;
+        }
+        
+        public function isPostRequest(string ...$params): bool
+        {
+	        $bool = true;
+	
+	        if (!empty($this->post) && ($this->getMethod() === self::POST)) {
+		        foreach ($params as $param) {
+			        if (!isset($this->get[$param])) {
+				        $bool = false;
+				        break;
+			        }
+		        }
+	        } else {
+		        $bool = false;
+	        }
+	
+	        return $bool;
+        }
 
         public function getGetRequest(): array { return $this->get; }
         public function getPostRequest(): array { return $this->post; }

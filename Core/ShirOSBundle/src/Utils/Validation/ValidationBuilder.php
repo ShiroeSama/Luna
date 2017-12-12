@@ -32,9 +32,8 @@
 	    public const PARAM_SANITIZE = 'Sanitize';
 	    public const PARAM_SANITIZE_TYPE = 'SanitizeType';
 	    public const PARAM_SANITIZE_METHOD = 'SanitizeMethod';
-	
-	    public const PARAM_EQUAL_TO = 'EqualTo';
-	    public const PARAM_PROHIBITED_CHARACTERS = 'ProhibitedCharacters';
+	    public const PARAM_SANITIZE_EQUAL_TO = 'SanitizeEqualTo';
+	    public const PARAM_SANITIZE_PROHIBITED_CHARACTERS = 'SanitizeProhibitedCharacters';
     	
         /**
          * @var array
@@ -114,7 +113,7 @@
 		     */
 		    protected function optionEqualTo(array $options)
 		    {
-			    return (isset($options[self::PARAM_EQUAL_TO]) ? $options[self::PARAM_EQUAL_TO] : false);
+			    return (isset($options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_EQUAL_TO]) ? $options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_EQUAL_TO] : false);
 		    }
 	
 		    /**
@@ -126,7 +125,7 @@
 		     */
 		    protected function optionProhibitedCharacters(array $options): array 
 		    {
-			    return (isset($options[self::PARAM_PROHIBITED_CHARACTERS]) ? $options[self::PARAM_PROHIBITED_CHARACTERS] : []);
+			    return (isset($options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_PROHIBITED_CHARACTERS]) ? $options[self::PARAM_SANITIZE][self::PARAM_SANITIZE_PROHIBITED_CHARACTERS] : []);
 		    }
 	    
 
@@ -149,8 +148,8 @@
 		            self::PARAM_SANITIZE_TYPE => $this->optionSanitizeType($options),
 		            self::PARAM_SANITIZE_METHOD => $this->optionSanitizeMethod($options),
 		            self::PARAM_REQUIRED => $this->optionRequired($options),
-		            self::PARAM_EQUAL_TO => $this->optionEqualTo($options),
-		            self::PARAM_PROHIBITED_CHARACTERS => $this->optionProhibitedCharacters($options),
+		            self::PARAM_SANITIZE_EQUAL_TO => $this->optionEqualTo($options),
+		            self::PARAM_SANITIZE_PROHIBITED_CHARACTERS => $this->optionProhibitedCharacters($options),
 	            ];
             	
             	return $this;
@@ -257,7 +256,7 @@
 		    public function getEqualTo(string $key)
 		    {
 			    if (isset($this->checkList[$key])) {
-				    return $this->checkList[$key][self::PARAM_EQUAL_TO];
+				    return $this->checkList[$key][self::PARAM_SANITIZE_EQUAL_TO];
 			    } else {
 				    throw new ValidationException(ValidationException::VALIDATION_UNEXIST_FIELD_CHECK_ERROR_CODE);
 			    }
@@ -273,7 +272,7 @@
 		    public function getProhibitedCharacters(string $key): ?array
 		    {
 			    if (isset($this->checkList[$key])) {
-				    return $this->checkList[$key][self::PARAM_PROHIBITED_CHARACTERS];
+				    return $this->checkList[$key][self::PARAM_SANITIZE_PROHIBITED_CHARACTERS];
 			    } else {
 				    throw new ValidationException(ValidationException::VALIDATION_UNEXIST_FIELD_CHECK_ERROR_CODE);
 			    }

@@ -31,9 +31,8 @@
 		public const PARAM_SANITIZE = ValidationBuilder::PARAM_SANITIZE;
 		public const PARAM_SANITIZE_TYPE = ValidationBuilder::PARAM_SANITIZE_TYPE;
 		public const PARAM_SANITIZE_METHOD = ValidationBuilder::PARAM_SANITIZE_METHOD;
-		
-		public const PARAM_EQUAL_TO = ValidationBuilder::PARAM_EQUAL_TO;
-		public const PARAM_PROHIBITED_CHARACTERS = ValidationBuilder::PARAM_PROHIBITED_CHARACTERS;
+		public const PARAM_SANITIZE_EQUAL_TO = ValidationBuilder::PARAM_SANITIZE_EQUAL_TO;
+		public const PARAM_SANITIZE_PROHIBITED_CHARACTERS = ValidationBuilder::PARAM_SANITIZE_PROHIBITED_CHARACTERS;
 		
 		
 		/** DEFAULT ERROR MESSAGE */

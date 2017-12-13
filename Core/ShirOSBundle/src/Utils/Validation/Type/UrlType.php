@@ -15,12 +15,12 @@
 	
 	namespace ShirOSBundle\Utils\Validation\Type;
 	
-	class UrlType implements Type
+	class UrlType implements ValidationType
 	{
 		/**
 		 * Retour le Type
 		 */
-		public static function type(): Type { return new UrlType(); }
+		public static function type(): ValidationType { return new UrlType(); }
 		
 		/**
 		 * Regex

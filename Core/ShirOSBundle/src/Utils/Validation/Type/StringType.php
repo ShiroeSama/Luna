@@ -15,12 +15,12 @@
 	
 	namespace ShirOSBundle\Utils\Validation\Type;
 	
-	class StringType implements Type
+	class StringType implements ValidationType
 	{
 		/**
 		 * Retour le Type
 		 */
-		public static function type(): Type { return new StringType(); }
+		public static function type(): ValidationType { return new StringType(); }
 		
 		/**
 		 * Permet de verifier si le champ est du type de la classe

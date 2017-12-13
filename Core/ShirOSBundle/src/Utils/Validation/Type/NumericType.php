@@ -15,12 +15,12 @@
 	
 	namespace ShirOSBundle\Utils\Validation\Type;
 	
-	class NumericType implements Type
+	class NumericType implements ValidationType
 	{
 		/**
 		 * Retour le Type
 		 */
-		public static function type(): Type { return new NumericType(); }
+		public static function type(): ValidationType { return new NumericType(); }
 		
 		/**
 		 * Regex

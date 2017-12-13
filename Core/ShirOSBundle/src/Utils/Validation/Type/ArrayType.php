@@ -15,12 +15,12 @@
 	
 	namespace ShirOSBundle\Utils\Validation\Type;
 	
-	class ArrayType implements Type
+	class ArrayType implements ValidationType
 	{
 		/**
 		 * Retour le Type
 		 */
-		public static function type(): Type { return new ArrayType(); }
+		public static function type(): ValidationType { return new ArrayType(); }
 		
 		/**
 		 * Permet de verifier si le champ est du type de la classe

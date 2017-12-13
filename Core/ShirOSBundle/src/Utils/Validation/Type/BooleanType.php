@@ -15,12 +15,12 @@
 	
 	namespace ShirOSBundle\Utils\Validation\Type;
 	
-	class BooleanType implements Type
+	class BooleanType implements ValidationType
 	{
 		/**
 		 * Retour le Type
 		 */
-		public static function type(): Type { return new BooleanType(); }
+		public static function type(): ValidationType { return new BooleanType(); }
 		
 		/**
 		 * Permet de verifier si le champ est du type de la classe

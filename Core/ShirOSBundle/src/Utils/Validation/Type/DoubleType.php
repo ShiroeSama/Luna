@@ -15,12 +15,12 @@
 	
 	namespace ShirOSBundle\Utils\Validation\Type;
 	
-	class DoubleType implements Type
+	class DoubleType implements ValidationType
 	{
 		/**
 		 * Retour le Type
 		 */
-		public static function type(): Type { return new DoubleType(); }
+		public static function type(): ValidationType { return new DoubleType(); }
 		
 		/**
 		 * Permet de verifier si le champ est du type de la classe

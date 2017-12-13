@@ -15,12 +15,12 @@
 	
 	namespace ShirOSBundle\Utils\Validation\Type;
 	
-	class LongType implements Type
+	class LongType implements ValidationType
 	{
 		/**
 		 * Retour le Type
 		 */
-		public static function type(): Type { return new LongType(); }
+		public static function type(): ValidationType { return new LongType(); }
 		
 		/**
 		 * Permet de verifier si le champ est du type de la classe

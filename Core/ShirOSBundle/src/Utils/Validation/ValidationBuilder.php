@@ -14,8 +14,8 @@
      */
 
     namespace ShirOSBundle\Utils\Validation;
-    
-    use ShirOSBundle\Utils\Validation\Type\Type;
+
+    use ShirOSBundle\Utils\Validation\Type\ValidationType;
     use ShirOSBundle\Utils\Exception\ValidationException;
     use ShirOSBundle\Utils\Validation\Sanitize\Sanitize;
 
@@ -134,13 +134,13 @@
 		    /**
 		     * Ajoute une régle de validation
 		     *
-		     * @param Type $type
+		     * @param ValidationType $type
 		     * @param string $varName
 		     * @param array $options
 		     *
 		     * @return ValidationBuilder
 		     */
-            public function add(Type $type, string $varName, array $options = []): ValidationBuilder
+            public function add(ValidationType $type, string $varName, array $options = []): ValidationBuilder
             {
             	$this->checkList[$varName] = [
             	    self::PARAM_TYPE => $type,
@@ -170,10 +170,10 @@
 		     * Return Type
 		     *
 		     * @param string $key
-		     * @return null|Type
+		     * @return null|ValidationType
 		     * @throws ValidationException
 		     */
-		    public function getType(string $key): ?Type
+		    public function getType(string $key): ?ValidationType
 		    {
 			    if (isset($this->checkList[$key])) {
 				    return $this->checkList[$key][self::PARAM_TYPE];

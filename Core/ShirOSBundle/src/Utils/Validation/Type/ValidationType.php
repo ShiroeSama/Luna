@@ -7,7 +7,7 @@
 	 *   @Author : Alexandre Caillot
 	 *   @WebSite : https://www.shiros.fr
 	 *
-	 *   @File : Type.php
+	 *   @File : ValidationType.php
 	 *   @Created_at : 08/12/2017
 	 *   @Update_at : 08/12/2017
 	 * --------------------------------------------------------------------------
@@ -15,12 +15,12 @@
 	
 	namespace ShirOSBundle\Utils\Validation\Type;
 	
-	interface Type
+	interface ValidationType
 	{
 		/**
 		 * Retour le Type
 		 */
-		public static function type(): Type;
+		public static function type(): ValidationType;
 		
 		/**
 		 * Permet de verifier si le champ est du type de la classe

@@ -15,12 +15,12 @@
 	
 	namespace ShirOSBundle\Utils\Validation\Type;
 	
-	class EmailType implements Type
+	class EmailType implements ValidationType
 	{
 		/**
 		 * Retour le Type
 		 */
-		public static function type(): Type { return new EmailType(); }
+		public static function type(): ValidationType { return new EmailType(); }
 		
 		/**
 		 * Permet de verifier si le champ est du type de la classe

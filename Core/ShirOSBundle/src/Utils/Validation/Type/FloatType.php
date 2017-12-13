@@ -15,12 +15,12 @@
 	
 	namespace ShirOSBundle\Utils\Validation\Type;
 	
-	class FloatType implements Type
+	class FloatType implements ValidationType
 	{
 		/**
 		 * Retour le Type
 		 */
-		public static function type(): Type { return new FloatType(); }
+		public static function type(): ValidationType { return new FloatType(); }
 		
 		/**
 		 * Permet de verifier si le champ est du type de la classe

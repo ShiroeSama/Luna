@@ -191,16 +191,26 @@
 							$this->RenderModule->internalServerError();
 							break;
 					}
-				} catch (Exception $e) {
-					$this->RenderModule->error($e->getCode(), $e->getMessage());
+				} catch (Exception $exception) {
+					$this->catchOtherException($exception);
 				}
 			}
 		
 		/**
+		 * Gère les cas d'erreurs inconnue
+		 * @param Exception $exception
+		 */
+		public function catchOtherException(Exception $exception)
+		{
+			/*TODO : Redifine this on SubClass*/
+			$this->RenderModule->error($exception->getCode(), $exception->getMessage());
+		}
+			
+			
+		
+		/**
 		 * Initialise le traitement de la requête et sa redirection
 		 * @throws PDOException
-		 * @throws DatabaseException
-		 * @throws LoginException
 		 * @throws RouteException
 		 */
 		protected function launch()

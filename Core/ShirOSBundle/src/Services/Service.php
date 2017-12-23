@@ -39,6 +39,16 @@
 		 */
 		protected $SessionModule;
 		
+		/**
+		 * @var string
+		 */
+		private $attributeName = '';
+		
+		/**
+		 * @var string
+		 */
+		private $value = '';
+		
 		
 		/**
 		 * Service constructor.
@@ -60,5 +70,57 @@
 			 * @param string $managerName
 			 */
 			protected function loadManager(string $managerName) { $this->$managerName = $this->ApplicationModule->getManager($managerName); }
+		
+		
+		/* ------------------------ Fonctions Complémentaires ------------------------ */
+		
+			/**
+			 * Supprime un Objet dans une liste
+			 *
+			 * @param array $lists
+			 * @param string $attributeName
+			 * @param $value
+			 *
+			 * @return array
+			 */
+			public function unsetObjectElement(array $lists, string $attributeName, $value): array
+			{
+				$this->attributeName = $attributeName;
+				$this->value = $value;
+				
+				return array_filter($lists, __CLASS__ . '::arrayCallback', ARRAY_FILTER_USE_BOTH);
+			}
+			
+			protected function arrayCallback($value, $key)
+			{
+				if (!empty($this->attributeName)) {
+					$attributeName = $this->attributeName;
+					
+					if (property_exists($value, $attributeName)) {
+						if ($value->$attributeName === $this->value) {
+							return false;
+						}
+					}
+					
+				}
+				return true;
+			}
+			
+			/**
+			 * Supprime une entrée dans une liste
+			 *
+			 * @param array $lists
+			 * @param $value
+			 *
+			 * @return array
+			 */
+			public function unsetElement(array $lists, $value, bool $strict = true): array
+			{
+				if(($key = array_search($value, $lists, $strict)) !== FALSE) {
+					unset($lists[$key]);
+				}
+				
+				return array_values($lists);
+			}
 	}
 ?>

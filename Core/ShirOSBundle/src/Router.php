@@ -228,8 +228,8 @@
 			# Vérifie que le dossier indiqué contenant les controleurs existe
 			$this->checkControllerDir();
 			
-			$route = $this->matchRoute($requestTab);
-			$this->createRoute($route);
+			$path = $this->matchRoute($requestTab);
+			$this->getControllerWithAction($path);
 			
 			$this->checkAccessPermissions();
 			
@@ -264,7 +264,7 @@
 			 *
 			 * @return bool
 			 */
-			protected function checkRoute(array $route, array $request): bool
+			protected function checkRouteRules(array $route, array $request): bool
 			{
 				$size = count($route);
 
@@ -315,12 +315,14 @@
 				foreach ($routes as $route) {
 					$route = $this->clearRoute($route);
 					
-					if (count($route) === count($requestTab) && $this->checkRoute($route, $requestTab)) {
-						$this->params = $this->getParams($route, $requestTab);
-						$path = $this->createPath($route);
-
-						$this->path = $path;
-						return $this->routes[$path];
+					if (count($route) === count($requestTab)) {
+						if ($this->checkRouteRules($route, $requestTab)) {
+							$this->params = $this->getParams($route, $requestTab);
+							$path = $this->createPath($route);
+							
+							$this->path = $path;
+							return $this->routes[$path];
+						}
 					}
 				}
 
@@ -385,6 +387,39 @@
 
 				return $params;
 			}
+		
+			/**
+			 * Créer la route à appeler (Controleur / Méthode / Paramètres)
+			 *
+			 * @param string $route
+			 */
+			protected function getControllerWithAction(string $route)
+			{
+				# Parse de la Route
+				$route = explode('.', $route);
+				
+				# Définition de la méthode
+				$this->action = end($route);
+				
+				# Définition du Controller
+				$key = array_search($this->action, $route);
+				unset($route[$key]);
+				$this->controller = $this->controllerFolder . '\\' . implode('\\', $route);
+			}
+			
+			/**
+			 * Importe les Méta Data de la page dans le Controleur
+			 *
+			 * @param Controller $controller
+			 * @return Controller
+			 */
+			protected function setMetaData(Controller $controller)
+			{
+				$metaData = new MetaData($this->path);
+				$controller->setMetaData($metaData);
+				
+				return $controller;
+			}
 
 
 		/* ------------------------ Format & Create ------------------------ */
@@ -440,39 +475,6 @@
 			{
 				$path = implode('/', $path);
 				return (($path === DIRECTORY_SEPARATOR) ? $path : DIRECTORY_SEPARATOR . $path);
-			}
-
-			/**
-			 * Créer la route à appeler (Controleur / Méthode / Paramètres)
-			 *
-			 * @param string $route
-			 */
-			protected function createRoute(string $route)
-			{
-				# Parse de la Route
-				$route = explode('.', $route);
-
-				# Définition de la méthode
-				$this->action = end($route);
-
-				# Définition du Controller
-				$key = array_search($this->action, $route);
-				unset($route[$key]);
-				$this->controller = $this->controllerFolder . '\\' . implode('\\', $route);
-			}
-		
-			/**
-			 * Importe les Méta Data de la page dans le Controleur
-			 *
-			 * @param Controller $controller
-			 * @return Controller
-			 */
-			protected function setMetaData(Controller $controller)
-			{
-				$metaData = new MetaData($this->path);
-				$controller->setMetaData($metaData);
-				
-				return $controller;	
 			}
 	}
 ?>

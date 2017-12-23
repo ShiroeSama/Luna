@@ -104,8 +104,7 @@
 			 */
 			public function show(string $view, array $variables = [], int $code = HTTP::OK)
 			{
-				$header = HTTP::getHeader($code);
-				header($header);
+				HTTP::generateHeader($code);
 
 				$variables['ConfigModule'] = $this->ConfigModule;
 				$variables['SessionModule'] = $this->SessionModule;

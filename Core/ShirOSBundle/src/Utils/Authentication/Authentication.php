@@ -54,7 +54,7 @@
 			$this->ConfigModule = Config::getInstance();
 			$this->SessionModule = Session::getInstance();
 			
-			if (!is_null($manager) && is_a($manager, 'ShirOSBundle\Database\Gateway\Manager')) {
+			if (!is_null($manager) && is_a($manager, Manager::class)) {
 				$this->manager = $manager;
 			}
 		}
@@ -113,7 +113,7 @@
 				try {
 					$user = $this->manager->getModel($this->ConfigModule->get('ShirOS.Database.Column.Auth_Login'), $login);
 					
-					if($user && is_a($user, 'ShirOSBundle\Model\Model')) {
+					if($user && is_a($user, Model::class)) {
 						if($this->verify($password, $user->password)) {
 							$this->createSession($user);
 							return true;

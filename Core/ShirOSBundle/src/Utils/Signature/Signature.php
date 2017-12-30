@@ -64,13 +64,13 @@
 		 * Modifie toute les signatures de l'utilisateur au traver d'une table
 		 *
 		 * @param Manager $manager
-		 * @param string $oldSignature
+		 * @param string $oldSignatureId
 		 */
-		public function updateSignature(Manager $manager, string $oldSignature)
+		public function updateSignature(Manager $manager, string $oldSignatureId)
 		{	
 			$id = [
 				Database::UPDATE_COLUMN => $this->ConfigModule->get('ShirOS.Database.Column.Signature_Id'),
-				Database::UPDATE_VALUE  => $oldSignature
+				Database::UPDATE_VALUE  => $oldSignatureId
 			];
 			
 			$value = [

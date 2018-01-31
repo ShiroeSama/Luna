@@ -17,7 +17,14 @@
 	use ShirOSBundle\Config;
 
 	class Session
-	{	
+	{
+		protected const AUTH = "Auth";
+		protected const NAV = "Navigation";
+		protected const NAV_BACK = "Back";
+		protected const NAV_CURRENT = "Current";
+		protected const NAV_IS_BACK = "Is_Back";
+	
+		
 		/**
 		 * Instance de la Classe de gestion des Configs
 		 * @var Config
@@ -30,11 +37,20 @@
 		 */
 		protected static $_instance;
 		
+		/**
+		 * Contient l'url du site
+		 * @var String
+		 */
+		protected $siteUrl;
+		
 		
 		/**
 		 * Session constructor, Singleton
 		 */
-		protected function __construct() { $this->ConfigModule = Config::getInstance(); }
+		protected function __construct() {
+			$this->ConfigModule = Config::getInstance();
+			$this->siteUrl = $this->ConfigModule->get('Server.Homepage');
+		}
 
 		/**
 		 * Retourne l'instance de la classe 'Session'
@@ -67,7 +83,7 @@
 			 */
 			public function isAuthSession(): bool
 			{
-				return isset($_SESSION['auth']);
+				return isset($_SESSION[self::AUTH]);
 			}
 
 			/**
@@ -79,7 +95,7 @@
 			{
 				session_name($auth[$this->ConfigModule->get('ShirOS.Session.Id')]);
 				$this->initSession();
-				$_SESSION['auth'] = $auth;
+				$_SESSION[self::AUTH] = $auth;
 			}
 
 			/**
@@ -90,8 +106,8 @@
 			public function authEdit(array $auth)
 			{
 				foreach ($auth as $key => $value)
-					if(isset($_SESSION['auth'][$key]))
-						$_SESSION['auth'][$key] = $value;
+					if(isset($_SESSION[self::AUTH][$key]))
+						$_SESSION[self::AUTH][$key] = $value;
 			}
 
 			/**
@@ -100,7 +116,7 @@
 			public function authDestroy()
 			{
 				session_destroy();
-				unset($_SESSION['auth']);
+				unset($_SESSION[self::AUTH]);
 			}
 		
 			/**
@@ -110,7 +126,7 @@
 			 *
 			 * @return null|string
 			 */
-			public function authValueFor(string $key): ?string { return (($this->isAuthSession() && isset($_SESSION['auth'][$key])) ? $_SESSION['auth'][$key] : NULL); }
+			public function authValueFor(string $key): ?string { return (($this->isAuthSession() && isset($_SESSION[self::AUTH][$key])) ? $_SESSION[self::AUTH][$key] : NULL); }
 
 
 		/* ------------------------ Fonctions de Navigation ------------------------ */
@@ -120,15 +136,15 @@
 			 */
 			public function navInit()
 			{
-				if(empty($_SESSION['url']) && !isset($_SESSION['url']))
+				if(empty($_SESSION[self::NAV][$this->siteUrl]) && !isset($_SESSION[self::NAV][$this->siteUrl]))
 				{
 					$url = array(
-						'URL_BACK' => array(),
-						'URL_CURRENT' => "",
-						'IS_BACK' => false
+						self::NAV_BACK => array(),
+						self::NAV_CURRENT => "",
+						self::NAV_IS_BACK => false
 					);
 
-					$_SESSION['url'] = $url;
+					$_SESSION[self::NAV][$this->siteUrl] = $url;
 				}
 			}
 		
@@ -137,20 +153,20 @@
 			 */
 			public function navSet()
 			{
-				if($this->urlFilter($_SESSION['url']['URL_CURRENT'])) {
-					if(!$_SESSION['url']['IS_BACK']) {
-						if(strtolower(reset($_SESSION['url']['URL_BACK'])) != strtolower($_SESSION['url']['URL_CURRENT'])) {
-							array_unshift($_SESSION['url']['URL_BACK'], $_SESSION['url']['URL_CURRENT']);
+				if($this->urlFilter($_SESSION[self::NAV][$this->siteUrl][self::NAV_CURRENT])) {
+					if(!$_SESSION[self::NAV][$this->siteUrl][self::NAV_IS_BACK]) {
+						if(strtolower(reset($_SESSION[self::NAV][$this->siteUrl][self::NAV_BACK])) != strtolower($_SESSION[self::NAV][$this->siteUrl][self::NAV_CURRENT])) {
+							array_unshift($_SESSION[self::NAV][$this->siteUrl][self::NAV_BACK], $_SESSION[self::NAV][$this->siteUrl][self::NAV_CURRENT]);
 
-							if(sizeof($_SESSION['url']['URL_BACK']) > 10)
-								array_pop($_SESSION['url']['URL_BACK']);
+							if(sizeof($_SESSION[self::NAV][$this->siteUrl][self::NAV_BACK]) > 10)
+								array_pop($_SESSION[self::NAV][$this->siteUrl][self::NAV_BACK]);
 						}
 					}
 					else
-						$_SESSION['url']['IS_BACK'] = false;
+						$_SESSION[self::NAV][$this->siteUrl][self::NAV_IS_BACK] = false;
 				}
 
-				$_SESSION['url']['URL_CURRENT'] = $_SERVER['REQUEST_URI'];
+				$_SESSION[self::NAV][$this->siteUrl][self::NAV_CURRENT] = $_SERVER['REQUEST_URI'];
 			}
 
 			/**
@@ -158,13 +174,13 @@
 			 */
 			public function navBack()
 			{
-				if(strtolower(reset($_SESSION['url']['URL_BACK'])) == strtolower($_SESSION['url']['URL_CURRENT']))
-					array_shift($_SESSION['url']['URL_BACK']); // Shift pour le rechargement de Page lors de l'action "Retour"
+				if(strtolower(reset($_SESSION[self::NAV][$this->siteUrl][self::NAV_BACK])) == strtolower($_SESSION[self::NAV][$this->siteUrl][self::NAV_CURRENT]))
+					array_shift($_SESSION[self::NAV][$this->siteUrl][self::NAV_BACK]); // Shift pour le rechargement de Page lors de l'action "Retour"
 
-				if(sizeof($_SESSION['url']['URL_BACK']) != 0) {
-					$urlBack = array_shift($_SESSION['url']['URL_BACK']); // Recup de l'url dans la list des "URL_BACK"
+				if(sizeof($_SESSION[self::NAV][$this->siteUrl][self::NAV_BACK]) != 0) {
+					$urlBack = array_shift($_SESSION[self::NAV][$this->siteUrl][self::NAV_BACK]); // Recup de l'url dans la list des "URL_BACK"
 					
-					$_SESSION['url']['IS_BACK'] = true;
+					$_SESSION[self::NAV][$this->siteUrl][self::NAV_IS_BACK] = true;
 					header('Location: ' . $urlBack);
 				} else
 					header('Location: /');

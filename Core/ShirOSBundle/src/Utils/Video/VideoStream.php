@@ -14,7 +14,6 @@
 	 */
 	
 	namespace ShirOSBundle\Utils\Video;
-	use \ByJG\PHPThread\Thread;
 	use ShirOSBundle\Utils\HTTP\HTTP;
 	
 	class VideoStream
@@ -60,12 +59,6 @@
 		 * @var int | Value = 102400
 		 */
 		private $buffer = 1024 * 8; // 102400
-
-		/**
-		 * Thread Video
-		 * @var resource
-		 */
-		private $thread = NULL;
 		
 		
 		/**
@@ -82,8 +75,6 @@
 
 			$this->start = 0;
 			$this->end = $this->size - 1;
-
-			$this->thread = new Thread(array($this, "start"));
 		}
 
 
@@ -98,19 +89,6 @@
 				$this->setHeader();
 				$this->stream();
 				$this->end();
-			}
-
-			/**
-			 * Launch the movie with Thread
-			 */
-			public function startThread()
-			{
-				try {
-					$this->thread->execute();
-					$this->thread->waitFinish();
-				} catch (\Exception $e) {
-					echo 'Exception: ' . $e . PHP_EOL;
-				}
 			}
 		 
 
@@ -186,11 +164,7 @@
 			private function end()
 			{
 				fclose($this->stream);
-
-				if ($this->thread != NULL)
-					$this->thread->stop();
-
-				exit;
+				exit();
 			}
 			 
 			/**

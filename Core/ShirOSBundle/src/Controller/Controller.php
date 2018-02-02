@@ -21,14 +21,14 @@
     use ShirOSBundle\View\Render;
 	use ShirOSBundle\View\MetaData;
 	use ShirOSBundle\Utils\Url\Url;
-	use ShirOSBundle\ApplicationService;
+	use ShirOSBundle\ApplicationKernel;
 	use ShirOSBundle\Utils\Session\Session;
 	
 	class Controller
 	{
 		/**
 		 * Instance de la Classe de gestion de l'application
-		 * @var ApplicationService
+		 * @var ApplicationKernel
 		 */
 		protected $ApplicationModule;
 
@@ -74,14 +74,14 @@
 		 */
 		public function __construct()
 		{
-			$this->ApplicationModule = ApplicationService::getInstance();
+			$this->ApplicationModule = ApplicationKernel::getInstance();
 
 			$this->ConfigModule = Config::getInstance();
 			$this->SessionModule = Session::getInstance();
 			
 			$this->UrlModule = new Url('Server.Homepage');
 			$this->RenderModule = new Render();
-			$this->RequestModule = new Request();
+			$this->RenderModule->setContext($this);
 		}
 		
 		/**
@@ -109,12 +109,31 @@
 
 
 
-		/* ------------------------ Gestion des Vues ------------------------ */
+		/* ------------------------ Getter/Setter ------------------------ */
 
 			/**
 			 * Permet de donner au controleur les méta datas de la page à afficher
 			 */
 			public function setMetaData(MetaData $metaData) { $this->MetaDataModule = $metaData; }
+		
+			/**
+			 * Permet de récupérer les méta datas
+			 */
+			public function getMetaData(): MetaData { return $this->MetaDataModule; }
+		
+			/**
+			 * Permet de donner au controleur la requête du client
+			 */
+			public function setRequest(Request $request) { $this->RequestModule = $request; }
+			
+			/**
+			 * Permet de récupérer la requête du client
+			 */
+			public function getRequest(): Request { return $this->RequestModule; }
+		
+		
+		
+		/* ------------------------ Gestion des Vues ------------------------ */
 
 			/**
 			 * Rend la View correspondant a celle demander en paramètre

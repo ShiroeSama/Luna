@@ -15,15 +15,16 @@
 	
 	namespace ShirOSBundle\View;
 	use ShirOSBundle\Config;
+	use ShirOSBundle\Controller\Controller;
 	use ShirOSBundle\Utils\HTTP\HTTP;
-	use ShirOSBundle\ApplicationService;
+	use ShirOSBundle\ApplicationKernel;
 	use ShirOSBundle\Utils\Session\Session;
 	
 	class Render
 	{
 		/**
 		 * Instance de la Classe de gestion des Configs
-		 * @var ApplicationService
+		 * @var ApplicationKernel
 		 */
 		protected $ApplicationModule;
 
@@ -38,6 +39,12 @@
 		 * @var Session
 		 */
 		protected $SessionModule;
+		
+		/**
+		 * Contient le Controller actif de la page
+		 * @var Controller
+		 */
+		protected $Context;
 
 		/**
 		 * Contient le chemin du dossier contenant les vues
@@ -80,7 +87,7 @@
 		 */
 		public function __construct()
 		{
-			$this->ApplicationModule = ApplicationService::getInstance();
+			$this->ApplicationModule = ApplicationKernel::getInstance();
 			$this->ConfigModule = Config::getInstance();
 			$this->SessionModule = Session::getInstance();
 
@@ -91,6 +98,13 @@
 			$this->templateHeader = $this->ConfigModule->get('ShirOS.Name.File.Template.Header');
 			$this->templateFooter = $this->ConfigModule->get('ShirOS.Name.File.Template.Footer');
 		}
+		
+		
+		/* ------------------------ Setter ------------------------ */
+		
+			public function setContext(Controller $controller) {
+				$this->Context = $controller;
+			}
 
 
 		/* ------------------------ View ------------------------ */
@@ -108,6 +122,7 @@
 
 				$variables['ConfigModule'] = $this->ConfigModule;
 				$variables['SessionModule'] = $this->SessionModule;
+				$variables['Render'] = $this;
 
 				extract($variables);
 
@@ -126,10 +141,27 @@
 			{
 				$variables['ConfigModule'] = $this->ConfigModule;
 				$variables['SessionModule'] = $this->SessionModule;
+				$variables['Render'] = $this;
 				extract($variables);
 
 				require ($this->viewPath . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, $view) . '.php');
-			}	
+			}
+			
+			/**
+			 * Permet l'inclusion d'une vue avec un Controleur
+			 *
+			 * @param string $controller
+			 * @param string $method | Default Value = "index"
+			 */
+			public function includeController(String $controller, String $method = "index") {
+				$controller = new $controller();
+				
+				/** @var Controller $controller */
+				$controller->setMetaData($this->Context->getMetaData());
+				$controller->setRequest($this->Context->getRequest());
+				
+				$controller->$method();
+			}
 
 			/**
 			 * Fonction appelant la page Forbidden (403)

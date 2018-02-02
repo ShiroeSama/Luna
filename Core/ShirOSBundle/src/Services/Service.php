@@ -15,7 +15,7 @@
 	
 	namespace ShirOSBundle\Services;
 
-	use ShirOSBundle\ApplicationService;
+	use ShirOSBundle\ApplicationKernel;
 	use ShirOSBundle\Config;
 	use ShirOSBundle\Utils\Session\Session;
 
@@ -55,7 +55,7 @@
 		 */
 		public function __construct()
 		{
-			$this->ApplicationModule = ApplicationService::getInstance();
+			$this->ApplicationModule = ApplicationKernel::getInstance();
 
 			$this->ConfigModule = Config::getInstance();
 			$this->SessionModule = Session::getInstance();

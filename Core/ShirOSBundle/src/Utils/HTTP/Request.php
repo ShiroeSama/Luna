@@ -28,60 +28,72 @@
 
         /** @var array $post */
         protected $post = [];
+	
+	    /** @var string $rule */
+	    protected $rule = '';
 
-        public function __construct()
-        {
-            $this->init();
-        }
-
+        public function __construct() { $this->init(); }
+	    
+        
+        /**
+         * Charge les Variables Globals de PHP
+         */
         public function init()
         {
         	if (isset($_SERVER)) { $this->server =& $_SERVER; }
 	        if (isset($_GET)) { $this->get =& $_GET; }
 	        if (isset($_POST)) { $this->post =& $_POST; }
         }
-
-        public function isGetRequest(string ...$params): bool
-        {
-        	$bool = true;
-        	
-        	if (!empty($this->get) && ($this->getMethod() === self::GET)) {
-		        foreach ($params as $param) {
-					if (!isset($this->get[$param])) {
-						$bool = false;
-						break;
-					}
-		        }
-	        } else {
-        		$bool = false;
-	        }
-        	
-        	return $bool;
-        }
-        
-        public function isPostRequest(string ...$params): bool
-        {
-	        $bool = true;
 	
-	        if (!empty($this->post) && ($this->getMethod() === self::POST)) {
-		        foreach ($params as $param) {
-			        if (!isset($this->get[$param])) {
-				        $bool = false;
-				        break;
-			        }
-		        }
-	        } else {
-		        $bool = false;
-	        }
 	
-	        return $bool;
-        }
-
-        public function getGetRequest(): array { return $this->get; }
-        public function getPostRequest(): array { return $this->post; }
-        
-        //TODO : Create Access Method to Server Var.
+	    /* ------------------------ Getter / Setter ------------------------ */
+			
+	        public function setRule(string $rule) { $this->rule = $rule; }
 	    
-	    public function getMethod(): ?string { return (isset($this->server['REQUEST_METHOD']) ? $this->server['REQUEST_METHOD'] : NULL); }
+		    public function getGetRequest(): array { return $this->get; }
+		    public function getPostRequest(): array { return $this->post; }
+		
+		    //TODO : Create Access Method to Server Var.
+		
+		    public function getMethod(): ?string { return (isset($this->server['REQUEST_METHOD']) ? $this->server['REQUEST_METHOD'] : NULL); }
+	
+	
+	    /* ------------------------ Gestion des Requêtes ------------------------ */
+
+	        public function isGetRequest(string ...$params): bool
+	        {
+	            $bool = true;
+	            
+	            if (!empty($this->get) && ($this->getMethod() === self::GET)) {
+			        foreach ($params as $param) {
+						if (!isset($this->get[$param])) {
+							$bool = false;
+							break;
+						}
+			        }
+		        } else {
+	                $bool = false;
+		        }
+	            
+	            return $bool;
+	        }
+	        
+	        public function isPostRequest(string ...$params): bool
+	        {
+		        $bool = true;
+		
+		        if (!empty($this->post) && ($this->getMethod() === self::POST)) {
+			        foreach ($params as $param) {
+				        if (!isset($this->get[$param])) {
+					        $bool = false;
+					        break;
+				        }
+			        }
+		        } else {
+			        $bool = false;
+		        }
+		
+		        return $bool;
+	        }
     }
 ?>

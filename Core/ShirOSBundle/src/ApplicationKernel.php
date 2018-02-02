@@ -7,7 +7,7 @@
 	 *   @Author : Alexandre Caillot
 	 *   @WebSite : https://www.shiros.fr
 	 *
-	 *   @File : ApplicationService.php
+	 *   @File : ApplicationKernelphp
 	 *   @Created_at : 03/12/2017
 	 *   @Update_at : 03/12/2017
 	 * --------------------------------------------------------------------------
@@ -20,11 +20,11 @@
     use ShirOSBundle\Utils\Url\Url;
 	use ShirOSBundle\Database\MySQLDatabase;
 
-	class ApplicationService
+	class ApplicationKernel
 	{
 		/**
 		 * Contient l'instance de la classe
-		 * @var ApplicationService
+		 * @var ApplicationKernel
 		 */
 		protected static $_instance;
 
@@ -48,7 +48,7 @@
 		
 		
 		/**
-		 * ApplicationService constructor, Singleton
+		 * ApplicationKernel constructor, Singleton
 		 */
 		protected function __construct()
 		{
@@ -59,17 +59,15 @@
 		/**
 		 * Retourne l'instance de la classe 'App'
 		 *
-		 * @return ApplicationService
+		 * @return ApplicationKernel
 		 */
 		public static function getInstance()
 		{
 			if(is_null(self::$_instance))
-				self::$_instance = new ApplicationService();
+				self::$_instance = new ApplicationKernel();
 			return self::$_instance;
 		}
 		
-
-
 
 		/* ------------------------ Accès à la DAL (Database) ------------------------ */
 

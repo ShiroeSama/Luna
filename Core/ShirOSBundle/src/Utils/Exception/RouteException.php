@@ -53,6 +53,12 @@
 		 * @var int
 		 */
 		public const ROUTE_GONE_ERROR_CODE = HTTP::GONE;
+		
+		/**
+		 * Constante d'erreur en cas de problème avec la configuration des routes
+		 * @var int
+		 */
+		public const ROUTE_INTERNAL_SERVER_ERROR_ERROR_CODE = HTTP::INTERNAL_SERVER_ERROR;
 
 
 		/**
@@ -84,6 +90,10 @@
 
 					case self::ROUTE_GONE_ERROR_CODE:
 						$message = "Error Processing Request, Resource for this route doesn't exist";
+						break;
+					
+					case self::ROUTE_INTERNAL_SERVER_ERROR_ERROR_CODE:
+						$message = "Error Processing Request, Configuration of Routes Failed";
 						break;
 					
 					default:

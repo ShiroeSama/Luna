@@ -19,10 +19,11 @@
 	use ShirOSBundle\Utils\Exception\RouteException;
 	use ShirOSBundle\Utils\Exception\LoginException;
 	use ShirOSBundle\Utils\Exception\DatabaseException;
-
+	
 	use ShirOSBundle\View\Render;
 	use ShirOSBundle\View\MetaData;
 	use ShirOSBundle\Utils\HTTP\HTTP;
+	use ShirOSBundle\Utils\HTTP\Request;
 	use ShirOSBundle\Controller\Controller;
 
 	class Router
@@ -38,13 +39,7 @@
 		 * @var string
 		 */
 		protected static $routing_path = 'Config/route.php';
-
-		/**
-		 * Contient la route actuel
-		 * @var string
-		 */
-		protected $path;
-
+		
 		/**
 		 * Contient toutes les routes et régles
 		 * @var array
@@ -52,10 +47,16 @@
 		protected $routes = [];
 
 		/**
+		 * Contient la route actuel
+		 * @var array
+		 */
+		protected $route;
+
+		/**
 		 * Clé des Routes à ignorer lors de la vérification de l'existence des routes
 		 * @var array
 		 */
-		protected $prohibitedKey = array(
+		protected $prohibitedKeys = array(
 			'ROOT_FOLDER',
 		);
 
@@ -150,6 +151,10 @@
 							$this->RenderModule->error(HTTP::GONE, $re->getMessage());
 							break;
 						
+						case RouteException::ROUTE_INTERNAL_SERVER_ERROR_ERROR_CODE:
+							$this->RenderModule->error(HTTP::INTERNAL_SERVER_ERROR, $re->getMessage());
+							break;
+						
 						default:
 							$this->RenderModule->internalServerError();
 							break;
@@ -228,14 +233,22 @@
 			# Vérifie que le dossier indiqué contenant les controleurs existe
 			$this->checkControllerDir();
 			
-			$path = $this->matchRoute($requestTab);
-			$this->getControllerWithAction($path);
+			$this->matchRoute($requestTab);
+			$this->getControllerWithAction();
 			
 			$this->checkAccessPermissions();
 			
 			$class = $this->controller;
 			$controller = new $class();
-			$controller = $this->setMetaData($controller);
+			
+			// Set MetaData
+			$this->setMetaData($controller);
+			// Set Request
+			$this->setRequest($controller);
+			
+			if (method_exists($controller, 'init')) {
+				$controller->init();
+			}
 			
 			if (!method_exists($controller, $this->action)) {
 				throw new RouteException(RouteException::ROUTE_METHODE_NOT_ALLOWED_ERROR_CODE);
@@ -249,6 +262,105 @@
 				call_user_func_array(array($controller, $action), $this->params);
 			}
 		}
+		
+		
+		/* ------------------------ Match ------------------------ */
+		
+			/**
+			 * Permet de voir si la route existe, puis retourne le controleur et la méthode à utiliser pour cette requête
+			 *
+			 * @param array $requestTab
+			 *
+			 * @throws RouteException
+			 */
+			protected function matchRoute(array $requestTab)
+			{
+				$requestTab = $this->clearRoute($requestTab);
+				
+				if(empty($requestTab)) { array_push($requestTab, "/"); }
+				$routes = $this->formatRoutes($this->routes);
+				
+				foreach ($routes as $key => $value) {
+					$rule = $value['Rule'];
+					$rule = $this->clearRoute($rule);
+					
+					if (count($rule) === count($requestTab)) {
+						if ($this->checkRouteRule($rule, $requestTab) && $this->checkRouteMethod($routes[$key])) {
+							$this->params = $this->getParams($rule, $requestTab);
+							$this->route = [ $key => $this->routes[$key] ];
+							return;
+						}
+					}
+				}
+				
+				throw new RouteException(RouteException::ROUTE_NOTFOUND_ERROR_CODE);
+			}
+		
+		
+		/* ------------------------ Format ------------------------ */
+		
+			/**
+			 * Formate la Requête
+			 *
+			 * @param string $REQUEST_URI
+			 * @param string $SCRIPT_NAME
+			 *
+			 * @return array
+			 */
+			protected function formatRequest(string $REQUEST_URI, string $SCRIPT_NAME): array
+			{
+				$REQUEST_URI = preg_replace('#\?[^>]*$#', '', $REQUEST_URI);
+				
+				$requestTab = explode('/', $REQUEST_URI);
+				$scriptTab  = explode('/', $SCRIPT_NAME);
+				
+				foreach ($requestTab as $key => $value) {
+					if (in_array($value, $scriptTab)) {
+						unset($requestTab[$key]);
+					}
+				}
+				
+				return array_values($requestTab);
+			}
+			
+			/**
+			 * Formate les Routes
+			 *
+			 * @param array $routesConfig
+			 *
+			 * @return array
+			 * @throws RouteException
+			 */
+			protected function formatRoutes(array $routesConfig): array
+			{
+				$keysRoutes = array_keys($routesConfig);
+				$routes = $routesConfig;
+				foreach ($this->prohibitedKeys as $key) {
+					if (in_array($key, $keysRoutes)) {
+						unset($routes[$key]);
+					}
+				}
+				
+				foreach ($routes as $key => $value) {
+					if (!isset($value['Rule']) || !isset($value['Action'])) {
+						throw new RouteException(RouteException::ROUTE_INTERNAL_SERVER_ERROR_ERROR_CODE, "The 'Rule' or 'Action' parameters as not configured for {$key}");
+					}
+					
+					$value['Rule'] = (($value['Rule'] == '/') ? array('/') : explode('/', $value['Rule']));
+					$routes[$key]['Rule'] =  $value['Rule'];
+				}
+				
+				return $routes;
+			}
+			
+			/**
+			 * Nettoie la route en enlevant les valeurs vides
+			 *
+			 * @param array $requestTab
+			 *
+			 * @return array
+			 */
+			protected function clearRoute(Array $requestTab): array { return array_values(array_filter($requestTab)); }
 
 
 		/* ------------------------ Check ------------------------ */
@@ -264,7 +376,7 @@
 			 *
 			 * @return bool
 			 */
-			protected function checkRouteRules(array $route, array $request): bool
+			protected function checkRouteRule(array $route, array $request): bool
 			{
 				$size = count($route);
 
@@ -276,6 +388,25 @@
 					}
 				}
 				return true;
+			}
+		
+			/**
+			 * Vérifie que la requête correspond à la méthode d'appel de la route
+			 * Exemple :
+			 * - Request (METHOD = GET) == Route (METHOD = GET)
+			 *
+			 * @param array $route
+			 *
+			 * @return bool
+			 */
+			protected function checkRouteMethod(array $route): bool
+			{
+				if (!isset($route['Method'])) { return true; }
+				
+				$routeMethod = $route['Method'];
+				$requestMethod = (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : NULL);
+				
+				return strtolower($routeMethod) === strtolower($requestMethod);
 			}
 
 			/**
@@ -296,73 +427,9 @@
 			 * Vérifie que l'utilisateur à les droits nécéssaire pour acceder à la ressource
 			 */
 			protected function checkAccessPermissions() { /*TODO : Redifine this on SubClass*/ }
-		
-			/**
-			 * Permet de voir si la route existe, puis retourne le controleur et la méthode à utiliser pour cette requête
-			 *
-			 * @param array $requestTab
-			 *
-			 * @return string
-			 * @throws RouteException
-			 */
-			protected function matchRoute(array $requestTab): string
-			{
-				$requestTab = $this->clearRoute($requestTab);
-				
-				if(empty($requestTab)) { array_push($requestTab, "/"); }
-				$routes = $this->getRoutes($this->routes);
-
-				foreach ($routes as $route) {
-					$route = $this->clearRoute($route);
-					
-					if (count($route) === count($requestTab)) {
-						if ($this->checkRouteRules($route, $requestTab)) {
-							$this->params = $this->getParams($route, $requestTab);
-							$path = $this->createPath($route);
-							
-							$this->path = $path;
-							return $this->routes[$path];
-						}
-					}
-				}
-
-				throw new RouteException(RouteException::ROUTE_NOTFOUND_ERROR_CODE);
-			}
 
 
-		/* ------------------------ Route Getter ------------------------ */
-
-			/**
-			 * Recupère les routes (règles de routage) et décompose les régles
-			 * Exemple :
-			 * - array(
-			 * 	'/' => ...,
-			 * 	'/Test' => ...,
-			 * 	'/Test/:name' => ...,
-			 * )
-			 *
-			 * <=> array(
-			 * 	0 => array('/'),
-			 * 	1 => array('Test'),
-			 * 	2 => array('Test', ':name'),
-			 * )
-			 *
-			 * @param array $lists
-			 *
-			 * @return array
-			 */
-			protected function getRoutes(array $lists): array
-			{
-				$routes = array();
-				foreach ($lists as $key => $value) {
-					if(in_array($key, $this->prohibitedKey))
-						continue;
-
-					$explode = (($key == '/') ? array('/') : explode('/', $key));
-					array_push($routes, $explode);
-				}
-				return $routes;
-			}
+		/* ------------------------ Controller / Action & Params ------------------------ */
 
 			/**
 			 * Retourne les paramètres s'il y en a
@@ -390,23 +457,29 @@
 		
 			/**
 			 * Créer la route à appeler (Controleur / Méthode / Paramètres)
-			 *
-			 * @param string $route
 			 */
-			protected function getControllerWithAction(string $route)
+			protected function getControllerWithAction()
 			{
-				# Parse de la Route
-				$route = explode('.', $route);
+				$route = reset($this->route);
+				
+				# Recupère l'action
+				$action = $route['Action'];
+				
+				# Parse l'action
+				$action = explode('.', $action);
 				
 				# Définition de la méthode
-				$this->action = end($route);
+				$this->action = end($action);
 				
 				# Définition du Controller
-				$key = array_search($this->action, $route);
-				unset($route[$key]);
-				$this->controller = $this->controllerFolder . '\\' . implode('\\', $route);
+				$key = array_search($this->action, $action);
+				unset($action[$key]);
+				$this->controller = $this->controllerFolder . '\\' . implode('\\', $action);
 			}
-			
+		
+		
+		/* ------------------------ Prepare Controller ------------------------ */
+		
 			/**
 			 * Importe les Méta Data de la page dans le Controleur
 			 *
@@ -415,66 +488,28 @@
 			 */
 			protected function setMetaData(Controller $controller)
 			{
-				$metaData = new MetaData($this->path);
+				$name = key($this->route);
+				
+				$metaData = new MetaData($name);
 				$controller->setMetaData($metaData);
 				
 				return $controller;
 			}
-
-
-		/* ------------------------ Format & Create ------------------------ */
-
+			
 			/**
-			 * Formate la Requête
+			 * Importe les Méta Data de la page dans le Controleur
 			 *
-			 * @param string $REQUEST_URI
-			 * @param string $SCRIPT_NAME
-			 *
-			 * @return array
+			 * @param Controller $controller
+			 * @return Controller
 			 */
-			protected function formatRequest(String $REQUEST_URI, String $SCRIPT_NAME): array
+			protected function setRequest(Controller $controller)
 			{
-				$REQUEST_URI = preg_replace('#\?[^>]*$#', '', $REQUEST_URI);
-
-				$requestTab		= explode('/', $REQUEST_URI);
-				$scriptTab		= explode('/', $SCRIPT_NAME);
-
-				foreach ($requestTab as $key => $value) {
-					if (in_array($value, $scriptTab)) {
-						unset($requestTab[$key]);
-					}
-				}
-
-				return array_values($requestTab);
-			}
-
-			/**
-			 * Nettoie la route en enlevant les valeurs vides
-			 *
-			 * @param array $requestTab
-			 *
-			 * @return array
-			 */
-			protected function clearRoute(Array $requestTab): array { return array_values(array_filter($requestTab)); }
-
-			/**
-			 * Créer le chemin pour récupérer le controleur et sa méthode par la suite
-			 * Exemple :
-			 * - array(
-			 * 	0 => 'Test',
-			 * 	1 =>':name',
-			 * )
-			 *
-			 * <=> 'Test/:name'
-			 *
-			 * @param array $path
-			 *
-			 * @return string
-			 */
-			protected function createPath(array $path): string
-			{
-				$path = implode('/', $path);
-				return (($path === DIRECTORY_SEPARATOR) ? $path : DIRECTORY_SEPARATOR . $path);
+				$request = new Request();
+				// TODO : Set differents informations in the Request Object.
+				
+				$controller->setRequest($request);
+				
+				return $controller;
 			}
 	}
 ?>

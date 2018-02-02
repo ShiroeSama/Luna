@@ -14,7 +14,8 @@
 	 */
 	
 	namespace ShirOSBundle;
-	use \Exception;
+	
+	use \Throwable;
 	use \PDOException;
 	use ShirOSBundle\Utils\Exception\RouteException;
 	use ShirOSBundle\Utils\Exception\LoginException;
@@ -196,19 +197,19 @@
 							$this->RenderModule->internalServerError();
 							break;
 					}
-				} catch (Exception $exception) {
-					$this->catchOtherException($exception);
+				} catch (Throwable $throwable) {
+					$this->catchOtherThrowable($throwable);
 				}
 			}
 		
 		/**
 		 * Gère les cas d'erreurs inconnue
-		 * @param Exception $exception
+		 * @param Throwable $throwable
 		 */
-		public function catchOtherException(Exception $exception)
+		protected function catchOtherThrowable(Throwable $throwable)
 		{
 			/*TODO : Redifine this on SubClass*/
-			$this->RenderModule->error($exception->getCode(), $exception->getMessage());
+			$this->RenderModule->error($throwable->getCode(), $throwable->getMessage());
 		}
 			
 			

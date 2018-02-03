@@ -14,6 +14,7 @@
 	 */
 
 	namespace ShirOSBundle\Utils\Validation;
+	use ShirOSBundle\Config;
 	use ShirOSBundle\Utils\Exception\ValidationException;
 	use ShirOSBundle\Utils\Validation\Sanitize\Sanitize;
 	
@@ -49,6 +50,12 @@
 		 */
 		protected $BuilderModule;
 		
+		/**
+		 * Instance de la Classe de gestion des Configs
+		 * @var Config
+		 */
+		protected $ConfigModule;
+		
         /**
          * @var array
          */
@@ -75,6 +82,7 @@
 		public function __construct()
 		{
 			$this->BuilderModule = new ValidationBuilder();
+			$this->ConfigModule = Config::getInstance();
 
             $this->errors = array();
             $this->values = array();

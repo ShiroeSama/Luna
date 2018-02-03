@@ -25,6 +25,10 @@
 		/**
 		 * Permet de verifier si le champ est du type de la classe
 		 */
-		public function validate($field) { return is_float($field); }
+		public function validate($field) {
+			if (is_numeric($field)) {
+				return is_float(floatval($field));
+			} else { return false; }
+		}
 	}
 ?>

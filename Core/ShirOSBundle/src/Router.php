@@ -242,10 +242,12 @@
 			$class = $this->controller;
 			$controller = new $class();
 			
+			$requestTab = (sizeof($requestTab) === 0) ? '/' : implode('/', $requestTab);
+			
 			// Set MetaData
 			$this->setMetaData($controller);
 			// Set Request
-			$this->setRequest($controller);
+			$this->setRequest($controller, $requestTab);
 			
 			if (method_exists($controller, 'init')) {
 				$controller->init();
@@ -503,7 +505,7 @@
 			 * @param Controller $controller
 			 * @return Controller
 			 */
-			protected function setRequest(Controller $controller)
+			protected function setRequest(Controller $controller, String $userRequest)
 			{
 				$request = new Request();
 				// TODO : Set differents informations in the Request Object.

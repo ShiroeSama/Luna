@@ -25,6 +25,6 @@
 		/**
 		 * Permet de verifier si le champ est du type de la classe
 		 */
-		public function validate($field) { return is_long($field); }
+		public function validate($field) { return ctype_digit($field); }
 	}
 ?>

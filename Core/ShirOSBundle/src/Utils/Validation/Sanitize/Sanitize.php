@@ -176,7 +176,7 @@
 		 *
 		 * @return string
 		 */
-		protected function sanitizeForCommentsField(string $field): string
+		protected function sanitizeComments(string $field): string
 		{
 			/* -- Suppression des Balises Js -- */
 			$field = preg_replace('@<script[^>]*?>.*?</script>@si', '', $field);

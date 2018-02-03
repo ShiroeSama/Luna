@@ -94,7 +94,7 @@
 		public function __call(string $name, $arguments)
 		{
 			if (!method_exists($this, $name))
-				throw new RouteException();
+				throw new RouteException(RouteException::ROUTE_METHODE_NOT_ALLOWED_ERROR_CODE, "This method ({$name}) doesn't exist");
 		}
 
 

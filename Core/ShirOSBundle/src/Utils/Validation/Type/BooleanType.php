@@ -25,6 +25,11 @@
 		/**
 		 * Permet de verifier si le champ est du type de la classe
 		 */
-		public function validate($field) { return is_bool($field); }
+		public function validate($field) {
+			if (!is_bool($field)) {
+				$field = strtolower($field);
+				return ($field == "false" || $field == "true");
+			} else { return true; }
+		}
 	}
 ?>

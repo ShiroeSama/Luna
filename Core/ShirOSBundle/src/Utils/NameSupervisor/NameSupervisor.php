@@ -30,11 +30,49 @@
 		 */
 		protected static $_instance;
 		
+		/**
+		 * Contient le PS_Type de la Config (PS : Prefixe / Suffixe)
+		 * @var string
+		 */
+		protected $PS_Type;
+		
+		/**
+		 * Contient le nom du dossier des 'Gateway'
+		 * @var string
+		 */
+		protected $FolderNameGateway;
+		
+		/**
+		 * Contient le nom du dossier des 'Models'
+		 * @var string
+		 */
+		protected $FolderNameModel;
+		
+		/**
+		 * Contient le prefixe ou suffixe des 'Gateway'
+		 * @var string
+		 */
+		protected $FileNameGateway;
+		
+		/**
+		 * Contient le prefixe ou suffixe des 'Models'
+		 * @var string
+		 */
+		protected $FileNameModel;
+		
 		
 		/**
 		 * NameSupervisor constructor, Singleton
 		 */
-		protected function __construct() { $this->ConfigModule = Config::getInstance(); }
+		protected function __construct() {
+			$this->ConfigModule = Config::getInstance();
+			
+			$this->PS_Type = $this->ConfigModule->get('ShirOS.Namespace.PS_Type');
+			$this->FolderNameGateway = $this->ConfigModule->get('ShirOS.Name.Folder.Namespace.Gateway');
+			$this->FolderNameModel = $this->ConfigModule->get('ShirOS.Name.Folder.Namespace.Model');
+			$this->FileNameGateway = $this->ConfigModule->get('ShirOS.Name.File.Namespace.Gateway');
+			$this->FileNameModel = $this->ConfigModule->get('ShirOS.Name.File.Namespace.Model');
+		}
 
 		/**
 		 * Retourne l'instance de la classe 'NameSupervisor'
@@ -55,14 +93,15 @@
 		 *
 		 * @return string
 		 */
-		public function GatewayModel_Path(string $path): string
+		public function gatewayPath_To_modelPath(string $path): string
 		{
-			$path = str_replace($this->ConfigModule->get('ShirOS.Name.Folder.Namespace.Gateway'), $this->ConfigModule->get('ShirOS.Name.Folder.Namespace.Model'), $path);
+			$path = str_replace($this->FolderNameGateway, $this->FolderNameModel, $path);
 
-			switch ($this->ConfigModule->get('ShirOS.Namespace.PS_Type')) {
+			switch ($this->PS_Type) {
 				case 'Prefixe':
 				case 'Suffixe':
-					return str_replace($this->ConfigModule->get('ShirOS.Name.File.Namespace.Gateway'), $this->ConfigModule->get('ShirOS.Name.File.Namespace.Model'), $path);
+					return
+						$path = str_replace($this->FileNameGateway, $this->FileNameModel, $path);
 					break;
 				
 				default:
@@ -70,53 +109,28 @@
 					break;
 			}
 		}
-
+		
 		/**
-		 * Retourne le 'Model' prefixé ou suffixé de la valeur de config
+		 * Retourne le nom de la classe sans le Prefixe ou Suffixe de celle-ci
 		 *
-		 * @param string $name
+		 * @param string $gatewayNamespace
 		 *
 		 * @return string
 		 */
-		public function PS_Model(String $name): string
-		{
-			switch ($this->ConfigModule->get('ShirOS.Namespace.PS_Type')) {
-				case 'Prefixe':
-					return $this->ConfigModule->get('ShirOS.Name.File.Namespace.Model') . $name;
-					break;
-
-				case 'Suffixe':
-					return $name . $this->ConfigModule->get('ShirOS.Name.File.Namespace.Model');
-					break;
-					
-				default:
-					return $name;
-					break;
-			}
+		public function getGatewayName(string $gatewayNamespace): string {
+			$explode = explode('\\', $gatewayNamespace);
+			return end($explode);
 		}
-
+		
 		/**
-		 * Retourne la 'Gateway' prefixé ou suffixé de la valeur de config
+		 * Retourne le nom de la classe sans le Prefixe ou Suffixe de celle-ci
 		 *
 		 * @param string $name
 		 *
 		 * @return string
 		 */
-		public function PS_Gateway(string $name): string
-		{
-			switch ($this->ConfigModule->get('ShirOS.Namespace.PS_Type')) {
-				case 'Prefixe':
-					return $this->ConfigModule->get('ShirOS.Name.File.Namespace.Gateway') . $name;
-					break;
-
-				case 'Suffixe':
-					return $name . $this->ConfigModule->get('ShirOS.Name.File.Namespace.Gateway');
-					break;
-
-				default:
-					return $name;
-					break;
-			}
+		public function removePSTo(string $name): string {
+			return str_replace($this->FileNameGateway, '', $name);
 		}
 	}
 

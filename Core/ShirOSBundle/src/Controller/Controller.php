@@ -18,7 +18,8 @@
 	use ShirOSBundle\Config;
 	use ShirOSBundle\Utils\Exception\RouteException;
     use ShirOSBundle\Utils\HTTP\Request;
-    use ShirOSBundle\View\Render;
+	use ShirOSBundle\Utils\NameSupervisor\NameSupervisor;
+	use ShirOSBundle\View\Render;
 	use ShirOSBundle\View\MetaData;
 	use ShirOSBundle\Utils\Url\Url;
 	use ShirOSBundle\ApplicationKernel;
@@ -43,6 +44,12 @@
 		 * @var Session
 		 */
 		protected $SessionModule;
+		
+		/**
+		 * Instance de la Classe de gestion des noms
+		 * @var NameSupervisor
+		 */
+		protected $NameSupervisorModule;
 
 		/**
 		 * Instance de la Classe de gestion des Url
@@ -78,6 +85,7 @@
 
 			$this->ConfigModule = Config::getInstance();
 			$this->SessionModule = Session::getInstance();
+			$this->NameSupervisorModule = NameSupervisor::getInstance();
 			
 			$this->UrlModule = new Url('Server.Homepage');
 			$this->RenderModule = new Render();
@@ -103,9 +111,12 @@
 			/**
 			 * Permet de Charger au préalable un Manager, pour accerder à des requêtes SQL
 			 *
-			 * @param string $managerName
+			 * @param string $manager
 			 */
-			protected function loadManager(string $managerName) { $this->$managerName = $this->ApplicationModule->getManager($managerName); }
+			protected function loadManager(string $manager) {
+				$managerName = $this->NameSupervisorModule->getGatewayName($manager);
+				$this->$managerName = $this->ApplicationModule->getManager($manager);
+			}
 
 
 

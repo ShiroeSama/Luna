@@ -17,6 +17,7 @@
 
 	use ShirOSBundle\ApplicationKernel;
 	use ShirOSBundle\Config;
+	use ShirOSBundle\Utils\NameSupervisor\NameSupervisor;
 	use ShirOSBundle\Utils\Session\Session;
 
 	class Service
@@ -40,6 +41,12 @@
 		protected $SessionModule;
 		
 		/**
+		 * Instance de la Classe de gestion des noms
+		 * @var NameSupervisor
+		 */
+		protected $NameSupervisorModule;
+		
+		/**
 		 * @var string
 		 */
 		private $attributeName = '';
@@ -59,6 +66,7 @@
 
 			$this->ConfigModule = Config::getInstance();
 			$this->SessionModule = Session::getInstance();
+			$this->NameSupervisorModule = NameSupervisor::getInstance();
 		}
 
 
@@ -67,9 +75,12 @@
 			/**
 			 * Permet de Charger au préalable un Manager, pour accerder à des requêtes SQL
 			 *
-			 * @param string $managerName
+			 * @param string $manager
 			 */
-			protected function loadManager(string $managerName) { $this->$managerName = $this->ApplicationModule->getManager($managerName); }
+			protected function loadManager(string $manager) {
+				$managerName = $this->NameSupervisorModule->getGatewayName($manager);
+				$this->$managerName = $this->ApplicationModule->getManager($manager);
+			}
 		
 		
 		/* ------------------------ Fonctions Complémentaires ------------------------ */

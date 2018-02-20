@@ -139,14 +139,14 @@
 				return false;
 			}
 
-			/**
-			 * Vérifie si la balise à un id
-			 *
-			 * @param array $options
-			 *
-			 * @return bool
-			 */
-			protected function hasId(array $options): bool
+            /**
+             * Vérifie si la balise à un id
+             *
+             * @param array $options
+             *
+             * @return bool|mixed
+             */
+			protected function hasId(array $options)
 			{
 				if(isset($options['id']) && !empty($options['id']))
 					return $options['id'];

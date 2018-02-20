@@ -160,6 +160,10 @@
 				$controller->setMetaData($this->Context->getMetaData());
 				$controller->setRequest($this->Context->getRequest());
 				
+				if (method_exists($controller, 'init')) {
+					$controller->init();
+				}
+				
 				$controller->$method();
 			}
 
@@ -237,6 +241,7 @@
 			 */
 			public function error(int $code, string $message = NULL)
 			{
+				$code = HTTP::getCode($code);
 				HTTP::generateHeader($code);
 
 				$ApplicationModule = $this->ApplicationModule;

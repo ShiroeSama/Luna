@@ -31,6 +31,12 @@
 	
 	    /** @var string $rule */
 	    protected $rule = '';
+	
+	    /** @var string $ruleName */
+	    protected $ruleName = '';
+	
+	    /** @var string $rule */
+	    protected $requestUrl = '';
 
         public function __construct() { $this->init(); }
 	    
@@ -49,12 +55,17 @@
 	    /* ------------------------ Getter / Setter ------------------------ */
 			
 	        public function setRule(string $rule) { $this->rule = $rule; }
+	        public function setRuleName(string $ruleName) { $this->ruleName = $ruleName; }
+	        public function setRequestUrl(string $requestUrl) { $this->requestUrl = $requestUrl; }
 	    
 		    public function getGetRequest(): array { return $this->get; }
 		    public function getPostRequest(): array { return $this->post; }
 		
 		    //TODO : Create Access Method to Server Var.
-		
+	
+            public function getRule(): string { return $this->rule; }
+	        public function getRuleName(): string { return $this->ruleName; }
+	        public function getRequestUrl(): string { return $this->requestUrl; }
 		    public function getMethod(): ?string { return (isset($this->server['REQUEST_METHOD']) ? $this->server['REQUEST_METHOD'] : NULL); }
 	
 	

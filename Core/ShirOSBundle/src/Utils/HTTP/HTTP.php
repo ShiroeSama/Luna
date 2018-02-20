@@ -172,6 +172,86 @@
 		/* ------------------------ Code Name ------------------------ */
 		
 			/**
+			 * Retourne le code correcte
+			 *
+			 * @param int $code
+			 *
+			 * @return int
+			 */
+			public static function getCode(int $code): int
+			{
+				switch ($code) {
+					case self::OK:
+						return self::OK;
+						break;
+
+					case self::CREATED:
+						return self::CREATED;
+						break;
+						
+					case self::ACCEPTED:
+						return self::ACCEPTED;
+						break;
+						
+					case self::NO_CONTENT:
+						return self::NO_CONTENT;
+						break;
+					
+					case self::PARTIAL_CONTENT:
+						return self::PARTIAL_CONTENT;
+						break;
+						
+					case self::MOVED_PERMANENTLY:
+						return self::MOVED_PERMANENTLY;
+						break;
+						
+					case self::UNAUTHORIZED:
+						return self::UNAUTHORIZED;
+						break;
+						
+					case self::FORBIDDEN:
+						return self::FORBIDDEN;
+						break;
+						
+					case self::NOT_FOUND:
+						return self::NOT_FOUND;
+						break;
+						
+					case self::METHOD_NOT_ALLOWED:
+						return self::METHOD_NOT_ALLOWED;
+						break;
+						
+					case self::GONE:
+						return self::GONE;
+						break;
+					
+					case self::REQUESTED_RANGE_UNSATISFIABLE:
+						return self::REQUESTED_RANGE_UNSATISFIABLE;
+						break;
+						
+					case self::IM_A_TEAPOT:
+						return self::IM_A_TEAPOT;
+						break;
+						
+					case self::INTERNAL_SERVER_ERROR:
+						return self::INTERNAL_SERVER_ERROR;
+						break;
+						
+					case self::NOT_IMPLEMENTED:
+						return self::NOT_IMPLEMENTED;
+						break;
+						
+					case self::BAD_GATEWAY:
+						return self::BAD_GATEWAY;
+						break;
+					
+					default:
+						return self::IM_A_TEAPOT;
+						break;
+				}
+			}
+		
+			/**
 			 * Retourne le nom du code
 			 *
 			 * @param int $code
@@ -184,15 +264,15 @@
 					case self::OK:
 						return 'OK';
 						break;
-
+					
 					case self::CREATED:
 						return 'Content Created';
 						break;
-						
+					
 					case self::ACCEPTED:
 						return 'Accepted';
 						break;
-						
+					
 					case self::NO_CONTENT:
 						return 'No Content';
 						break;
@@ -200,27 +280,27 @@
 					case self::PARTIAL_CONTENT:
 						return 'No Content';
 						break;
-						
+					
 					case self::MOVED_PERMANENTLY:
 						return 'Moved Permanently';
 						break;
-						
+					
 					case self::UNAUTHORIZED:
 						return 'Unauthorized';
 						break;
-						
+					
 					case self::FORBIDDEN:
 						return 'Forbidden';
 						break;
-						
+					
 					case self::NOT_FOUND:
 						return 'Not Found';
 						break;
-						
+					
 					case self::METHOD_NOT_ALLOWED:
 						return 'Method Not Allowed';
 						break;
-						
+					
 					case self::GONE:
 						return 'Gone';
 						break;
@@ -228,19 +308,19 @@
 					case self::REQUESTED_RANGE_UNSATISFIABLE:
 						return 'Requested range unsatisfiable';
 						break;
-						
+					
 					case self::IM_A_TEAPOT:
 						return 'I\'m a Teapot';
 						break;
-						
+					
 					case self::INTERNAL_SERVER_ERROR:
 						return 'Internal Server Error';
 						break;
-						
+					
 					case self::NOT_IMPLEMENTED:
 						return 'Not Implemented';
 						break;
-						
+					
 					case self::BAD_GATEWAY:
 						return 'Bad Gateway';
 						break;

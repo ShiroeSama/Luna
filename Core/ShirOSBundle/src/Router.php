@@ -42,6 +42,12 @@
 		protected static $routing_path = 'Config/route.php';
 		
 		/**
+		 * Contient le dossier des contrôleurs
+		 * @var string
+		 */
+		protected $rootFolder;
+		
+		/**
 		 * Contient toutes les routes et régles
 		 * @var array
 		 */
@@ -52,14 +58,6 @@
 		 * @var array
 		 */
 		protected $route;
-
-		/**
-		 * Clé des Routes à ignorer lors de la vérification de l'existence des routes
-		 * @var array
-		 */
-		protected $prohibitedKeys = array(
-			'ROOT_FOLDER',
-		);
 
 		/**
 		 * Module de Rendu de vue
@@ -99,7 +97,11 @@
 		 */
 		protected function __construct(string $filePath)
 		{
-			$this->routes = require($filePath);
+			$routeFile = require($filePath);
+			
+			$this->routes = $routeFile['ROUTES'];
+			$this->rootFolder = $routeFile['ROOT_FOLDER'];
+			
 			$this->RenderModule = new Render();
 		}
 
@@ -338,11 +340,6 @@
 			{
 				$keysRoutes = array_keys($routesConfig);
 				$routes = $routesConfig;
-				foreach ($this->prohibitedKeys as $key) {
-					if (in_array($key, $keysRoutes)) {
-						unset($routes[$key]);
-					}
-				}
 				
 				foreach ($routes as $key => $value) {
 					if (!isset($value['Rule']) || !isset($value['Action'])) {
@@ -419,8 +416,8 @@
 			 */
 			protected function checkControllerDir()
 			{
-				if (is_dir($this->routes['ROOT_FOLDER'])) {
-					$this->controllerFolder = str_replace('/',	'\\', $this->routes['ROOT_FOLDER']);
+				if (is_dir($this->rootFolder)) {
+					$this->controllerFolder = str_replace('/',	'\\', $this->rootFolder);
 				} else {
 					throw new RouteException(RouteException::ROUTE_CONTROLLER_NOTFOUND_ERROR_CODE);
 				}
@@ -508,7 +505,11 @@
 			protected function setRequest(Controller $controller, String $userRequest)
 			{
 				$request = new Request();
-				// TODO : Set differents informations in the Request Object.
+				$route = reset($this->route);
+				
+				$request->setRuleName(key($this->route));
+				$request->setRule($route['Rule']);
+				$request->setRequestUrl($userRequest);
 				
 				$controller->setRequest($request);
 				

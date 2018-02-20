@@ -16,7 +16,6 @@
 	namespace ShirOSBundle\Database;
 	use \PDO;
 	use ShirOSBundle\Config;
-	use ShirOSBundle\Utils\Exception\DatabaseException;
 	
 	/**
 	 * Gestion de l'accés à une base de données

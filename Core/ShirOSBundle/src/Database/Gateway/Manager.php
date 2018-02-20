@@ -32,19 +32,16 @@
 		/**
 		 * Manager constructor.
 		 *
-		 * @param string $name
+		 * @param string $gateway
 		 * @param Database $db_instance
 		 *
 		 * @throws DatabaseException
 		 */
-		public function __construct(string $name, Database $db_instance)
+		public function __construct(string $gateway, Database $db_instance)
 		{
-			$GatewayNamespace = Config::getInstance()->get('ShirOS.Path.Namespace.Gateway');
-			$GatewayNamespace .= NameSupervisor::getInstance()->PS_Gateway($name);
-
 			try {
-				$this->Gateway = new $GatewayNamespace($db_instance);
-			} catch (\Exception $e) {
+				$this->Gateway = new $gateway($db_instance);
+			} catch (\Throwable $e) {
 				throw new DatabaseException(DatabaseException::DATABASE_BAD_GATEWAY_ERROR_CODE, $e->getMessage());				
 			}
 		}

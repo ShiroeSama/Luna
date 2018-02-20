@@ -34,6 +34,12 @@
 		 * @var Config
 		 */
 		protected $ConfigModule;
+		
+		/**
+		 * Instance de la Classe de gestion des noms
+		 * @var NameSupervisor
+		 */
+		protected $NameSupervisorModule;
 
 		/**
 		 * Nom de la Table
@@ -51,12 +57,13 @@
 		{
 			$this->DBModule = $database;
 			$this->ConfigModule = Config::getInstance();
+			$this->NameSupervisorModule = NameSupervisor::getInstance();
 			
 			if(is_null($this->table))
 			{
 				$parse = explode('\\', get_class($this));
 				$class_name = end($parse);
-				$this->table = strtolower(str_replace($this->ConfigModule->get('ShirOS.Namespace.FolderName.Gateway'), '', $class_name));
+				$this->table = strtolower($this->NameSupervisorModule->removePSTo($class_name));
 			}
 		}
 
@@ -78,7 +85,7 @@
 			{
 				switch ($this->ConfigModule->get('ShirOS.Database.FetchMode.Current')) {
 					case $this->ConfigModule->get('ShirOS.Database.FetchMode.Name.Fetch_Class'):
-						$class = NameSupervisor::getInstance()->GatewayModel_Path(get_class($this));
+						$class = $this->NameSupervisorModule->gatewayPath_To_modelPath(get_class($this));
 						break;
 					
 					case $this->ConfigModule->get('ShirOS.Database.FetchMode.Name.Fetch_Into'):

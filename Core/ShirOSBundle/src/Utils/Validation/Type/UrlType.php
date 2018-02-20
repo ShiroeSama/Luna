@@ -26,7 +26,7 @@
 		 * Regex
 		 * @var string
 		 */
-		protected const REGEX_URL = "#^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$#";
+		protected const REGEX_URL = "#(https?|ftp|ssh|mailto):\/\/[a-z0-9\/:%_+.,\#?!@&=-]+#i";
 		
 		/**
 		 * Permet de verifier si le champ est du type de la classe

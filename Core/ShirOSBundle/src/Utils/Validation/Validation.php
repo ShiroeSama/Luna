@@ -39,6 +39,7 @@
 		/** DEFAULT ERROR MESSAGE */
 		
 		protected const ERROR_MESSAGE_EMPTY = "Le champ doit être renseigné";
+		protected const ERROR_MESSAGE_TYPE = "Le champ ne correspond pas au type voulu";
 		protected const ERROR_MESSAGE_EQUAL_TO = "Le champ ne correspond pas avec les valeurs attendues";
 		
 		
@@ -146,7 +147,7 @@
                 if (!empty($fields)) {
                 	$checkList = $this->BuilderModule->getCheckList();
                     foreach ($fields as $key => $value) {
-	
+                    	// Get information about the field
 	                    $type = $this->BuilderModule->getType($key);
 	                    $message = $this->BuilderModule->getMessage($key);
 	                    $equalTo = $this->BuilderModule->getEqualTo($key);
@@ -154,7 +155,8 @@
                         $sanitizeType = $this->BuilderModule->getSanitizeType($key);
 	                    $sanitizeMethod = $this->BuilderModule->getSanitizeMethod($key);
 	                    $prohibitedCharacters = $this->BuilderModule->getProhibitedCharacters($key);
-	
+	                    
+	                    // Test if the field is required
 	                    if ($required) {
 		                    if ($this->isEmpty($value)) {
 			                    $this->errors[$key] = self::ERROR_MESSAGE_EMPTY;
@@ -164,21 +166,24 @@
 		                    $this->values[$key] = (empty($this->values[$key]) ?  '' : $this->values[$key]);
 		                    unset($checkList[$key]);
 	                    }
-	                    
+	
+                        // Check the value of the field
 	                    if ($equalTo) {
 	                        if ($this->isNotEqual($value, $equalTo)) {
 		                        $this->errors[$key] = self::ERROR_MESSAGE_EQUAL_TO;
 		                        $this->valid = false;
 	                        }
 	                    }
-	
+	                    
+	                    // Check the type
 	                    if (!$type->validate($value)) {
-		                    $this->errors[$key] = $message;
+		                    $this->errors[$key] = ((!empty($message)) ? $message : self::ERROR_MESSAGE_TYPE);
 		                    $this->valid = false;
 	                    }
+
+                        $this->rawValues[$key] = $value;
 	                    
-	                    $this->rawValues[$key] = $value;
-	                    
+	                    // Sanitize
 	                    $options = [
 	                        Sanitize::PARAM_SANITIZE_TYPE => $sanitizeType,
 		                    Sanitize::PARAM_SANITIZE_METHOD => $sanitizeMethod,
@@ -190,8 +195,8 @@
                     }
 	
 	                $diff = array_diff_key($checkList, $fields);
-                    
-                    foreach ($diff as $key => $value){
+
+                    foreach ($diff as $key => $value) {
 	                    $required = $this->BuilderModule->getRequired($key);
 	                    if ($required) {
 		                    $this->errors[$key] = self::ERROR_MESSAGE_EMPTY;

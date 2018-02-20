@@ -4,6 +4,7 @@
 
 /*
 /Config/*
+Core/*
 
 # -------------------------------
 # Files Keep
@@ -13,6 +14,7 @@
 !.htaccess
 !LICENSE
 !README.md
-!Core/*
+!Core/ShirOSBundle
+!Core/.htaccess
 !Config/configBundle.php
 !*/

@@ -22,6 +22,10 @@
 
 	class Service
 	{
+		protected const COMPARE_EQUALS = '=';
+		protected const COMPARE_GREATER_THAN = '>';
+		protected const COMPARE_LOWER_THAN = '<';
+		
 		/**
 		 * Instance de la Classe de gestion des Configs
 		 * @var Config
@@ -55,6 +59,11 @@
 		 * @var string
 		 */
 		private $value = '';
+		
+		/**
+		 * @var array
+		 */
+		private $compareOptions = [];
 		
 		
 		/**
@@ -94,10 +103,11 @@
 			 *
 			 * @return array
 			 */
-			public function unsetObjectElement(array $lists, string $attributeName, $value): array
+			public function unsetObjectElement(array $lists, string $attributeName, $value, $compareOptions = [self::COMPARE_EQUALS]): array
 			{
 				$this->attributeName = $attributeName;
 				$this->value = $value;
+				$this->compareOptions = $compareOptions;
 				
 				return array_filter($lists, __CLASS__ . '::arrayCallback', ARRAY_FILTER_USE_BOTH);
 			}
@@ -108,8 +118,22 @@
 					$attributeName = $this->attributeName;
 					
 					if (property_exists($value, $attributeName)) {
-						if ($value->$attributeName === $this->value) {
-							return false;
+						if (in_array(self::COMPARE_GREATER_THAN, $this->compareOptions)) {
+							if ($value->$attributeName > $this->value) {
+								return false;
+							}
+						}
+						
+						if (in_array(self::COMPARE_EQUALS, $this->compareOptions)) {
+							if ($value->$attributeName === $this->value) {
+								return false;
+							}
+						}
+						
+						if (in_array(self::COMPARE_LOWER_THAN, $this->compareOptions)) {
+							if ($value->$attributeName < $this->value) {
+								return false;
+							}
 						}
 					}
 					
@@ -132,6 +156,22 @@
 				}
 				
 				return array_values($lists);
+			}
+		
+			/**
+			 * Permet de créer un tableau associatif à partir d'un objet
+			 *
+			 * @param array $array
+			 * @param string $attributeKey
+			 * @param string $attributeValue
+			 *
+			 * @return array
+			 */
+			protected function convertObjectArrayToStringArray(array $array, string $attributeKey, string $attributeValue): array
+			{
+				$stringArray = [];
+				foreach ($array as $element) { $stringArray[$element->$attributeKey] = $element->$attributeValue; }
+				return $stringArray;
 			}
 	}
 ?>

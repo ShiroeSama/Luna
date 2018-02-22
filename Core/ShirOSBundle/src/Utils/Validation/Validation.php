@@ -16,7 +16,11 @@
 	namespace ShirOSBundle\Utils\Validation;
 	use ShirOSBundle\Config;
 	use ShirOSBundle\Utils\Exception\ValidationException;
+	use ShirOSBundle\Utils\Url\Url;
 	use ShirOSBundle\Utils\Validation\Sanitize\Sanitize;
+	use ShirOSBundle\Utils\Validation\Type\PhoneType;
+	use ShirOSBundle\Utils\Validation\Type\StringType;
+	use ShirOSBundle\Utils\Validation\Type\UrlType;
 	
 	/**
 	* Controller des Validation de Champs
@@ -66,6 +70,16 @@
          * @var array
          */
         protected $values;
+		
+		/**
+		 * Liste des types sur lesquels appliquer la fonction 'trim()'
+		 * @var array
+		 */
+		protected $typeToTrim = [
+			StringType::class,
+			UrlType::class,
+			PhoneType::class
+		];
 		
 		/**
 		 * @var array
@@ -174,6 +188,11 @@
 		                        $this->valid = false;
 	                        }
 	                    }
+	
+	                    // Remove start and end space
+	                    if (in_array(get_class($type), $this->typeToTrim, true)) {
+	                    	$value = trim($value);
+	                    }
 	                    
 	                    // Check the type
 	                    if (!$type->validate($value)) {
@@ -211,11 +230,11 @@
 			/**
 			 * Verifie si un champ n'est pas vide
 			 *
-			 * @param string $field
+			 * @param $field
 			 *
 			 * @return bool
 			 */
-			protected function isEmpty(string $field): bool
+			protected function isEmpty($field): bool
 			{
 				/* -- Cas où le champs ne récupére qu'un nombre entre 0 et * | Evite de retourer FALSE en cas de saisie de 0 dans ce champs -- */
 					if ($field === '0')

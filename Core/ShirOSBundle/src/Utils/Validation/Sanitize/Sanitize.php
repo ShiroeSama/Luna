@@ -134,14 +134,23 @@
 		/**
 		 * Nettoie la chaine de caratère
 		 *
-		 * @param string $field
+		 * @param $field
 		 *
-		 * @return string
+		 * @return mixed
 		 */
-		public function sanitize(string $field): string
+		public function sanitize($field)
 		{
 			$sanitizeMethod = $this->sanitizeMethod;
-			return $this->$sanitizeMethod($field);
+			
+			if (is_array($field)) {
+				foreach ($field as $key => $value) {
+					$field[$key] = $this->$sanitizeMethod($value);
+				}
+			} else {
+				$field = $this->$sanitizeMethod($field);
+			}
+			
+			return $field;
 		}
 		
 		/* ------------------------ Private Function ------------------------ */
@@ -150,7 +159,6 @@
 		 * Nettoie les Champs de Formulaires
 		 *
 		 * @param string $field
-		 * @param string $type
 		 *
 		 * @return string
 		 */

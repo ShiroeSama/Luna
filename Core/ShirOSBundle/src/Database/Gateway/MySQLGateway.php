@@ -40,6 +40,12 @@
 		 * @var NameSupervisor
 		 */
 		protected $NameSupervisorModule;
+		
+		/**
+		 * Separateur pour les Group_Concat
+		 * @var String
+		 */
+		protected $separator;
 
 		/**
 		 * Nom de la Table
@@ -58,6 +64,8 @@
 			$this->DBModule = $database;
 			$this->ConfigModule = Config::getInstance();
 			$this->NameSupervisorModule = NameSupervisor::getInstance();
+			
+			$this->separator = $this->ConfigModule->get('ShirOS.Separator');
 			
 			if(is_null($this->table))
 			{
@@ -123,7 +131,6 @@
 			 * Récupère toutes les données
 			 *
 			 * @return mixed
-			 * @throws DatabaseException
 			 */
 			public function all()
 			{
@@ -141,7 +148,6 @@
 			 * @param array $fields
 			 *
 			 * @return mixed
-			 * @throws DatabaseException
 			 */
 			public function select(array $fields)
 			{
@@ -170,7 +176,6 @@
 			 * @param string $value
 			 *
 			 * @return mixed
-			 * @throws DatabaseException
 			 */
 			public function find(string $column, string $value)
 			{
@@ -191,7 +196,6 @@
 			 * @param bool $date | Default Value = false
 			 *
 			 * @return mixed
-			 * @throws DatabaseException
 			 */
 			public function create(Model $object, bool $date = false)
 			{
@@ -223,7 +227,6 @@
 			 * @param Model $object
 			 *
 			 * @return mixed
-			 * @throws DatabaseException
 			 */
 			public function update(array $id, Model $object)
 			{
@@ -243,7 +246,7 @@
 					SET $SQLPart
 					WHERE {$id[Database::UPDATE_COLUMN]}
 					LIKE ?";
-				 
+				
 				return $this->query($request, $attributes, true);
 			}
 		
@@ -255,7 +258,6 @@
 			 * @param string $value
 			 *
 			 * @return mixed
-			 * @throws DatabaseException
 			 */
 			public function delete(string $column, string $value)
 			{
@@ -279,7 +281,6 @@
 			 * @param string $value
 			 *
 			 * @return array
-			 * @throws DatabaseException
 			 */
 			public function extract(string $key, string $value): array
 			{
@@ -300,7 +301,6 @@
 			 * @param String $value
 			 *
 			 * @return mixed
-			 * @throws DatabaseException
 			 */
 			public function search(String $column, String $value)
 			{
@@ -318,7 +318,6 @@
 			 * Retourne le nombre d'élément dans une table
 			 *
 			 * @return int
-			 * @throws DatabaseException
 			 */
 			public function count(): int
 			{

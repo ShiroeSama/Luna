@@ -19,6 +19,16 @@
 
 	class ShirOSForm
 	{
+		/* ---- CONSTANTE ---- */
+		
+		protected const ERROR_CLASS = 'formError';
+		
+		public const OPTIONS_SURROUND_TYPE = 'Surround_Type';
+		public const OPTIONS_SURROUND = 'Surround';
+		
+		
+		/* ---- ATTRIBUTS ---- */
+		
 		/**
 		 * Instance de la Classe de gestion des Configs
 		 * @var Config
@@ -42,334 +52,404 @@
 			$this->ConfigModule = Config::getInstance();
 			$this->data = $data;
 		}
-
-		/* ------------------------ Private Function ------------------------ */
+		
+		/**
+		 * Récupère une valeur dans les données du formulaire
+		 *
+		 * @param string $index
+		 *
+		 * @return string|null
+		 */
+		protected function getValue(string $index): ?string
+		{
+			if(is_object($this->data)){ return $this->data->$index; }
+			elseif (isset($this->data[$index])){ return $this->data[$index]; }
+			else { return NULL; }
+		}
+		
+		
+		
+		/* ------------------------ Generate Fields Function ------------------------ */
 		
 			/**
-			 * Récupère une valeur dans les données du formulaire
+			 * INPUT (Text)
 			 *
-			 * @param string $index
+			 * @param string $id
+			 * @param string|null $placeholder
+			 * @param string|null $class
+			 * @param array $surroundOptions
+			 * @param bool $error
 			 *
-			 * @return string|null
+			 * @return string
 			 */
-			protected function getValue(string $index): ?string
+			public function input(string $type, string $id, ?string $placeholder = NULL, ?string $class = NULL, array $surroundOptions = [], $error = false): string
 			{
-				if(is_object($this->data)){
-					return $this->data->$index;
-				} elseif (isset($this->data[$index])){
-					return $this->data[$index];
-				} else {
-					return NULL;
-				}
+				/* Traitement du type d'input */
+				
+					$class = $this->getClass($class, $error);
+					$placeholder = $this->getPlaceholder($id, $placeholder);
+				
+				/* Format de l'input */
+				
+					$input = "<input type='{$type}' {$class} name=\"{$id}\" placeholder=\"{$placeholder}\" value=\"{$this->getValue($id)}\" />";
+				
+				return $this->surround($input, $surroundOptions);
 			}
+			
+			/**
+			 * INPUT (Text)
+			 *
+			 * @param string $id
+			 * @param string|null $placeholder
+			 * @param string|null $class
+			 * @param array $surroundOptions
+			 * @param bool $error
+			 *
+			 * @return string
+			 */
+			public function field(string $id, ?string $placeholder = NULL, ?string $class = NULL, array $surroundOptions = [], $error = false): string
+			{
+				return $this->input('text', $id, $placeholder, $class, $surroundOptions, $error);
+			}
+			
+			/**
+			 * INPUT (Password)
+			 *
+			 * @param string $id
+			 * @param string|null $placeholder
+			 * @param string|null $class
+			 * @param array $surroundOptions
+			 * @param bool $error
+			 *
+			 * @return string
+			 */
+			public function password(string $id, ?string $placeholder = NULL, ?string $class = NULL, array $surroundOptions = [], $error = false): string
+			{
+				return $this->input('password', $id, $placeholder, $class, $surroundOptions, $error);
+			}
+		
+			/**
+			 * INPUT (Search)
+			 *
+			 * @param string $id
+			 * @param string|null $placeholder
+			 * @param string|null $class
+			 * @param array $surroundOptions
+			 * @param bool $error
+			 *
+			 * @return string
+			 */
+			public function search(string $id, ?string $placeholder = NULL, ?string $class = NULL, array $surroundOptions = [], $error = false): string
+			{
+				return $this->input('search', $id, $placeholder, $class, $surroundOptions, $error);
+			}
+			
+			/**
+			 * TEXTAREA
+			 *
+			 * @param string $id
+			 * @param string|null $placeholder
+			 * @param string|null $class
+			 * @param array $surroundOptions
+			 * @param bool $error
+			 *
+			 * @return string
+			 */
+			public function textarea(string $id, ?string $placeholder = NULL, ?string $class = NULL, array $surroundOptions = [], $error = false): string
+			{
+				/* Traitement du type d'input */
+				
+					$class = $this->getClass($class, $error);
+					$placeholder = $this->getPlaceholder($id, $placeholder);
+				
+				/* Format de l'input */
+				
+					$input = "<textarea {$class} name=\"{$id}\" placeholder=\"{$placeholder}\">{$this->getValue($id)}</textarea>";
+				
+				return $this->surround($input, $surroundOptions);
+			}
+			
+			/**
+			 * INPUT (Checkbox)
+			 *
+			 * @param string $id
+			 * @param string $value
+			 * @param mixed $checkedList
+			 * @param string|null $placeholder
+			 * @param string|null $class
+			 * @param array $surroundOptions
+			 *
+			 * @return string
+			 */
+			public function checkbox(string $id, string $value, $checkedList, ?string $placeholder = NULL, ?string $class = NULL, array $surroundOptions = []): string
+			{
+				/* Traitement du type d'input */
+				
+				$checked = '';
+				$class = $this->getClass($class);
+				$placeholder = $this->getPlaceholder($id, $placeholder);
+				
+				if($this->isChecked($value, $checkedList)) {
+					$checked = 'checked="checked"';
+				}
+				
+				/* Format de l'input */
+				
+				$input = "<input type='checkbox' {$class} id=\"{$id}\" name=\"{$id}\" value=\"{$value}\" {$checked}/><label for=\"{$id}\">{$placeholder}</label>";
+				
+				return $this->surround($input, $surroundOptions);
+			}
+			
+			/**
+			 * INPUT (Radio)
+			 *
+			 * @param string $id
+			 * @param string $value
+			 * @param string $checkedValue
+			 * @param string|null $placeholder
+			 * @param string|null $class
+			 * @param array $surroundOptions
+			 *
+			 * @return string
+			 */
+			public function radio(string $id, string $value, string $checkedValue, ?string $placeholder = NULL, ?string $class = NULL, array $surroundOptions = []): string
+			{
+				/* Traitement du type d'input */
+				
+					$checked = '';
+					$class = $this->getClass($class);
+					$placeholder = $this->getPlaceholder($id, $placeholder);
+				
+					if($this->isChecked($value, $checkedValue)) {
+						$checked = 'checked';
+					}
+				
+				/* Format de l'input */
+				
+					$input = "<input type='radio' {$class} id=\"{$id}\" name=\"{$id}\" value=\"{$value}\" {$checked}/><label for=\"{$id}\">{$placeholder}</label>";
+				
+				return $this->surround($input, $surroundOptions);
+			}
+		
+			/**
+			 * SELECT
+			 *
+			 * @param string $id
+			 * @param array $items
+			 * @param null|string $class
+			 * @param array $surroundOptions
+			 *
+			 * @return string
+			 */
+			public function select(string $id, array $items, ?string $class = NULL, array $surroundOptions = []): string
+			{
+				/* Traitement des options */
+				
+				$class = $this->getClass($class);
+				
+				/* Format du Select */
+				
+				$input = "<select {$class} name='{$id}'>";
+				
+				foreach ($items as $key => $value) {
+					$selected = '';
+					
+					if($key == $this->getValue($id))
+						$selected = 'selected';
+					
+					$input .= "<option value='{$key}' {$selected}>{$value}</option>";
+				}
+				
+				$input .= '</select>';
+				
+				return $this->surround($input, $surroundOptions);
+			}
+		
+			/**
+			 * SUBMIT
+			 *
+			 * @param string $name
+			 * @param null|string $class
+			 * @param array $surroundOptions
+			 *
+			 * @return string
+			 */
+			public function submit(string $name, ?string $class = NULL, array $surroundOptions = []): string
+			{
+				return $this->getSubmitButton(NULL, $name, NULL, $class, $surroundOptions);
+			}
+			
+			/**
+			 * SUBMIT
+			 *
+			 * @param string $id
+			 * @param string $name
+			 * @param null|string $class
+			 * @param array $surroundOptions
+			 *
+			 * @return string
+			 */
+			public function submitWithId(string $id, string $name, ?string $value, ?string $class, array $surroundOptions = []): string
+			{
+				return $this->getSubmitButton($id, $name, $value, $class, $surroundOptions);
+			}
+		
+			
+		
+		/* ------------------------ Render Function ------------------------ */
 
 			/**
-			 * Entoure / Encapsule du contenu HTML
+			 * SURROUND
 			 *
 			 * @param string $html
 			 * @param string $balise | Default Value = NULL
 			 *
 			 * @return string
 			 */
-			protected function surround(string $html, string $balise = NULL): string
+			protected function surround(string $html, array $surroundOptions = []): string
 			{
-				if($balise != NULL) {
-					$baliseEnd = preg_replace('# class[^>]*?$#', '', $balise);
-					$baliseEnd = preg_replace('# style[^>]*?$#', '', $baliseEnd);
-					return "<{$balise}>{$html}</{$baliseEnd}>";
-				} else {
+				if (!key_exists(self::OPTIONS_SURROUND_TYPE, $surroundOptions)
+					&& !key_exists(self::OPTIONS_SURROUND, $surroundOptions)) {
 					return $html;
 				}
+				
+				$surroundType = 'div';
+				if (key_exists(self::OPTIONS_SURROUND_TYPE, $surroundOptions)) {
+					$surroundType = $surroundOptions[self::OPTIONS_SURROUND_TYPE];
+				}
+				
+				$tag = $surroundType;
+				$tagEnd = $surroundType;
+				
+				if (key_exists(self::OPTIONS_SURROUND, $surroundOptions)) {
+					$tag .= ' class="' . $surroundOptions[self::OPTIONS_SURROUND] . '"';
+				}
+				
+				return "<{$tag}>{$html}</{$tagEnd}>";
 			}
-
+		
 			/**
-			 * Récupère le Type de la balise
+			 * SUBMIT BUTTON
 			 *
-			 * @param array $options
+			 * @param string $id
+			 * @param string $name
+			 * @param null|string $class
+			 * @param array $surroundOptions
 			 *
 			 * @return string
 			 */
-			protected function getType(array $options): string
+			public function getSubmitButton(?string $id, string $name, ?string $value, ?string $class, array $surroundOptions = []): string
 			{
-				if(isset($options['type']))
-					return $options['type'];
-				else
-					return 'text';
+				/* Traitement des options */
+				
+				$class = $this->getClassButton($class);
+				
+				/* Format du Submit */
+				
+				switch ($name) {
+					case $this->ConfigModule->get('Login_Button'):
+						$glyphicon = "<span class='glyphicon glyphicon-log-in' /> ";
+						break;
+					
+					case $this->ConfigModule->get('Logout_Button'):
+						$glyphicon = "<span class='glyphicon glyphicon-log-out' /> ";
+						break;
+					
+					default:
+						$glyphicon = '';
+						break;
+				}
+				
+				if (is_null($id)) {
+					$button = "<button type='submit' {$class}>{$glyphicon}{$name}</button>";
+				} else {
+					if (is_null($value)) { $value = $name; }
+					$button = "<button type='submit' name=\"{$id}\" value=\"{$value}\" {$class}>{$glyphicon}{$name}</button>";
+				}
+				
+				return $this->surround($button, $surroundOptions);
 			}
-
+		
+			
+		
+		/* ------------------------ Treatment Function ------------------------ */
+		
 			/**
 			 * Récupère la classe css à appliquer sur la balise
 			 *
-			 * @param array $options
-			 * @param bool $error | Default Value = false
+			 * @param null|string $class
+			 * @param bool $error
 			 *
 			 * @return string
 			 */
-			protected function getClass(array $options, bool $error = false): string
+			protected function getClass(?string $class, bool $error = false): string
 			{
-				$error ? $error = 'formError' : $error = '';
-				isset($options['class']) ? $class = $options['class'] . ' ' . $error : $class = $error;
-				empty($class) ? $class = '' : $class = 'class="' . $class . '"';
-
-				return $class;
-			}
-
-			/**
-			 * Vérifie si la 'Checkbox' est cochée ou non
-			 *
-			 * @param string $name
-			 * @param array $options
-			 *
-			 * @return bool
-			 */
-			protected function isChecked(string $name, array $options): bool
-			{
-				if(isset($options['checkedList'])) {
-					$checkedList = $options['checkedList'];
-
-					if (is_array($checkedList)) {
-						foreach ($checkedList as $key => $value)
-							if($value === $name)
-								return true;
-					} else if (is_string($checkedList)) {
-						return $checkedList === $name;
-					}					
+				$firstClassElement = true;
+				$classAttribute = '';
+				
+				if (!is_null($class)) {
+					if ($firstClassElement) {
+						$classAttribute = 'class="' . $class;
+						$firstClassElement = false;
+					} else {
+						$classAttribute .= " {$class}";
+					}
 				}
-
-				return false;
+				
+				if ($error) {
+					if ($firstClassElement) {
+						$classAttribute = 'class="' . self::ERROR_CLASS;
+						$firstClassElement = false;
+					} else {
+						$classAttribute .= ' ' . self::ERROR_CLASS;
+					}
+				}
+				
+				return ((empty($classAttribute)) ? '' : $classAttribute . '"');
 			}
-
-            /**
-             * Vérifie si la balise à un id
-             *
-             * @param array $options
-             *
-             * @return bool|mixed
-             */
-			protected function hasId(array $options)
-			{
-				if(isset($options['id']) && !empty($options['id']))
-					return $options['id'];
-				return false;
-			}
-
+		
 			/**
 			 * Récupère la/les classes css pour former un bouton
 			 *
-			 * @param array $options
+			 * @param null|string $class
 			 *
 			 * @return string
 			 */
-			protected function getClassButton(array $options): string
+			protected function getClassButton(?string $class): string
 			{
-				if(isset($options['class'])) {
-					$options['class'] = 'btn btn-primary ' . $options['class'];
- 					return $this->getClass($options);
-				} else
-					return 'class="btn btn-primary"';
+				$class = ((is_null($class)) ? 'btn btn-primary' : 'btn btn-primary ' . $class);
+				return $this->getClass($class);
 			}
-
-			/**
-			 * Récupère l'entourage/l'encapsulation de la balise
-			 *
-			 * @param array $options
-			 *
-			 * @return string|null
-			 */
-			protected function getSurround(array $options): ?string
-			{
-				if (!isset($options['surround_type']) && !isset($options['surround'])) {
-					$surround = NULL;
-				} else {
-					isset($options['surround_type']) ? $type = $options['surround_type'] : $type = 'div';
-					isset($options['surround']) ? $surround = $type . ' class="' . $options['surround'] . '"' : $surround = $type;
-				}
-
-				return $surround;
-			}
-
+			
 			/**
 			 * Récupère le placeholde de la balise
 			 *
 			 * @param string $name
-			 * @param array $options
+			 * @param null|string $placeholder
 			 *
 			 * @return string
 			 */
-			protected function getPlaceholder(string $name, array $options): string
-			{
-				if(isset($options['placeholder']))
-					return $options['placeholder'];
-				else
-					return $name;
-			}
-
-
-
-
-		/* ------------------------ Public Function ------------------------ */
-
+			protected function getPlaceholder(string $name, ?string $placeholder): string { return ((is_null($placeholder)) ? $name : $placeholder); }
+			
 			/**
-			 * Génére la balise 'input'
+			 * Vérifie si la 'Checkbox' est cochée ou non
 			 *
 			 * @param string $name
-			 * @param array $options | Default Value = []
-			 * @param bool $error | Default Value = false
+			 * @param mixed $checkedList
 			 *
-			 * @return string
+			 * @return bool
 			 */
-			public function input(string $name, array $options = [], $error = false): string
+			protected function isChecked(string $name, $checkedList): bool
 			{
-				/* Traitement du type d'input */
-
-					$type = $this->getType($options);
-					$class = $this->getClass($options, $error);
-					$surround = $this->getSurround($options);
-					$placeholder = $this->getPlaceholder($name, $options);
-
-				/* Format de l'input */
-
-					if($type === 'textarea')
-						$input = "<textarea {$class} name=\"{$name}\" placeholder=\"{$placeholder}\">{$this->getValue($name)}</textarea>";
-					else if($type === 'checkbox') {
-						$attribute = '';
-
-						if($this->isChecked($name, $options))
-							$attribute = 'checked="checked"';
-
-						$id = $this->hasId($options);
-						if ($id) $input = "<input type=\"{$type}\" {$class} id=\"{$name}\" name=\"{$id}\" value=\"{$name}\" {$attribute}/><label for=\"{$name}\">" . $placeholder . "</label>";
-						else $input = "<input type=\"{$type}\" {$class} id=\"{$name}\" name=\"{$name}\" value=\"{$name}\" {$attribute}/><label for=\"{$name}\">" . $placeholder . "</label>";
-
-					} else if($type === 'radio') {
-						$attribute = '';
-						
-						$id = $this->hasId($options);
-						if ($id) {
-							if($this->isChecked($name, $options))
-								$attribute = 'checked';
-
-							$input = "<input type=\"{$type}\" {$class} id=\"{$name}\" name=\"{$id}\" value=\"{$name}\" {$attribute}/><label for=\"{$name}\">" . $placeholder . "</label>";
-						} else $input = "<input type=\"{$type}\" {$class} id=\"{$name}\" name=\"{$name}\" value=\"{$name}\" {$attribute}/><label for=\"{$name}\">" . $placeholder . "</label>";
-						
-					} else if($type === 'search')
-						$input = "<input type=\"{$type}\" {$class} name=\"{$name}\" placeholder=\"{$placeholder}\" value=\"{$this->getValue($name)}\" />";
-					else if($type === 'submit')
-						$input =  "<input type=\"{$type}\" {$class} name=\"Stylesheet\" value=\"{$name}\" />";
-					else
-						$input = "<input type=\"{$type}\" {$class} name=\"{$name}\" placeholder=\"{$placeholder}\" value=\"{$this->getValue($name)}\" />";
-
-				return $this->surround($input, $surround);
-			}
-
-
-			/**
-			 * Génére la balise 'select'
-			 *
-			 * @param string $name
-			 * @param array $items
-			 * @param array $options | Default Value = []
-			 *
-			 * @return string
-			 */
-			public function select(string $name, array $items, array $options = []): string
-			{
-				/* Traitement des options */
-
-					$class = $this->getClass($options);
-					$surround = $this->getSurround($options);
-
-				/* Format du Select */
-
-					$input = "<select {$class} name=\"{$name}\">";
-
-					foreach ($items as $key => $value) {
-						$attributes = '';
-						
-						if($key == $this->getValue($name))
-							$attributes = ' selected';
-
-						$input .= "<option value='$key'$attributes>$value</option>";
-					}
-
-					$input .= '</select>';
-
-				return $this->surround($input, $surround);
-			}
-
-
-			/**
-			 * Génére le bouton 'submit'
-			 *
-			 * @param string $btn_name
-			 * @param array $options | Default Value = []
-			 *
-			 * @return string
-			 */
-			public function submit(string $btn_name, array $options = []): string
-			{
-				/* Traitement des options */
-
-					$class = $this->getClassButton($options);
-					$surround = $this->getSurround($options);
-
-				/* Format du Submit */
-
-					switch ($btn_name) {
-						case $this->ConfigModule->get('Login_Button'):
-							$glyphicon = "<span class=\"glyphicon glyphicon-log-in\"></span>";
-							break;
-
-						case $this->ConfigModule->get('Logout_Button'):
-							$glyphicon = "<span class=\"glyphicon glyphicon-log-out\"></span>";
-							break;
-						
-						default:
-							$glyphicon = '';
-							break;
-					}
-					
-					return $this->surround("<button type=\"submit\" {$class}>{$glyphicon} {$btn_name} </button>", $surround);
-			}
-
-
-			/**
-			 * Génére le bouton 'submit' avec un id
-			 *
-			 * @param string $btn_name
-			 * @param string $name
-			 * @param string $value | Default Value = NULL
-			 * @param array $options | Default Value = []
-			 *
-			 * @return string
-			 */
-			public function submitWithId(string $btn_name, string $name, string $value = NULL, array $options = []): string
-			{
-				/* Traitement des options */
-
-					$class = $this->getClassButton($options);
-					$surround = $this->getSurround($options);
-
-				/* Format du Submit avec ID */
-
-					switch ($btn_name) {
-						case $this->ConfigModule->get('Login_Button'):
-							$glyphicon = "<span class=\"glyphicon glyphicon-log-in\"></span>";
-							break;
-
-						case $this->ConfigModule->get('Logout_Button'):
-							$glyphicon = "<span class=\"glyphicon glyphicon-log-out\"></span>";
-							break;
-						
-						default:
-							$glyphicon = '';
-							break;
-					}
-
-					if(is_null($value) || empty($value))
-						return $this->surround("<button type=\"submit\" name=\"{$name}\" value=\"{$btn_name}\" {$class}>{$glyphicon} {$btn_name} </button>", $surround);
-					else
-						return $this->surround("<button type=\"submit\" name=\"{$name}\" value=\"{$value}\" {$class}>{$glyphicon} {$btn_name} </button>", $surround);
+				if (is_array($checkedList)) {
+					foreach ($checkedList as $key => $value)
+						if($value === $name)
+							return true;
+				} else if (is_string($checkedList)) {
+					return $checkedList === $name;
+				}
+				
+				return false;
 			}
 	}
 ?>

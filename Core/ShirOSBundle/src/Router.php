@@ -39,7 +39,7 @@
 		 * Contient le chemin du fichier des routes
 		 * @var string
 		 */
-		protected static $routing_path = 'Config/route.php';
+		protected static $routing_path = SHIROS_ROUTES;
 		
 		/**
 		 * Contient le dossier des contrôleurs
@@ -360,7 +360,9 @@
 			 *
 			 * @return array
 			 */
-			protected function clearRoute(Array $requestTab): array { return array_values(array_filter($requestTab)); }
+			protected function clearRoute(Array $requestTab): array { return array_values(array_filter($requestTab, __CLASS__ . '::arrayFilterCallback', ARRAY_FILTER_USE_BOTH)); }
+			
+			protected function arrayFilterCallback($var) : bool { return (!empty($var) || $var == '0'); }
 
 
 		/* ------------------------ Check ------------------------ */

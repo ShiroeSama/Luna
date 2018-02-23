@@ -50,7 +50,7 @@
 		 */
 		public function __construct(string $homeUrl) {
 			$this->ConfigModule = Config::getInstance();
-			$this->rootUrl = $this->ConfigModule->get('Server.Homepage');
+			$this->rootUrl = rtrim(trim($this->ConfigModule->get('Server.Homepage')), '/');
 			$this->homeUrl = $homeUrl;
 			
 			$routeFile = require(SHIROS_ROUTES);

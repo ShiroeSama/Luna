@@ -67,8 +67,9 @@
 		/**
 		 * Démarre la Session
 		 */
-		public function initSession() {
+		public function initSession(?string $name = NULL) {
 			if(empty($_SESSION)) {
+				if (!is_null($name)) { session_name($name); }
 				session_start();
 			}
 		}
@@ -93,8 +94,7 @@
 			 */
 			public function authInit(array $auth)
 			{
-				session_name($auth[$this->ConfigModule->get('ShirOS.Session.Id')]);
-				$this->initSession();
+				$this->initSession($auth[$this->ConfigModule->get('ShirOS.Session.Id')]);
 				$_SESSION[self::AUTH] = $auth;
 			}
 

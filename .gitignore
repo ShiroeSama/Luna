@@ -2,19 +2,12 @@
 # Files Exclusion
 # -------------------------------
 
-/*
-/Config/*
-/Core/*
+# IntelliJ Files
+.idea
 
-# -------------------------------
-# Files Keep
-# -------------------------------
+# Mac Files
+.DS_STORE
 
-!.gitignore
-!.htaccess
-!LICENSE
-!README.md
-!Core/ShirOSBundle
-!Core/.htaccess
-!Config/configBundle.php
-!*/
+# Composer Files
+vendor/
+composer.lock

@@ -1,0 +1,21 @@
+{
+    "name": "shiros/luna",
+    "description": "Luna PHP Framework",
+    "keywords": ["Framework", "ShirOS", "Luna"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexandre Caillot (Shiroe_sama)",
+            "email": "pro.casper805@sfr.fr"
+        }
+    ],
+    "require": {
+        "php": "^7.1.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Luna\\": "src/"
+        }
+    }
+}

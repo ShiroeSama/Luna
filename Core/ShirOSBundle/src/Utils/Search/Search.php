@@ -38,19 +38,16 @@
 			 *
 			 * @param string $search
 			 * @param Manager $Manager
-			 * @param array $column
+			 * @param array $columns
 			 *
 			 * @return array|bool|mixed
 			 */
-			public function search(string $search, Manager $Manager, array $column)
+			public function search(string $search, Manager $Manager, array $columns)
 			{
 				$result = [];
-
-				# Sanitize des Paramètres
-					$search = $this->ValidationModule->sanitizeSearch($search);
-
-				foreach ($column as $c) {
-					$result += $Manager->searchModel($c,$search);
+				
+				foreach ($columns as $column) {
+					$result += $Manager->searchModel($column, $search);
 				}
 
 				$result = array_unique($result,SORT_REGULAR);

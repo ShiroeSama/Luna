@@ -50,17 +50,11 @@
 		/**
 		 * Verifie que la Gateway peut être appelée
 		 *
-		 * @param string $nameGateway
+		 * @param string $gateway
 		 *
 		 * @return bool
 		 */
-		protected function gatewayNameIs(string $nameGateway): bool
-		{
-			$name = explode('\\', get_class($this->Gateway));
-			$name = end($name);
-
-			return $nameGateway == $name;
-		}
+		protected function gatewayIs(string $gateway): bool { return is_a($this->Gateway, $gateway); }
 
 
 		/* ------------------------ Opérations CRUD ------------------------ */
@@ -100,12 +94,13 @@
 			 * @return mixed
 			 */
 			public function searchModel(string $column, string $value) { return $this->Gateway->search($column, $value); }
-
-
+		
+		
 			/**
 			 * Créer une ligne spécifique. Utilise la Gateway appropriée
 			 *
-			 * @param Model $objet
+			 * @param Model $object
+			 * @param bool $date
 			 *
 			 * @return mixed
 			 */
@@ -125,7 +120,7 @@
 			/**
 			 * Supprime une ligne spécifique. Utilise la Gateway appropriée
 			 *
-			 * @param string $colone
+			 * @param string $column
 			 * @param string $value
 			 *
 			 * @return mixed

@@ -143,6 +143,22 @@
 			{
 				return $this->input('search', $id, $placeholder, $class, $surroundOptions, $error);
 			}
+
+            /**
+             * INPUT (EMAIL)
+             *
+             * @param string $id
+             * @param string|null $placeholder
+             * @param string|null $class
+             * @param array $surroundOptions
+             * @param bool $error
+             *
+             * @return string
+             */
+            public function email(string $id, ?string $placeholder = NULL, ?string $class = NULL, array $surroundOptions = [], $error = false): string
+            {
+                return $this->input('email', $id, $placeholder, $class, $surroundOptions, $error);
+            }
 			
 			/**
 			 * TEXTAREA

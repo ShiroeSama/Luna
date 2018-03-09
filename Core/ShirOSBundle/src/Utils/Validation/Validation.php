@@ -203,17 +203,15 @@
                         $this->rawValues[$key] = $value;
 	                    
 	                    // Sanitize
-	                    $options = [
-	                        Sanitize::PARAM_SANITIZE_TYPE => $sanitizeType,
-		                    Sanitize::PARAM_SANITIZE_METHOD => $sanitizeMethod,
-		                    Sanitize::PARAM_PROHIBITED_CHARACTERS => $prohibitedCharacters,
-	                    ];
-		
-	                    $SanitizeModule = new Sanitize($options);
+	                    $SanitizeModule = new Sanitize();
+	                    $SanitizeModule->setSanitizeType($sanitizeType);
+	                    $SanitizeModule->setSanitizeMethod($sanitizeMethod);
+	                    $SanitizeModule->setProhibitedCharacters($prohibitedCharacters);
+	                    
 	                    $this->values[$key] = $SanitizeModule->sanitize($value);
                     }
-	
-	                $diff = array_diff_key($checkList, $fields);
+		
+	                /* $diff = array_diff_key($checkList, $fields);
 
                     foreach ($diff as $key => $value) {
 	                    $required = $this->BuilderModule->getRequired($key);
@@ -221,7 +219,7 @@
 		                    $this->errors[$key] = self::ERROR_MESSAGE_EMPTY;
 		                    $this->valid = false;
 	                    }
-                    }
+                    } */
                 } else {
                 	throw new ValidationException();
                 }

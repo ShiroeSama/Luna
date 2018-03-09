@@ -41,7 +41,7 @@
 		public function __construct(array $array = NULL)
 		{
 			$this->ConfigModule = Config::getInstance();
-			$this->UrlModule = new Url($this->ConfigModule->get('Server.Homepage'));
+			$this->UrlModule = new Url();
 			
 			if(!is_null($array)) {
 				foreach ($array as $key => $value)

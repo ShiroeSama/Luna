@@ -341,14 +341,19 @@
 			 */
 			public static function generateHeader(int $code, array $options = [])
 			{
-				$header = self::getHeader($code);
-				header($header);
-
-				if (!empty($options)) {
-					foreach ($options as $option) {
-						header($option);
+				if (!headers_sent()) {
+					$header = self::getHeader($code);
+					
+					header($header);
+					
+					if (!empty($options)) {
+						foreach ($options as $option) {
+							header($option);
+						}
 					}
-				}				
+				}
+				
+				
 			}
 		
 		

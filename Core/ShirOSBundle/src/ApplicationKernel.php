@@ -53,7 +53,7 @@
 		protected function __construct()
 		{
 			$this->ConfigModule = Config::getInstance();
-			$this->UrlModule = new Url($this->ConfigModule->get('Server.Homepage'));
+			$this->UrlModule = new Url();
 		}
 		
 		/**
@@ -61,11 +61,12 @@
 		 *
 		 * @return ApplicationKernel
 		 */
-		public static function getInstance()
+		public static function getInstance(): ApplicationKernel
 		{
-			if(is_null(self::$_instance))
-				self::$_instance = new ApplicationKernel();
-			return self::$_instance;
+			if(is_null(static::$_instance))
+				static::$_instance = new static();
+			
+			return static::$_instance;
 		}
 		
 
@@ -137,11 +138,76 @@
 						if(in_array($file, $prohibitedDirCss))
 							continue;
 
-						$css .= "<link type=\"text/css\" rel=\"stylesheet\" href=\"{$this->UrlModule->getUrl()}/{$dir}/{$file}\">\n";
+						$css .= "<link type=\"text/css\" rel=\"stylesheet\" href=\"{$this->UrlModule->getUrl()}/{$dir}/{$file}\" />\n";
 					}
 				}
 
 				return $css;
+			}
+		
+			/**
+			 * Recupère une liste de feuille Css
+			 *
+			 * @param string $dir
+			 * @return string
+			 */
+			public function getCss(string $dir)
+			{
+				$css = "";
+				$prohibitedDirCss = array(
+					'.',
+					'..',
+					'Users',
+					'Fonts',
+				);
+				
+				if(file_exists($dir))
+				{
+					$files = scandir($dir);
+					
+					foreach ($files as $file)
+					{
+						if(in_array($file, $prohibitedDirCss))
+							continue;
+						
+						$css .= "<link type=\"text/css\" rel=\"stylesheet\" href=\"{$this->UrlModule->getUrl()}/{$dir}/{$file}\" />\n";
+					}
+				}
+				
+				return $css;
+			}
+		
+		
+		/* ------------------------ Récupèration des Js ------------------------ */
+		
+			/**
+			 * Recupère une liste de fonction Js
+			 *
+			 * @param string $dir
+			 * @return string
+			 */
+			public function getJs(String $dir)
+			{
+				$js = "";
+				$prohibitedDirJs = array(
+					'.',
+					'..'
+				);
+				
+				if(file_exists($dir))
+				{
+					$files = scandir($dir);
+					
+					foreach ($files as $file)
+					{
+						if(in_array($file, $prohibitedDirJs))
+							continue;
+						
+						$js .= "<script type=\"text/javascript\" src=\"{$this->UrlModule->getUrl()}/{$dir}/{$file}\" ></script>\n";
+					}
+				}
+				
+				return $js;
 			}
 	}
 ?>

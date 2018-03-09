@@ -81,9 +81,9 @@
 		 */
 		public static function getInstance(): NameSupervisor
 		{
-			if(is_null(self::$_instance))
-				self::$_instance = new NameSupervisor();
-			return self::$_instance;
+			if(is_null(static::$_instance))
+				static::$_instance = new static();
+			return static::$_instance;
 		}
 
 		/**

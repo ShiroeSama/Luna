@@ -125,13 +125,13 @@
 			/**
 			 * Envoi un Message aux Utilisateurs pour la validation du leurs Emails
 			 *
-			 * @param string $content
-			 * @param string $name
 			 * @param string $email
+			 * @param string $name
+			 * @param string $content
 			 *
 			 * @return bool
 			 */
-			public function Subscribe(string $content, string $name, string $email): bool
+			public function Subscribe(string $email, string $name, string $content): bool
 			{
 				$this->headerFormat($email);
 
@@ -154,13 +154,13 @@
 			/**
 			 * Envoi un Message aux Utilisateurs pour la Reinitialisation du leurs Mot de Passe
 			 *
-			 * @param string $content
-			 * @param string $name
 			 * @param string $email
+			 * @param string $name
+			 * @param string $content
 			 *
 			 * @return bool
 			 */
-			public function Password(string $content, string $name, string $email): bool
+			public function Password(string $email, string $name, string $content): bool
 			{
 				$this->headerFormat($email);
 
@@ -183,13 +183,13 @@
 			/**
 			 * Envoi un Message aux Utilisateurs pour la validation du leurs Emails
 			 *
-			 * @param string $content
-			 * @param string $name
 			 * @param string $email
+			 * @param string $name
+			 * @param string $content
 			 *
 			 * @return bool
 			 */
-			public function Email(string $content, string $name, string $email): bool
+			public function Email(string $email, string $name, string $content): bool
 			{
 				$this->headerFormat($email);
 				

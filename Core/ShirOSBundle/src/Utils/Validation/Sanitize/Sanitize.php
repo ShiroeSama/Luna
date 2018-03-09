@@ -28,12 +28,6 @@
 		public const SANITIZE_COMMENTS = 2;
 		public const SANITIZE_CHARACTER = 3;
 		
-		/** PARAMETERS */
-		
-		public const PARAM_SANITIZE_TYPE = 'SanitizeType';
-		public const PARAM_SANITIZE_METHOD = 'SanitizeMethod';
-		public const PARAM_PROHIBITED_CHARACTERS = 'ProhibitedCharacters';
-		
 		/** ATTRIBUTES */
 		
 		/**
@@ -60,74 +54,44 @@
 		/**
 		 * Sanitize constructor.
 		 */
-		public function __construct(array $options = [])
+		public function __construct()
 		{
-			$this->type = $this->optionSanitizeType($options);
-			$this->sanitizeCode = $this->optionSanitizeMethod($options);
-			$this->prohibitedCharacters = $this->optionProhibitedCharacters($options);
-			
-			switch ($this->sanitizeCode) {
-				case self::SANITIZE :
-					$this->sanitizeMethod = 'sanitizeField';
-					break;
-					
-				case self::SANITIZE_SEARCH :
-					$this->sanitizeMethod = 'sanitizeSearch';
-					break;
-					
-				case self::SANITIZE_COMMENTS :
-					$this->sanitizeMethod = 'sanitizeComments';
-					break;
-				
-				case self::SANITIZE_CHARACTER :
-					$this->sanitizeMethod = 'sanitizeCharacter';
-					break;
-					
-				default:
-					$this->sanitizeMethod = 'sanitizeField';
-					break;
-			}
+			$this->setSanitizeType();
+			$this->setSanitizeMethod();
+			$this->setProhibitedCharacters();
 		}
 		
 		
-		/* ------------------------ Get Option Parameters ------------------------ */
+		/* ------------------------ Configure Sanitize Class ------------------------ */
 		
-			/**
-			 * Permet de récupèrer le type du sanitize pour le champ
-			 *
-			 * @param array $options
-			 *
-			 * @return string
-			 */
-			protected function optionSanitizeType(array $options): string
+			public function setSanitizeType(int $SanitizeType = FILTER_SANITIZE_STRING) { $this->type = $SanitizeType; }
+			public function setProhibitedCharacters(array $ProhibitedCharacters = []) { $this->prohibitedCharacters = $ProhibitedCharacters; }
+			public function setSanitizeMethod(int $SanitizeMethod = self::SANITIZE)
 			{
-				return (isset($options[self::PARAM_SANITIZE_TYPE]) ? $options[self::PARAM_SANITIZE_TYPE] : FILTER_SANITIZE_STRING);
+				$this->sanitizeCode = $SanitizeMethod;
+				
+				switch ($this->sanitizeCode) {
+					case self::SANITIZE :
+						$this->sanitizeMethod = 'sanitizeField';
+						break;
+					
+					case self::SANITIZE_SEARCH :
+						$this->sanitizeMethod = 'sanitizeSearch';
+						break;
+					
+					case self::SANITIZE_COMMENTS :
+						$this->sanitizeMethod = 'sanitizeComments';
+						break;
+					
+					case self::SANITIZE_CHARACTER :
+						$this->sanitizeMethod = 'sanitizeCharacter';
+						break;
+					
+					default:
+						$this->sanitizeMethod = 'sanitizeField';
+						break;
+				}
 			}
-			
-			/**
-			 * Permet de récupèrer lea méthode de sanitize pour le champ
-			 *
-			 * @param array $options
-			 *
-			 * @return string
-			 */
-			protected function optionSanitizeMethod(array $options): string
-			{
-				return (isset($options[self::PARAM_SANITIZE_METHOD]) ? $options[self::PARAM_SANITIZE_METHOD] : Sanitize::SANITIZE);
-			}
-			
-			/**
-			 * Permet de récupèrer lea méthode de sanitize pour le champ
-			 *
-			 * @param array $options
-			 *
-			 * @return array
-			 */
-			protected function optionProhibitedCharacters(array $options): array
-			{
-				return (isset($options[self::PARAM_PROHIBITED_CHARACTERS]) ? $options[self::PARAM_PROHIBITED_CHARACTERS] : []);
-			}
-		
 		
 		/* ------------------------ Fonctions de Sanitize des Champs ------------------------ */
 		

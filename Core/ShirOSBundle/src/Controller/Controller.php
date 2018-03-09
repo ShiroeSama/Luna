@@ -87,7 +87,7 @@
 			$this->SessionModule = Session::getInstance();
 			$this->NameSupervisorModule = NameSupervisor::getInstance();
 			
-			$this->UrlModule = new Url('Server.Homepage');
+			$this->UrlModule = new Url();
 			$this->RenderModule = new Render();
 			$this->RenderModule->setContext($this);
 		}

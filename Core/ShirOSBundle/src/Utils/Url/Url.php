@@ -16,6 +16,7 @@
 	namespace ShirOSBundle\Utils\Url;
 	
 	use ShirOSBundle\Config;
+	use ShirOSBundle\Utils\Validation\Type\UrlType;
 	
 	class Url
 	{
@@ -24,6 +25,12 @@
 		 * @var Config
 		 */
 		protected $ConfigModule;
+		
+		/**
+		 * Instance de la Classe de validation du format d'une URL
+		 * @var UrlType
+		 */
+		protected $UrlCheckModule;
 		
 		/**
 		 * Contient l'url de la page d'accueil
@@ -48,10 +55,13 @@
 		 *
 		 * @param string $homeUrl
 		 */
-		public function __construct(string $homeUrl) {
+		public function __construct(?string $homeUrl = NULL) {
 			$this->ConfigModule = Config::getInstance();
 			$this->rootUrl = rtrim(trim($this->ConfigModule->get('Server.Homepage')), '/');
-			$this->homeUrl = $homeUrl;
+			
+			$this->homeUrl =((is_null($homeUrl)) ? trim($this->ConfigModule->get('Server.Homepage')) : $homeUrl);
+			
+			$this->UrlCheckModule = new UrlType();
 			
 			$routeFile = require(SHIROS_ROUTES);
 			$this->routes = $routeFile['ROUTES'];
@@ -78,11 +88,13 @@
 				return $this->rootUrl . $rule;
 			} else {
 				if (strstr($url, $this->homeUrl)) { return $url; }
+				else if ($this->UrlCheckModule->validate($url)) { return $url; }
 				else {
 					$url = explode('.', $url);
 					if (is_array($url)) { $url = implode('/', $url); }
 					
-					$this->homeUrl = rtrim(trim($this->homeUrl), '/');
+					$this->homeUrl = trim($this->homeUrl, '/');
+					$url = trim($url, '/');
 					return $this->homeUrl . '/' . $url;
 				}
 			}
@@ -93,6 +105,6 @@
 		 *
 		 * @param string $url
 		 */
-		public function goTo(string $url = NULL) { die(header('Location: ' . $this->getUrl($url))); }
+		public function goTo(string $url = NULL, array $params = []) { die(header('Location: ' . $this->getUrl($url, $params))); }
 	}
 ?>

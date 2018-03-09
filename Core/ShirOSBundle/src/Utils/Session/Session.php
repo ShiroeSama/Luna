@@ -59,9 +59,9 @@
 		 */
 		public static function getInstance(): Session
 		{
-			if(is_null(self::$_instance))
-				self::$_instance = new Session();
-			return self::$_instance;
+			if(is_null(static::$_instance))
+				static::$_instance = new static();
+			return static::$_instance;
 		}
 
 		/**

@@ -39,7 +39,7 @@
 		 * Contient le chemin du fichier des routes
 		 * @var string
 		 */
-		protected static $routing_path = SHIROS_ROUTES;
+		protected static $routingPath = SHIROS_ROUTES;
 		
 		/**
 		 * Contient le dossier des contrôleurs
@@ -112,14 +112,18 @@
 		 *
 		 * @return Router
 		 */
-		public static function getInstance(string $filePath = NULL)
+		public static function getInstance(string $filePath = NULL): Router
 		{
-			if(is_null($filePath))
-				$filePath = self::$routing_path;
-
-			if(is_null(self::$_instance))
-				self::$_instance = new Router($filePath);
-			return self::$_instance;
+			$re_instantiation = false;
+			if(!is_null($filePath)) {
+				$re_instantiation = ($filePath != static::$routingPath);
+				static::$routingPath = $filePath;
+			}
+			
+			if(is_null(static::$_instance) || $re_instantiation)
+				static::$_instance = new static(static::$routingPath);
+			
+			return static::$_instance;
 		}
 
 		/* ------------------------ Init Router ------------------------ */

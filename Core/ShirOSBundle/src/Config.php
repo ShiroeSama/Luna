@@ -28,7 +28,7 @@
 		 * Contient le chemin du fichier de config par défaut
 		 * @var string
 		 */
-		protected static $ConfigPath = 'Config/config.php';
+		protected static $configPath = 'Config/config.php';
 
 		/**
 		 * Contient toutes les variables de config
@@ -52,12 +52,16 @@
 		 */
 		public static function getInstance(string $filePath = NULL): Config
 		{
-			if(is_null($filePath))
-				$filePath = self::$ConfigPath;
-
-			if(is_null(self::$_instance))
-				self::$_instance = new Config($filePath);
-			return self::$_instance;
+			$re_instantiation = false;
+			if(!is_null($filePath)) {
+				$re_instantiation = ($filePath != static::$configPath);
+				static::$configPath = $filePath;
+			}
+			
+			if(is_null(static::$_instance) || $re_instantiation)
+				static::$_instance = new static(static::$configPath);
+			
+			return static::$_instance;
 		}
 		
 		/**

@@ -77,9 +77,9 @@
 				$this->ConfigModule->get('ShirOS.Database.Column.Signature_Id') => $this->name,
 				$this->ConfigModule->get('ShirOS.Database.Column.Signature')    => $this->signature
 			];
-
+			
 			$NewSignature = new Model($value);
-			$manager->updateModel($id,$NewSignature);
+			$manager->updateModel($id, $NewSignature);
 		}
 	}	
 ?>

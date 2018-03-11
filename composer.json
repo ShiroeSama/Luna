@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Luna\\": "src/"
+            "Luna\\": "src/Luna"
         }
     }
 }

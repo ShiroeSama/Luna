@@ -17,85 +17,144 @@
 
 	class Config
 	{
-		/**
-		 * Contient l'instance de la classe
-		 * @var Config
-		 */
+	    protected const ROOT_CONFIG = 'Luna';
+
+	    protected const DEFAULT_GENERAL_CONFIG_PATH = LUNA_CONFIG_DIR . '/config.php';
+        protected const DEFAULT_DATABASE_CONFIG_PATH = LUNA_CONFIG_DIR . '/database.php';
+
+        protected const GENERAL_CONFIG_PATH = LUNA_CONFIG_DIR . '/config.php';
+        protected const DATABASE_CONFIG_PATH = LUNA_CONFIG_DIR . '/database.php';
+
+
+		/** @var Config */
 		protected static $_instance;
 
-
 		/**
-		 * Contient le chemin du fichier de config par défaut
-		 * @var string
-		 */
-		protected static $configPath = 'Config/config.php';
-
-		/**
-		 * Contient toutes les variables de config
+		 * Default config vars
 		 * @var array
 		 */
-		protected $settings = [];
+		protected $defaultSettings = [];
+
+        /**
+         * Config vars
+         * @var array
+         */
+        protected $settings = [];
 		
 		
 		/**
-		 * Config constructor, Singleton
-		 *
-		 * @param string $filePath
+		 * Config constructor (Singleton)
 		 */
-		protected function __construct(string $filePath) { $this->settings = require($filePath); }
-		
-		/**
-		 * Retourne l'instance de la classe 'Config'
-		 *
-		 * @param string $filePath | Default Value = NULL
-		 * @return Config
-		 */
-		public static function getInstance(string $filePath = NULL): Config
-		{
-			$re_instantiation = false;
-			if(!is_null($filePath)) {
-				$re_instantiation = ($filePath != static::$configPath);
-				static::$configPath = $filePath;
-			}
-			
-			if(is_null(static::$_instance) || $re_instantiation)
-				static::$_instance = new static(static::$configPath);
-			
-			return static::$_instance;
+		protected function __construct()
+        {
+            # Default Config
+            $this->getConfigFile(self::DEFAULT_GENERAL_CONFIG_PATH);
+            $this->getConfigFile(self::DEFAULT_DATABASE_CONFIG_PATH, 'Database');
+
+            # Config
+            $this->getConfigFile(self::GENERAL_CONFIG_PATH, NULL, false);
+            $this->getConfigFile(self::DATABASE_CONFIG_PATH, 'Database', false);
 		}
-		
-		/**
-		 * Permet de récupèrer une variable de config
-		 *
-		 * @param string $key
-		 * @return mixed
-		 */
-		public function get(string $key) { return $this->isInConfig($this->settings, $key); }
 
-		/**
-		 * Parcour Récursif des configs pour trouver la valeur souhaitée
-		 *
-		 * @param array $configs
-		 * @param string $key
-		 *
-		 * @return mixed
-		 */
-		protected function isInConfig(array $configs, string $key)
-		{
-			$keyArray = explode('.', $key);
-			$key = array_shift($keyArray);
-			$keyString = implode('.', $keyArray);
 
-			if(isset($configs[$key])) {
-				$value = $configs[$key];
+        /**
+         * Get the Config instance
+         * @return Config
+         */
+        public static function getInstance(): Config
+        {
+            if(is_null(static::$_instance))
+                static::$_instance = new static();
 
-				if (is_array($value) && !empty($keyString)) {
-					return $this->isInConfig($value, $keyString);
-				}
-				return $value;
-			}
+            return static::$_instance;
+        }
 
-			return NULL;
-		}
+
+        /* -------------------------------------------------------------------------- */
+        /* GETTER */
+
+            /**
+             * Allow to take the value for a key in the config vars
+             *
+             * @param string $key
+             * @return mixed
+             */
+            public function get(string $key)
+            {
+                $value = $this->keyExistIn($this->settings, $key);
+
+                if (!is_null($value)) {
+                    return $value;
+                } else {
+                    $value = $this->keyExistIn($this->defaultSettings, $key);
+                    if (is_null($value)) {
+                        // TODO : Throw ConfigException
+                    }
+
+                    return $value;
+                }
+            }
+
+            /**
+             * Check if a value exists for the key
+             *
+             * @param array $configs
+             * @param string $key
+             *
+             * @return mixed
+             */
+            protected function keyExistIn(array $configs, string $key)
+            {
+                $keyArray = explode('.', $key);
+                $key = array_shift($keyArray);
+                $keyString = implode('.', $keyArray);
+
+                if(isset($configs[$key])) {
+                    $value = $configs[$key];
+
+                    if (is_array($value) && !empty($keyString)) {
+                        return $this->keyExistIn($value, $keyString);
+                    }
+                    return $value;
+                }
+
+                return NULL;
+            }
+
+
+        /* -------------------------------------------------------------------------- */
+        /* CONFIGURATION */
+
+            /**
+             * @param string $path
+             * @param string $groupName
+             * @param bool $defaultConfig
+             */
+            protected function getConfigFile(string $path, ?string $groupName = NULL, bool $defaultConfig = true)
+            {
+                $settingsName = 'defaultSettings';
+                if (!$defaultConfig) {
+                    $settingsName = 'settings';
+                }
+
+                if (empty($this->$settingsName)) {
+                    $this->$settingsName = [self::ROOT_CONFIG => []];
+                }
+
+                if (is_file($path)) {
+                    if (is_null($groupName)) {
+                        $this->$settingsName[self::ROOT_CONFIG] = require($path);
+                    } else {
+                        $this->$settingsName[self::ROOT_CONFIG][$groupName] = require($path);
+                    }
+                } else {
+                    if ($defaultConfig) {
+                        // TODO : ReadFilesException
+                    }
+                }
+            }
+
+
+
 	}
 ?>

@@ -40,6 +40,7 @@
 		public function start()
 		{
 			define('LUNA_ROOT', __DIR__);
+            define('LUNA_CONFIG_DIR', LUNA_ROOT . 'Config/files');
 		}
 	}
 ?>

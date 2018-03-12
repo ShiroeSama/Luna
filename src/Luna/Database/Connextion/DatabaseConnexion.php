@@ -56,11 +56,11 @@
 		}
 		
 		/* -------------------------------------------------------------------------- */
-		/* CONNEXION
+		/* CONNEXION */
 		
 			/**
 			 * Return a configured connexion
-			 * @return Database
+			 * @return PDO
 			 */
 			public function getConnection(): PDO
 			{
@@ -69,7 +69,7 @@
 			
 		
 		/* -------------------------------------------------------------------------- */
-		/* CONFIGURATION
+		/* CONFIGURATION */
 		
 			/**
 			 * Prepare the connexion according to the selected driver

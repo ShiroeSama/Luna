@@ -188,7 +188,7 @@
 						break;
 					
 					case static::FETCH_LAZY :
-						$request->setFetchMode(static::FETCH_LAZY );
+						$request->setFetchMode(static::FETCH_LAZY);
 						break;
 					
 					case static::FETCH_NAMED :

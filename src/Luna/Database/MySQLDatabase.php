@@ -9,7 +9,7 @@
 	 *
 	 *   @File : MySQLDatabase.php
 	 *   @Created_at : 24/11/2016
-	 *   @Update_at : 10/07/2017
+	 *   @Update_at : 14/03/2018
 	 * --------------------------------------------------------------------------
 	 */
 	
@@ -19,12 +19,6 @@
 	
 	class MySQLDatabase implements Database
 	{
-		/**
-		 * Config Instance
-		 * @var Config
-		 */
-		protected $ConfigModule;
-		
 		/**
 		 * PDO Instance
 		 * @var PDO
@@ -58,8 +52,6 @@
 			$this->db_user = $db_user;
 			$this->db_pass = $db_pass;
 			$this->db_host = $db_host;
-
-			$this->ConfigModule = Config::getInstance();
 		}
 		
 		protected function preparePDO()
@@ -67,12 +59,13 @@
 			$dsn = "mysql:dbname={$this->db_name};host={$this->db_host}";
 			$pdoOptions = [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'];
 			
-			$pdo = new PDO($dsn, $this->db_user, $this->db_pass, $pdoOptions);
-			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$this->PDOModule = new PDO($dsn, $this->db_user, $this->db_pass, $pdoOptions);
+            $this->PDOModule->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		}
 		
 		public function getPDO(): PDO
 		{
+            $this->preparePDO();
 			return $this->PDOModule;
 		}
 	}

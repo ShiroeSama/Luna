@@ -13,9 +13,9 @@
 	 * --------------------------------------------------------------------------
 	 */
 	
-	namespace Luna;
-	
-	use \Throwable;
+	namespace Luna\Component\Routing;
+
+    use \Throwable;
 	use \PDOException;
 	use Luna\Utils\Exception\RouteException;
 	use Luna\Utils\Exception\LoginException;
@@ -27,20 +27,11 @@
 	use Luna\Utils\HTTP\Request;
 	use Luna\Controller\Controller;
 
-	class Router
+	class Router implements RouterInterface
 	{
-		/**
-		 * Contient l'instance de la classe
-		 * @var Router
-		 */
-		protected static $_instance;
-		
-		/**
-		 * Contient le chemin du fichier des routes
-		 * @var string
-		 */
-		protected static $routingPath = SHIROS_ROUTES;
-		
+        /** @var Config */
+        protected $ConfigModule;
+
 		/**
 		 * Contient le dossier des contrôleurs
 		 * @var string
@@ -90,40 +81,17 @@
 		protected $params;
 
 
-		/**
-		 * Construteur de la classe 'AppRouter', Singleton
-		 *
-		 * @param string $filePath
-		 */
-		protected function __construct(string $filePath)
+        /**
+         * Router constructor.
+         */
+        public function __construct()
 		{
-			$routeFile = require($filePath);
-			
-			$this->routes = $routeFile['ROUTES'];
-			$this->rootFolder = $routeFile['ROOT_FOLDER'];
+		    $this->ConfigModule = Config::getInstance();
+
+		    $this->routes = $this->ConfigModule->getRouting('ROUTES');
+            $this->rootFolder = $this->ConfigModule->getRouting('ROOT_FOLDER');
 			
 			$this->RenderModule = new Render();
-		}
-
-		/**
-		 * Retourne l'instance de la classe 'Router'
-		 *
-		 * @param string $filePath | Default Value => NULL
-		 *
-		 * @return Router
-		 */
-		public static function getInstance(string $filePath = NULL): Router
-		{
-			$re_instantiation = false;
-			if(!is_null($filePath)) {
-				$re_instantiation = ($filePath != static::$routingPath);
-				static::$routingPath = $filePath;
-			}
-			
-			if(is_null(static::$_instance) || $re_instantiation)
-				static::$_instance = new static(static::$routingPath);
-			
-			return static::$_instance;
 		}
 
 		/* ------------------------ Init Router ------------------------ */
@@ -194,11 +162,6 @@
 						case LoginException::AUTHENTIFICATION_FAILED_ERROR_CODE:
 							$this->RenderModule->error(HTTP::UNAUTHORIZED, $le->getMessage());
 							break;
-
-						case LoginException::AUTHENTIFICATION_TOKEN_FAILED_ERROR_CODE:
-							$this->RenderModule->error(HTTP::UNAUTHORIZED, $le->getMessage());
-							break;
-						
 						default:
 							$this->RenderModule->internalServerError();
 							break;

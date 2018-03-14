@@ -21,9 +21,11 @@
 
 	    protected const DEFAULT_GENERAL_CONFIG_PATH = LUNA_CONFIG_DIR . '/config.php';
         protected const DEFAULT_DATABASE_CONFIG_PATH = LUNA_CONFIG_DIR . '/database.php';
+		protected const DEFAULT_ROUTING_CONFIG_PATH = LUNA_CONFIG_DIR . '/routing.php';
 
-        protected const GENERAL_CONFIG_PATH = LUNA_CONFIG_DIR . '/config.php';
-        protected const DATABASE_CONFIG_PATH = LUNA_CONFIG_DIR . '/database.php';
+        protected const GENERAL_CONFIG_PATH = APP_CONFIG_DIR . '/config.php';
+        protected const DATABASE_CONFIG_PATH = APP_CONFIG_DIR . '/database.php';
+		protected const ROUTING_CONFIG_PATH = APP_CONFIG_DIR . '/routing.php';
 
 
 		/** @var Config */
@@ -49,11 +51,13 @@
         {
             # Default Config
             $this->getConfigFile(self::DEFAULT_GENERAL_CONFIG_PATH);
-            $this->getConfigFile(self::DEFAULT_DATABASE_CONFIG_PATH, 'Database');
+	        $this->getConfigFile(self::DEFAULT_DATABASE_CONFIG_PATH, 'Database');
+	        $this->getConfigFile(self::DEFAULT_ROUTING_CONFIG_PATH, 'Routing');
 
             # Config
             $this->getConfigFile(self::GENERAL_CONFIG_PATH, NULL, false);
             $this->getConfigFile(self::DATABASE_CONFIG_PATH, 'Database', false);
+	        $this->getConfigFile(self::ROUTING_CONFIG_PATH, 'Routing', false);
 		}
 
 
@@ -94,6 +98,25 @@
                     return $value;
                 }
             }
+		
+			/**
+			 * Get the routing key
+			 *
+			 * @param string $key
+			 * @return mixed
+			 */
+			public function getRouting(?string $key = NULL)
+			{
+				if(is_null($key)) {
+					return $this->get('Luna.Routing');
+				} else {
+					return $this->get('Luna.Routing.' . $key);
+				}
+			}
+		
+		
+		/* -------------------------------------------------------------------------- */
+		/* CHECK */
 
             /**
              * Check if a value exists for the key
@@ -149,7 +172,7 @@
                     }
                 } else {
                     if ($defaultConfig) {
-                        // TODO : ReadFilesException
+                        // TODO : Throw ReadFilesException
                     }
                 }
             }

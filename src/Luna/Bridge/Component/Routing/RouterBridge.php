@@ -25,7 +25,7 @@
 
         /**
          * Allow to instance the Luna Router or the App Router
-         * Make bridge between the framework and the app
+         * Make bridge between the app and the framework
          *
          * @return RouterInterface
          */

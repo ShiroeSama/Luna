@@ -14,30 +14,50 @@
 	 */
 	
 	namespace Luna;
-	use Luna\Config;
-    use Luna\Database\Database;
-    use Luna\Database\Gateway\Manager;
-    use Luna\Utils\Url\Url;
-	use Luna\Database\MySQLDatabase;
 
-	class Kernel
+	use Luna\Bridge\Component\Routing\RouterBridge;
+
+    class Kernel
 	{
+	    /** @var RouterBridge */
+	    protected $RouterBridgeModule;
+
 		/**
 		 * Kernel constructor.
 		 */
 		public function __construct()
 		{
+            # ----------------------------------------------------------
 			# LUNA Constant
-			define('LUNA_ROOT', __DIR__);
+
+            define('LUNA_ROOT', __DIR__);
 			define('LUNA_CONFIG_DIR', LUNA_ROOT . '/Config/files');
-			
+
+
+
 			# ----------------------------------------------------------
 			# APP Constant
-			$luna_root = LUNA_ROOT;
+
+            $luna_root = LUNA_ROOT;
 			$app_root = preg_replace('#/vendor/([^<]*)$#', '', $luna_root);
 			
 			define('APP_ROOT', $app_root);
 			define('APP_CONFIG_DIR', APP_ROOT . '/config');
+
+
+
+            # ----------------------------------------------------------
+            # Prepare Singleton Instance
+
+            Config::getInstance();
+
+
+
+            # ----------------------------------------------------------
+            # Construct Object
+
+            $this->RouterBridgeModule = new RouterBridge();
+
 		}
 		
 		/**
@@ -50,6 +70,12 @@
 		 * - Constant
 		 */
 		public function start()
-		{}
+		{
+            # ----------------------------------------------------------
+            # Routing
+
+		    $router = $this->RouterBridgeModule->bridge();
+		    $router->init();
+        }
 	}
 ?>

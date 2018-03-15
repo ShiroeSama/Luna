@@ -15,20 +15,12 @@
 
     namespace Luna\Bridge\Component\Routing;
 
-    use Luna\Bridge\BridgeInterface;
-    use Luna\Bridge\BridgeTrait;
+    use Luna\Bridge\Bridge;
     use Luna\Component\Routing\Router;
     use Luna\Component\Routing\RouterInterface;
 
-    class RouterBridge implements BridgeInterface
+    class RouterBridge extends Bridge
     {
-        # ----------------------------------------------------------
-        # Trait
-
-            use BridgeTrait;
-
-
-
         # ----------------------------------------------------------
         # Constant
 
@@ -39,26 +31,23 @@
         /**
          * Allow to instance the Luna Router or the App Router
          * Make bridge between the app and the framework
-         *
-         * @return RouterInterface
          */
-        public function bridge(): RouterInterface
+        protected function bridge()
         {
             if (class_exists(self::APP_ROUTER_NAMESPACE)) {
                 $appRouterNamespace = self::APP_ROUTER_NAMESPACE;
 
                 if (is_subclass_of($appRouterNamespace, RouterInterface::class)) {
                     // TODO : Use DI (Dependency Injector)
-                    return new $appRouterNamespace();
+                    $this->class = new $appRouterNamespace();
                 } else {
                     // TODO : Throw BridgeExeption (App Router doesnt implements the RouterInterface)
                 }
-
             } else {
                 $lunaRouterNamespace = self::LUNA_ROUTER_NAMESPACE;
 
                 // TODO : Use DI (Dependency Injector)
-                return new $lunaRouterNamespace();
+	            $this->class = new $lunaRouterNamespace();
             }
         }
     }

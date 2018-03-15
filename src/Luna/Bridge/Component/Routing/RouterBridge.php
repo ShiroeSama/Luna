@@ -16,12 +16,25 @@
     namespace Luna\Bridge\Component\Routing;
 
     use Luna\Bridge\BridgeInterface;
+    use Luna\Bridge\BridgeTrait;
+    use Luna\Component\Routing\Router;
     use Luna\Component\Routing\RouterInterface;
 
     class RouterBridge implements BridgeInterface
     {
-        protected const APP_ROUTER_NAMESPACE = 'App\\Router';
-        protected const LUNA_ROUTER_NAMESPACE = 'Luna\\Component\\Routing\\';
+        # ----------------------------------------------------------
+        # Trait
+
+            use BridgeTrait;
+
+
+
+        # ----------------------------------------------------------
+        # Constant
+
+            protected const APP_ROUTER_NAMESPACE = 'App\\Component\\Routing\\Router';
+            protected const LUNA_ROUTER_NAMESPACE = Router::class;
+
 
         /**
          * Allow to instance the Luna Router or the App Router

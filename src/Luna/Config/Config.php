@@ -22,10 +22,12 @@
 	    protected const DEFAULT_GENERAL_CONFIG_PATH = LUNA_CONFIG_DIR . '/config.php';
         protected const DEFAULT_DATABASE_CONFIG_PATH = LUNA_CONFIG_DIR . '/database.php';
 		protected const DEFAULT_ROUTING_CONFIG_PATH = LUNA_CONFIG_DIR . '/routing.php';
+        protected const DEFAULT_HANDLER_CONFIG_PATH = LUNA_CONFIG_DIR . '/handler.php';
 
         protected const GENERAL_CONFIG_PATH = APP_CONFIG_DIR . '/config.php';
         protected const DATABASE_CONFIG_PATH = APP_CONFIG_DIR . '/database.php';
-		protected const ROUTING_CONFIG_PATH = APP_CONFIG_DIR . '/routing.php';
+        protected const ROUTING_CONFIG_PATH = APP_CONFIG_DIR . '/routing.php';
+        protected const HANDLER_CONFIG_PATH = APP_CONFIG_DIR . '/handler.php';
 
 
 		/** @var Config */
@@ -53,11 +55,13 @@
             $this->getConfigFile(self::DEFAULT_GENERAL_CONFIG_PATH);
 	        $this->getConfigFile(self::DEFAULT_DATABASE_CONFIG_PATH, 'Database');
 	        $this->getConfigFile(self::DEFAULT_ROUTING_CONFIG_PATH, 'Routing');
+            $this->getConfigFile(self::DEFAULT_HANDLER_CONFIG_PATH, 'Handler');
 
             # Config
             $this->getConfigFile(self::GENERAL_CONFIG_PATH, NULL, false);
             $this->getConfigFile(self::DATABASE_CONFIG_PATH, 'Database', false);
 	        $this->getConfigFile(self::ROUTING_CONFIG_PATH, 'Routing', false);
+            $this->getConfigFile(self::HANDLER_CONFIG_PATH, 'Handler', false);
 		}
 
 
@@ -83,18 +87,17 @@
              * @param string $key
              * @return mixed
              */
-            public function get(string $key)
+            public function get(?string $key = NULL)
             {
                 $value = $this->keyExistIn($this->settings, $key);
 
-                if (!is_null($value)) {
-                    return $value;
-                } else {
+                if (is_null($value)) {
                     $value = $this->keyExistIn($this->defaultSettings, $key);
-                    if (is_null($value)) {
-                        // TODO : Throw ConfigException
-                    }
+                }
 
+                if (is_null($value)) {
+                    // TODO : Throw ConfigException
+                } else {
                     return $value;
                 }
             }
@@ -113,6 +116,36 @@
 					return $this->get('Luna.Routing.' . $key);
 				}
 			}
+
+            /**
+             * Get the database key
+             *
+             * @param string $key
+             * @return mixed
+             */
+            public function getDatabase(?string $key = NULL)
+            {
+                if(is_null($key)) {
+                    return $this->get('Luna.Database');
+                } else {
+                    return $this->get('Luna.Database.' . $key);
+                }
+            }
+
+            /**
+             * Get the database key
+             *
+             * @param string $key
+             * @return mixed
+             */
+            public function getHandler(?string $key = NULL)
+            {
+                if(is_null($key)) {
+                    return $this->get('Luna.Handler');
+                } else {
+                    return $this->get('Luna.Handler.' . $key);
+                }
+            }
 		
 		
 		/* -------------------------------------------------------------------------- */
@@ -176,8 +209,5 @@
                     }
                 }
             }
-
-
-
 	}
 ?>

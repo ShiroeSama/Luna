@@ -17,6 +17,7 @@
 
     use \Throwable;
 	use \PDOException;
+    use Luna\Config;
 	use Luna\Utils\Exception\RouteException;
 	use Luna\Utils\Exception\LoginException;
 	use Luna\Utils\Exception\DatabaseException;

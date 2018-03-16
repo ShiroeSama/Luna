@@ -17,14 +17,13 @@
 
     use \Throwable;
 	use \PDOException;
+
     use Luna\Config;
 	use Luna\Utils\Exception\RouteException;
-	use Luna\Utils\Exception\LoginException;
-	use Luna\Utils\Exception\DatabaseException;
+    use Luna\Bridge\Component\Routing\RoutingExceptionHandlerBridge;
 	
 	use Luna\View\Render;
 	use Luna\View\MetaData;
-	use Luna\Utils\HTTP\HTTP;
 	use Luna\Utils\HTTP\Request;
 	use Luna\Controller\Controller;
 
@@ -32,6 +31,10 @@
 	{
         /** @var Config */
         protected $ConfigModule;
+
+        /** @var RoutingExceptionHandlerBridge */
+        protected $RoutingExceptionHandlerBridgeModule;
+
 
 		/**
 		 * Contient le dossier des contrôleurs
@@ -93,99 +96,28 @@
             $this->rootFolder = $this->ConfigModule->getRouting('ROOT_FOLDER');
 			
 			$this->RenderModule = new Render();
+			$this->RoutingExceptionHandlerBridgeModule = new RoutingExceptionHandlerBridge();
 		}
 
 		/* ------------------------ Init Router ------------------------ */
 			
 			/**
-			 * Point d'entré de l'application
+			 * Start the router and exec the routing system
 			 */
 			public function init()
 			{
 				try {
 					$this->launch();
-				} catch (RouteException $re) {
-					# Gére les Exceptions des Routes
-					switch ($re->getCode()) {
-						case RouteException::ROUTE_NOTFOUND_ERROR_CODE:
-							$this->RenderModule->notFound($re->getMessage());
-							break;
-
-						case RouteException::ROUTE_CONTROLLER_NOTFOUND_ERROR_CODE:
-							$this->RenderModule->notFound($re->getMessage());
-							break;
-
-						case RouteException::ROUTE_FORBIDDEN_ERROR_CODE:
-							$this->RenderModule->forbidden($re->getMessage());
-							break;
-
-						case RouteException::ROUTE_METHODE_NOT_ALLOWED_ERROR_CODE:
-							$this->RenderModule->error(HTTP::METHOD_NOT_ALLOWED, $re->getMessage());
-							break;
-
-						case RouteException::ROUTE_GONE_ERROR_CODE:							
-							$this->RenderModule->error(HTTP::GONE, $re->getMessage());
-							break;
-						
-						case RouteException::ROUTE_INTERNAL_SERVER_ERROR_ERROR_CODE:
-							$this->RenderModule->error(HTTP::INTERNAL_SERVER_ERROR, $re->getMessage());
-							break;
-						
-						default:
-							$this->RenderModule->internalServerError();
-							break;
-					}
-				} catch (PDOException $pdo) {
-					# Gére les Exceptions de Connexion à la Base de Données
-					$this->RenderModule->internalServerError($pdo->getMessage());
-				} catch (DatabaseException $dbe) {
-					# Gére les Exceptions de Connexion à la Base de Données
-					switch ($dbe->getCode()) {
-						case DatabaseException::DATABASE_METHODE_NOT_ALLOWED_ERROR_CODE:
-							$this->RenderModule->error(HTTP::METHOD_NOT_ALLOWED, $dbe->getMessage());
-							break;
-
-						case DatabaseException::DATABASE_NOT_IMPLEMENTED_ERROR_CODE:
-							$this->RenderModule->error(HTTP::NOT_IMPLEMENTED, $dbe->getMessage());
-							break;
-
-						case DatabaseException::DATABASE_BAD_GATEWAY_ERROR_CODE:
-							$this->RenderModule->error(HTTP::BAD_GATEWAY, $dbe->getMessage());
-							break;
-						
-						default:						
-							$this->RenderModule->internalServerError();
-							break;
-					}
-				} catch (LoginException $le) {
-					# Gére les Exceptions du Login
-					switch ($le->getCode()) {
-						case LoginException::AUTHENTIFICATION_FAILED_ERROR_CODE:
-							$this->RenderModule->error(HTTP::UNAUTHORIZED, $le->getMessage());
-							break;
-						default:
-							$this->RenderModule->internalServerError();
-							break;
-					}
 				} catch (Throwable $throwable) {
-					$this->catchOtherThrowable($throwable);
+                    $this->RoutingExceptionHandlerBridgeModule->catchException($throwable);
 				}
 			}
-		
-		/**
-		 * Gère les cas d'erreurs inconnue
-		 * @param Throwable $throwable
-		 */
-		protected function catchOtherThrowable(Throwable $throwable)
-		{
-			/*TODO : Redifine this on SubClass*/
-			$this->RenderModule->error($throwable->getCode(), $throwable->getMessage());
-		}
 			
 			
 		
 		/**
-		 * Initialise le traitement de la requête et sa redirection
+		 * Exec the routing system
+         *
 		 * @throws PDOException
 		 * @throws RouteException
 		 */

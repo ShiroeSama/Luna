@@ -15,6 +15,7 @@
 
     namespace Luna\Bridge\Component\Routing;
 
+    use \Throwable;
     use Luna\Bridge\Bridge;
     use Luna\Component\Routing\Handler\RoutingExceptionHandler;
 
@@ -27,7 +28,19 @@
 	    
     	# ----------------------------------------------------------
         # Constant
-	    
+
+            protected const DEFAULT_HANDLER_METHOD = 'onKernelException';
             protected const LUNA_ROUTING_HANDLE_NAMESPACE = RoutingExceptionHandler::class;
+
+
+        public function catchException(Throwable $throwable)
+        {
+            $class = $this->class;
+            $method = $this->method;
+
+            // TODO : Use DI (Dependency Injector)
+            $routingExceptionHandler = new $class();
+            $routingExceptionHandler->$method($throwable);
+        }
     }
 ?>

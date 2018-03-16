@@ -28,6 +28,13 @@
             protected const LUNA_ROUTER_NAMESPACE = Router::class;
 
 
+        # ----------------------------------------------------------
+        # Attributes
+
+            /** @var RouterInterface */
+            protected $class;
+
+
         /**
          * Allow to instance the Luna Router or the App Router
          * Make bridge between the app and the framework
@@ -48,6 +55,17 @@
 
                 // TODO : Use DI (Dependency Injector)
 	            $this->class = new $lunaRouterNamespace();
+            }
+        }
+
+        public function init()
+        {
+            switch (get_class($this->class)) {
+                case self::APP_ROUTER_NAMESPACE :
+                default :
+                    $this->class->init();
+                    break;
+
             }
         }
     }

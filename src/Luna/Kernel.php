@@ -72,10 +72,9 @@
 		public function start()
 		{
             # ----------------------------------------------------------
-            # Routing
+            # Routing Init
 
-		    $router = $this->RouterBridgeModule->bridge();
-		    $router->init();
+		    $this->RouterBridgeModule->init();
         }
 	}
 ?>

@@ -44,9 +44,13 @@
 					$this->class = new $class();
 				}
 			} else {
-				$lunaRoutingHandlerNamespace = static::LUNA_ROUTING_HANDLE_NAMESPACE;
-				// TODO : Use DI (Dependency Injector)
-				$this->class = new $lunaRoutingHandlerNamespace();
+			    if (defined(static::class . '::LUNA_ROUTING_HANDLE_NAMESPACE')) {
+                    $lunaRoutingHandlerNamespace = static::LUNA_ROUTING_HANDLE_NAMESPACE;
+                    // TODO : Use DI (Dependency Injector)
+                    $this->class = new $lunaRoutingHandlerNamespace();
+                } else {
+                    // TODO : Throw Bridge Exception (Constant LUNA_ROUTING_HANDLE_NAMESPACE is not redefined in subclass static::class)
+                }
 			}
 			
 			$this->method = $this->getMethod($handler);
@@ -78,7 +82,12 @@
 			if (array_key_exists('method', $handler)) {
 				return $handler['method'];
 			}
-			return 'onHandlerEvent';
+
+            if (defined(static::class . '::DEFAULT_HANDLER_METHOD')) {
+                return static::DEFAULT_HANDLER_METHOD;
+            } else {
+                return 'onHandlerEvent';
+            }
 		}
 	}
 ?>

@@ -22,7 +22,7 @@
     class RoutingExceptionHandlerBridge extends Bridge
     {
 	    # ----------------------------------------------------------
-	    # Constant
+	    # Trait
 	
 	        use RoutingHandlerTrait;
 	    

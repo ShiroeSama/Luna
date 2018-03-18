@@ -38,22 +38,7 @@
 	     */
 	    protected function bridge()
 	    {
-	    	// TODO : Throw Bridge Exception (This method can be overide in subclass)
-	    }
-	
-	    /**
-	     * Allow to take some information about a bridge
-	     * Like method to class for an Handler
-	     *
-	     * @param string $key
-	     * @return null
-	     */
-	    public function getParameters(string $key)
-	    {
-		    if (property_exists($this, $key)) {
-			    return $this->$key;
-		    }
-		    return NULL;
+	    	// TODO : Throw Bridge Exception (This method can be override in subclass)
 	    }
     }
 ?>

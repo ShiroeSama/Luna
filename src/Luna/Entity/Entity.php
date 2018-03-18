@@ -15,7 +15,22 @@
 
 	namespace Luna\Entity;
     
+	use Luna\Config;
+	
 	class Entity
 	{
+		/** @var Config */
+		protected $ConfigModule;
+		
+		/**
+		 * Entity constructor.
+		 */
+		public function __construct()
+		{
+			$this->ConfigModule = Config::getInstance();
+		}
+		
+		public function __get($key) {}
+		public function __set($name, $value) {}
 	}
 ?>

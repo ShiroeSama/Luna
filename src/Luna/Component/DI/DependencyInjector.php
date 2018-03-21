@@ -35,7 +35,7 @@
          * @param array $args
          * @return Controller
          */
-        public function callController(string $className, ...$args): Controller
+        public function callController(string $className, array $args = []): Controller
         {
             if (!is_a($className, Controller::class)) {
                 // TODO : Throw DependencyInjector Exception ({$className} is not a Controller)
@@ -56,7 +56,7 @@
          * @param array $args
          * @return mixed
          */
-        public function callConstructor(string $className, ...$args)
+        public function callConstructor(string $className, array $args = [])
         {
             if (!class_exists($className)) {
                 // TODO : Throw DependencyInjector Exception (Class {$className} doesn't exist))
@@ -76,7 +76,7 @@
          * @param array $args
          * @return mixed
          */
-        public function callMethod(string $method, $class, ...$args)
+        public function callMethod(string $method, $class, array $args = [])
         {
             if (!method_exists($class, $method)) {
                 // TODO : Throw DependencyInjector Exception (Method {$method} for {$className} doesn't exist))
@@ -156,6 +156,12 @@
          */
         protected function getParameter(ReflectionParameter $parameter)
         {
+            $parameterName = $parameter->getName();
+
+            if (array_key_exists($parameterName, $this->args)) {
+                return $this->args[$parameterName];
+            }
+
             $className = $parameter->getType()->getName();
             if (!class_exists($className)) {
                 // TODO : Throw DependencyInjector Exception (Class {$className} doesn't exist))
@@ -164,13 +170,9 @@
             $parameterClass = $parameter->getClass();
 
             if (is_null($parameterClass)) {
-                $parameterName = $parameter->getName();
-                if (array_key_exists($parameterName, $this->args)) {
-                    return $this->args[$parameterName];
-                } else {
-                    // TODO : Throw DependencyInjector Exception (Cannot inject a value for attribut {$parameterName})
-                }
+                // TODO : Throw Dependency Injector Exception (Cannot inject a value for attribut {$parameterName})
             }
+
             return $this->constructorProcess($parameterClass);
         }
     }

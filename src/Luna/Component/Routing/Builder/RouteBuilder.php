@@ -15,7 +15,8 @@
 	
 	namespace Luna\Component\Routing\Builder;
 	
-	use Luna\Component\Routing\Route;
+	use Luna\Component\DI\DependencyInjector;
+    use Luna\Component\Routing\Route;
 	use Luna\Config;
 	use Luna\Controller\Controller;
 	
@@ -23,6 +24,9 @@
 	{
 		/** @var Config */
 		protected $ConfigModule;
+
+        /** @var DependencyInjector */
+        protected $DIModule;
 		
 		/** @var string */
 		protected $request;
@@ -57,6 +61,7 @@
 		public function __construct(array $requestTab)
 		{
 			$this->ConfigModule = Config::getInstance();
+			$this->DIModule = new DependencyInjector();
 			
 			$this->request = (sizeof($requestTab) === 0) ? '/' : implode('/', $requestTab);
 			$this->requestTab = $requestTab;
@@ -100,9 +105,8 @@
 			
 			$controllerNamespace = str_replace('/',	'\\', $this->rootFolder);
 			$controllerClassName = $controllerNamespace . '\\' . implode('\\', $action);
-			
-			// TODO : Use DI (Dependency Injector)
-			$this->controller = new $controllerClassName();
+
+			$this->controller = $this->DIModule->callController($controllerClassName);
 			
 			# Get Method
 			$this->method = end($action);
@@ -237,7 +241,7 @@
 				
 				for ($i=0; $i < $size; $i++) {
 					if ($route[$i][0] === ':') {
-						array_push($params, rawurldecode($this->requestTab[$i]));
+					    $params[substr($route[$i],1)] = rawurldecode($this->requestTab[$i]);
 					}
 				}
 				

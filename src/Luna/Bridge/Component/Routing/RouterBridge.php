@@ -45,16 +45,12 @@
                 $appRouterNamespace = self::APP_ROUTER_NAMESPACE;
 
                 if (is_subclass_of($appRouterNamespace, RouterInterface::class)) {
-                    // TODO : Use DI (Dependency Injector)
-                    $this->class = new $appRouterNamespace();
+                    $this->class = $this->DIModule->callConstructor($appRouterNamespace);
                 } else {
                     // TODO : Throw BridgeExeption (App Router doesnt implements the RouterInterface)
                 }
             } else {
-                $lunaRouterNamespace = self::LUNA_ROUTER_NAMESPACE;
-
-                // TODO : Use DI (Dependency Injector)
-	            $this->class = new $lunaRouterNamespace();
+                $this->class = $this->DIModule->callConstructor(self::LUNA_ROUTER_NAMESPACE);
             }
         }
 

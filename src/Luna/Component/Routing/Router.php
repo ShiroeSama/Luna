@@ -15,12 +15,16 @@
 	
 	namespace Luna\Component\Routing;
 	
-	use \Throwable;
+	use Luna\Component\DI\DependencyInjector;
+    use \Throwable;
 	use Luna\Bridge\Component\Routing\RoutingExceptionHandlerBridge;
 	use Luna\Component\Routing\Builder\RouteBuilder;
 
 	class Router implements RouterInterface
 	{
+        /** @var DependencyInjector */
+        protected $DIModule;
+
         /** @var RoutingExceptionHandlerBridge */
         protected $RoutingExceptionHandlerBridgeModule;
 
@@ -29,6 +33,7 @@
          */
         public function __construct()
 		{
+            $this->DIModule = new DependencyInjector();
 			$this->RoutingExceptionHandlerBridgeModule = new RoutingExceptionHandlerBridge();
 		}
 
@@ -67,8 +72,8 @@
 				$route = $routeBuilder->getRoute();
 				
 				// TODO : Call RoutingAccessHandler (Check the User Permissions)
-				
-				// TODO : Use DI (Dependency Injector) to call method
+
+                $this->DIModule->callMethod($route->getMethod(), $route->getController(), $route->getParams());
 			}
 		
 		

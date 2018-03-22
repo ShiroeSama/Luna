@@ -7,26 +7,21 @@
      *   @Author : Alexandre Caillot
      *   @WebSite : https://www.shiros.fr
      *
-     *   @File : RoutingExceptionHandler.php
+     *   @File : ExceptionHandler.php
      *   @Created_at : 14/03/2018
-     *   @Update_at : 14/03/2018
+     *   @Update_at : 21/03/2018
      * --------------------------------------------------------------------------
      */
 
-    namespace Luna\Component\Routing\Handler;
+    namespace Luna\Component\Handler\Exception;
 
-    use \Throwable;
     use \PDOException;
 
-    use Luna\Utils\Exception\LoginException;
-    use Luna\Utils\Exception\DatabaseException;
-
-
-    class RoutingExceptionHandler
+    class ExceptionHandler extends ExceptionHandlerAbstract
     {
-        public function onKernelException(Throwable $throwable)
+        public function onKernelException()
         {
-            switch (get_class($throwable)) {
+            switch (get_class($this->throwable)) {
                 case RoutingException::class:
                     break;
 

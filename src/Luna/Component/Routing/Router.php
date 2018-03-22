@@ -15,9 +15,9 @@
 	
 	namespace Luna\Component\Routing;
 	
-	use Luna\Component\DI\DependencyInjector;
     use \Throwable;
-	use Luna\Bridge\Component\Routing\RoutingExceptionHandlerBridge;
+	use Luna\Bridge\Component\Handler\Exception\RoutingExceptionHandlerBridge;
+    use Luna\Component\DI\DependencyInjector;
 	use Luna\Component\Routing\Builder\RouteBuilder;
 
 	class Router implements RouterInterface
@@ -25,37 +25,33 @@
         /** @var DependencyInjector */
         protected $DIModule;
 
-        /** @var RoutingExceptionHandlerBridge */
-        protected $RoutingExceptionHandlerBridgeModule;
-
         /**
          * Router constructor.
          */
         public function __construct()
 		{
             $this->DIModule = new DependencyInjector();
-			$this->RoutingExceptionHandlerBridgeModule = new RoutingExceptionHandlerBridge();
 		}
 
 		/* ------------------------ Init Router ------------------------ */
 			
 			/**
 			 * Start the router and exec the routing system
+             *
+             * @throws \Luna\Component\Exception\DependencyInjectorException
 			 */
 			public function init()
 			{
-				try {
-					$this->launch();
-				} catch (Throwable $throwable) {
-                    $this->RoutingExceptionHandlerBridgeModule->catchException($throwable);
-				}
+                $this->launch();
 			}
 		
 		/* ------------------------ System ------------------------ */
-			
-			/**
-			 * Exec the routing system
-			 */
+
+            /**
+             * Exec the routing system
+             *
+             * @throws \Luna\Component\Exception\DependencyInjectorException
+             */
 			protected function launch()
 			{
 				# Get the Request URI

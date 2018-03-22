@@ -15,10 +15,16 @@
 	
 	namespace Luna;
 
+	use Luna\Bridge\Component\Handler\Exception\ExceptionHandlerBridge;
+    use Luna\Component\Handler\Exception\ExceptionHandler;
+    use \Throwable;
 	use Luna\Bridge\Component\Routing\RouterBridge;
 
     class Kernel
 	{
+        /** @var ExceptionHandlerBridge */
+        protected $ExceptionHandlerBridgeModule;
+
 	    /** @var RouterBridge */
 	    protected $RouterBridgeModule;
 
@@ -56,10 +62,20 @@
             # ----------------------------------------------------------
             # Construct Object
 
-            $this->RouterBridgeModule = new RouterBridge();
-
+            try {
+                $this->RouterBridgeModule = new RouterBridge();
+                $this->RouterBridgeModule->bridge();
+            } catch (Throwable $throwable) {
+                try {
+                    $this->ExceptionHandlerBridgeModule = new ExceptionHandlerBridge($throwable);
+                    $this->ExceptionHandlerBridgeModule->bridge();
+                } catch (Throwable $throwable) {
+                    $exceptionHandler = new ExceptionHandler($throwable);
+                    $exceptionHandler->onKernelException();
+                }
+            }
 		}
-		
+
 		/**
 		 * Access point of the application
 		 * Allow to start the routing component and settings the Luna Framework
@@ -71,10 +87,20 @@
 		 */
 		public function start()
 		{
-            # ----------------------------------------------------------
-            # Routing Init
+		    try {
+                # ----------------------------------------------------------
+                # Routing Init
 
-		    $this->RouterBridgeModule->init();
+                $this->RouterBridgeModule->init();
+
+            } catch (Throwable $throwable) {
+                try {
+                    $this->ExceptionHandlerBridgeModule->catchException();
+                } catch (Throwable $throwable) {
+                    $exceptionHandler = new ExceptionHandler($throwable);
+                    $exceptionHandler->onKernelException();
+                }
+            }
         }
 	}
 ?>

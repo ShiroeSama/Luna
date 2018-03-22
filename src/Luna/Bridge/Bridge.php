@@ -15,12 +15,17 @@
 
     namespace Luna\Bridge;
 
+    use Luna\Component\DI\DependencyInjector;
+    use Luna\Component\Exception\BridgeException;
     use Luna\Config;
 
     abstract class Bridge
     {
 	    /** @var Config */
 	    protected $ConfigModule;
+
+        /** @var DependencyInjector */
+        protected $DIModule;
 	
 	    protected $class;
 	
@@ -30,15 +35,16 @@
 	    public function __construct()
 	    {
 		    $this->ConfigModule = Config::getInstance();
-		    $this->bridge();
+		    $this->DIModule = new DependencyInjector();
 	    }
-	
-	    /**
-	     * Make bridge between the app and the framework
-	     */
-	    protected function bridge()
+
+        /**
+         * Make bridge between the app and the framework
+         * @throws BridgeException
+         */
+	    public function bridge()
 	    {
-	    	// TODO : Throw Bridge Exception (This method can be override in subclass)
+            throw new BridgeException('Bridge method can be override in subclass');
 	    }
     }
 ?>

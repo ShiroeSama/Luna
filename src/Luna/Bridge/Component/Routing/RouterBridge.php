@@ -16,6 +16,7 @@
     namespace Luna\Bridge\Component\Routing;
 
     use Luna\Bridge\Bridge;
+    use Luna\Component\Exception\BridgeException;
     use Luna\Component\Routing\Router;
     use Luna\Component\Routing\RouterInterface;
 
@@ -38,8 +39,11 @@
         /**
          * Allow to instance the Luna Router or the App Router
          * Make bridge between the app and the framework
+         *
+         * @throws BridgeException
+         * @throws \Luna\Component\Exception\DependencyInjectorException
          */
-        protected function bridge()
+        public function bridge()
         {
             if (class_exists(self::APP_ROUTER_NAMESPACE)) {
                 $appRouterNamespace = self::APP_ROUTER_NAMESPACE;
@@ -47,7 +51,7 @@
                 if (is_subclass_of($appRouterNamespace, RouterInterface::class)) {
                     $this->class = $this->DIModule->callConstructor($appRouterNamespace);
                 } else {
-                    // TODO : Throw BridgeExeption (App Router doesnt implements the RouterInterface)
+                    throw new BridgeException('App Router doesnt implements the RouterInterface');
                 }
             } else {
                 $this->class = $this->DIModule->callConstructor(self::LUNA_ROUTER_NAMESPACE);

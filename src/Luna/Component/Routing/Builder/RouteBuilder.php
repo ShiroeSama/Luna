@@ -16,6 +16,7 @@
 	namespace Luna\Component\Routing\Builder;
 	
 	use Luna\Component\DI\DependencyInjector;
+    use Luna\Component\Exception\RouteException;
     use Luna\Component\Routing\Route;
 	use Luna\Config;
 	use Luna\Controller\Controller;
@@ -68,13 +69,16 @@
 			$this->routes = $this->ConfigModule->getRouting('ROUTES');
 			$this->rootFolder = $this->ConfigModule->getRouting('ROOT_FOLDER');
 		}
-		
-		/**
-		 * Prepare the Route
-		 *
-		 * - Check if the Controller Dir exist
-		 * - Check if the route exist in the config
-		 */
+
+        /**
+         * Prepare the Route
+         *
+         * - Check if the Controller Dir exist
+         * - Check if the route exist in the config
+         *
+         * @throws \Luna\Component\Exception\DependencyInjectorException
+         * @throws RouteException
+         */
 		public function prepare()
 		{
 			# Prepare the Route's List
@@ -83,7 +87,7 @@
 			# Check if the route exist
 			$key = $this->matchRoute();
 			if (!$key) {
-				// TODO : Throw RouteException (Not Found);
+			    throw new RouteException("Route '{$this->request}' not found");
 			}
 			
 			# Set the Rout information
@@ -100,7 +104,7 @@
 			unset($action[$keyForMethodName]);
 			
 			if (!$this->checkControllerDir()) {
-				// TODO : Throw Route Exception (Controller Dir doesn't exist)
+                throw new RouteException("Controller Dir '{$this->rootFolder}' doesn't exist");
 			}
 			
 			$controllerNamespace = str_replace('/',	'\\', $this->rootFolder);
@@ -144,17 +148,16 @@
 		
 		
 		/* ------------------------ Format ------------------------ */
-		
-			/**
-			 * Prepare the Route's List
-			 */
+
+            /**
+             * Prepare the Route's List
+             * @throws RouteException
+             */
 			protected function formatRoutes()
 			{
-				$keysRoutes = array_keys($this->routes);
-				
 				foreach ($this->routes as $key => $value) {
 					if (!isset($value['Rule']) || !isset($value['Action'])) {
-						// TODO : Throw the RouteException ("The 'Rule' or 'Action' parameters as not configured for {$key}")
+                        throw new RouteException(RouteException::DEFAULT_CODE, "The 'Rule' or 'Action' parameters as not configured for {$key}");
 					}
 					
 					$value['Rule'] = (($value['Rule'] == '/') ? array('/') : explode('/', $value['Rule']));

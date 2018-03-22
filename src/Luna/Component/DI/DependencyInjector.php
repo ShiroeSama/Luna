@@ -15,6 +15,7 @@
 
     namespace Luna\Component\DI;
 
+    use Luna\Component\Exception\DependencyInjectorException;
     use \ReflectionClass;
     use \ReflectionMethod;
     use \ReflectionParameter;
@@ -34,11 +35,13 @@
          * @param string $className
          * @param array $args
          * @return Controller
+         *
+         * @throws DependencyInjectorException
          */
         public function callController(string $className, array $args = []): Controller
         {
             if (!is_a($className, Controller::class)) {
-                // TODO : Throw DependencyInjector Exception ({$className} is not a Controller)
+                throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "{$className} is not a Controller");
             }
 
             /** @var Controller $controller*/
@@ -55,11 +58,13 @@
          * @param string $className
          * @param array $args
          * @return mixed
+         *
+         * @throws DependencyInjectorException
          */
         public function callConstructor(string $className, array $args = [])
         {
             if (!class_exists($className)) {
-                // TODO : Throw DependencyInjector Exception (Class {$className} doesn't exist))
+                throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Class {$className} doesn't exist");
             }
 
             $reflectionClass = new ReflectionClass($className);
@@ -75,11 +80,14 @@
          * @param $class
          * @param array $args
          * @return mixed
+         *
+         * @throws DependencyInjectorException
          */
         public function callMethod(string $method, $class, array $args = [])
         {
             if (!method_exists($class, $method)) {
-                // TODO : Throw DependencyInjector Exception (Method {$method} for {$className} doesn't exist))
+                $className = (is_string($class) ? $class : get_class($class));
+                throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Method {$method} for {$className} doesn't exist)");
             }
 
             $reflectionMethod = new ReflectionMethod($class, $method);
@@ -97,6 +105,8 @@
          *
          * @param ReflectionClass $reflectionClass
          * @return mixed
+         *
+         * @throws DependencyInjectorException
          */
         protected function constructorProcess(ReflectionClass $reflectionClass)
         {
@@ -119,7 +129,7 @@
 
                 return (empty($constructArgs) ? new $className() : $reflectionClass->newInstanceArgs($constructArgs));
             } else {
-                // TODO : Throw DependencyInjector Exception (Class {$parameterClassName} not instantiable (private or protected constructor))
+                throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Class {$className} not instantiable (private or protected constructor)");
             }
         }
 
@@ -129,6 +139,8 @@
          * @param ReflectionMethod $reflectionMethod
          * @param $object
          * @return mixed
+         *
+         * @throws DependencyInjectorException
          */
         protected function methodProcess(ReflectionMethod $reflectionMethod, $object)
         {
@@ -153,6 +165,8 @@
          *
          * @param ReflectionParameter $parameter
          * @return mixed
+         *
+         * @throws DependencyInjectorException
          */
         protected function getParameter(ReflectionParameter $parameter)
         {
@@ -164,13 +178,13 @@
 
             $className = $parameter->getType()->getName();
             if (!class_exists($className)) {
-                // TODO : Throw DependencyInjector Exception (Class {$className} doesn't exist))
+                throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Class {$className} doesn't exist)");
             }
 
             $parameterClass = $parameter->getClass();
 
             if (is_null($parameterClass)) {
-                // TODO : Throw Dependency Injector Exception (Cannot inject a value for attribut {$parameterName})
+                throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Cannot inject a value for attribut {$parameterName}");
             }
 
             return $this->constructorProcess($parameterClass);

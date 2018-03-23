@@ -15,7 +15,9 @@
 
 	namespace Luna;
 
-	class Config
+	use Luna\Component\Exception\ConfigException;
+
+    class Config
 	{
 	    protected const ROOT_CONFIG = 'Luna';
 
@@ -48,6 +50,8 @@
 		
 		/**
 		 * Config constructor (Singleton)
+         *
+         * @throws ConfigException
 		 */
 		protected function __construct()
         {
@@ -86,6 +90,8 @@
              *
              * @param string $key
              * @return mixed
+             *
+             * @throws ConfigException
              */
             public function get(?string $key = NULL)
             {
@@ -96,7 +102,7 @@
                 }
 
                 if (is_null($value)) {
-                    // TODO : Throw ConfigException
+                    throw new ConfigException("Value '{$value}' not found'");
                 } else {
                     return $value;
                 }
@@ -107,6 +113,8 @@
 			 *
 			 * @param string $key
 			 * @return mixed
+             *
+             * @throws ConfigException
 			 */
 			public function getRouting(?string $key = NULL)
 			{
@@ -122,6 +130,8 @@
              *
              * @param string $key
              * @return mixed
+             *
+             * @throws ConfigException
              */
             public function getDatabase(?string $key = NULL)
             {
@@ -137,6 +147,8 @@
              *
              * @param string $key
              * @return mixed
+             *
+             * @throws ConfigException
              */
             public function getHandler(?string $key = NULL)
             {
@@ -185,6 +197,8 @@
              * @param string $path
              * @param string $groupName
              * @param bool $defaultConfig
+             *
+             * @throws ConfigException
              */
             protected function getConfigFile(string $path, ?string $groupName = NULL, bool $defaultConfig = true)
             {
@@ -205,7 +219,7 @@
                     }
                 } else {
                     if ($defaultConfig) {
-                        // TODO : Throw ReadFilesException
+                        throw new ConfigException('Failed to load the default config files');
                     }
                 }
             }

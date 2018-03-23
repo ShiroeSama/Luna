@@ -16,6 +16,7 @@
 	namespace Luna\Bridge\Component\Handler\Exception;
 
     use Luna\Component\Exception\BridgeException;
+    use Luna\Component\Exception\ConfigException;
     use \Throwable;
 	use Luna\Bridge\Bridge;
 	use Luna\Component\DI\DependencyInjector;
@@ -55,6 +56,8 @@
         /**
          * ExceptionHandlerBridgeTrait constructor.
          * @param Throwable $throwable
+         *
+         * @throws ConfigException
          */
         public function __construct(Throwable $throwable)
         {

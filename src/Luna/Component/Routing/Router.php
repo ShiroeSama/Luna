@@ -39,6 +39,7 @@
 			 * Start the router and exec the routing system
              *
              * @throws \Luna\Component\Exception\DependencyInjectorException
+             * @throws \Luna\Component\Exception\RouteException
 			 */
 			public function init()
 			{
@@ -51,6 +52,7 @@
              * Exec the routing system
              *
              * @throws \Luna\Component\Exception\DependencyInjectorException
+             * @throws \Luna\Component\Exception\RouteException
              */
 			protected function launch()
 			{

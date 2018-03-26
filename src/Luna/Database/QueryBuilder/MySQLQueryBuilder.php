@@ -44,6 +44,7 @@
 		
 		/**
 		 * MySQLQueryBuilder constructor.
+         *
 		 * @param string $entityName
 		 */
 		public function __construct(string $entityName)

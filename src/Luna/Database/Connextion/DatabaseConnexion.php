@@ -73,6 +73,7 @@
 		
 			/**
 			 * Prepare the connexion according to the selected driver
+             * @throws \Luna\Component\Exception\ConfigException
 			 */
 			protected function prepareConnexion()
 			{
@@ -88,10 +89,11 @@
 					}
 				}
 			}
-		
-			/**
-			 * @return int|null
-			 */
+
+            /**
+             * @return int|null
+             * @throws \Luna\Component\Exception\ConfigException
+             */
 			protected function getDriver()
 			{
 				if ($this->ConfigModule->get('ShirOS.Database.Driver.PDO_MYSQL')){
@@ -104,6 +106,7 @@
 			/**
 			 * Get the MySql Connexion
 			 * @return PDO
+             * @throws \Luna\Component\Exception\ConfigException
 			 */
 			protected function getMySqlDatabaseConnexion(): PDO
 			{

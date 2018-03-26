@@ -9,7 +9,7 @@
 	 *
 	 *   @File : Kernel.php
 	 *   @Created_at : 03/12/2017
-	 *   @Update_at : 03/12/2017
+	 *   @Update_at : 26/12/2017
 	 * --------------------------------------------------------------------------
 	 */
 	
@@ -17,6 +17,7 @@
 
 	use Luna\Bridge\Component\Handler\Exception\ExceptionHandlerBridge;
     use Luna\Component\Handler\Exception\ExceptionHandler;
+    use Luna\Component\HTTP\Request\RequestBuilder;
     use \Throwable;
 	use Luna\Bridge\Component\Routing\RouterBridge;
 
@@ -88,10 +89,17 @@
 		public function start()
 		{
 		    try {
+
+                # ----------------------------------------------------------
+                # Request Builder
+
+                $requestBuilder = new RequestBuilder();
+
+
                 # ----------------------------------------------------------
                 # Routing Init
 
-                $this->RouterBridgeModule->init();
+                $this->RouterBridgeModule->init($requestBuilder);
 
             } catch (Throwable $throwable) {
                 try {

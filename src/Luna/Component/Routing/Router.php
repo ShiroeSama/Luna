@@ -9,21 +9,23 @@
 	 *
 	 *   @File : Router.php
 	 *   @Created_at : 03/12/2017
-	 *   @Update_at : 03/12/2017
+	 *   @Update_at : 26/03/2018
 	 * --------------------------------------------------------------------------
 	 */
 	
 	namespace Luna\Component\Routing;
 	
-    use \Throwable;
-	use Luna\Bridge\Component\Handler\Exception\RoutingExceptionHandlerBridge;
     use Luna\Component\DI\DependencyInjector;
+    use Luna\Component\HTTP\Request\RequestBuilder;
 	use Luna\Component\Routing\Builder\RouteBuilder;
 
 	class Router implements RouterInterface
 	{
         /** @var DependencyInjector */
         protected $DIModule;
+
+        /** @var RequestBuilder */
+        protected $requestBuilder;
 
         /**
          * Router constructor.
@@ -34,15 +36,18 @@
 		}
 
 		/* ------------------------ Init Router ------------------------ */
-			
-			/**
-			 * Start the router and exec the routing system
+
+            /**
+             * Start the router and exec the routing system
+             *
+             * @param RequestBuilder $requestBuilder
              *
              * @throws \Luna\Component\Exception\DependencyInjectorException
              * @throws \Luna\Component\Exception\RouteException
-			 */
-			public function init()
+             */
+			public function init(RequestBuilder $requestBuilder)
 			{
+			    $this->requestBuilder = $requestBuilder;
                 $this->launch();
 			}
 		
@@ -64,7 +69,7 @@
 				$requestTab = $this->prepareUserRequestURI($REQUEST_URI, $SCRIPT_NAME);
 				
 				# Build the Route
-				$routeBuilder = new RouteBuilder($requestTab);
+				$routeBuilder = new RouteBuilder($this->requestBuilder, $requestTab);
 				$routeBuilder->prepare();
 				
 				$route = $routeBuilder->getRoute();

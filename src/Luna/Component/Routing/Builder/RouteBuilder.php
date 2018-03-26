@@ -9,7 +9,7 @@
 	 *
 	 *   @File : RouteBuilder.php
 	 *   @Created_at : 18/03/2018
-	 *   @Update_at : 18/03/2018
+     *   @Update_at : 26/03/2018
 	 * --------------------------------------------------------------------------
 	 */
 	
@@ -17,6 +17,7 @@
 	
 	use Luna\Component\DI\DependencyInjector;
     use Luna\Component\Exception\RouteException;
+    use Luna\Component\HTTP\Request\RequestBuilder;
     use Luna\Component\Routing\Route;
 	use Luna\Config;
 	use Luna\Controller\Controller;
@@ -28,6 +29,9 @@
 
         /** @var DependencyInjector */
         protected $DIModule;
+
+        /** @var RequestBuilder */
+        protected $requestBuilder;
 		
 		/** @var string */
 		protected $request;
@@ -52,17 +56,20 @@
 		
 		/** @var array */
 		protected $params;
-		
-		
-		/**
-		 * RouteBuilder constructor.
-		 *
-		 * @param array $requestTab
-		 */
-		public function __construct(array $requestTab)
+
+
+        /**
+         * RouteBuilder constructor.
+         *
+         * @param RequestBuilder $requestBuilder
+         * @param array $requestTab
+         * @throws \Luna\Component\Exception\ConfigException
+         */
+		public function __construct(RequestBuilder $requestBuilder, array $requestTab)
 		{
 			$this->ConfigModule = Config::getInstance();
 			$this->DIModule = new DependencyInjector();
+			$this->requestBuilder = $requestBuilder;
 			
 			$this->request = (sizeof($requestTab) === 0) ? '/' : implode('/', $requestTab);
 			$this->requestTab = $requestTab;
@@ -98,7 +105,13 @@
 			
 			# Action Parse
 			$action = explode('.', $action);
-			
+
+            # Prepare RequestBuilder
+            $this->requestBuilder
+                ->setRule($this->routes[$key]['Rule'])
+                ->setRuleName($key)
+                ->setUserRequest($this->request);
+
 			# Get Controller
 			$keyForMethodName = array_search($action, end($action));
 			unset($action[$keyForMethodName]);
@@ -106,11 +119,11 @@
 			if (!$this->checkControllerDir()) {
                 throw new RouteException("Controller Dir '{$this->rootFolder}' doesn't exist");
 			}
-			
+
 			$controllerNamespace = str_replace('/',	'\\', $this->rootFolder);
 			$controllerClassName = $controllerNamespace . '\\' . implode('\\', $action);
 
-			$this->controller = $this->DIModule->callController($controllerClassName);
+			$this->controller = $this->DIModule->callController($controllerClassName, $this->requestBuilder);
 			
 			# Get Method
 			$this->method = end($action);

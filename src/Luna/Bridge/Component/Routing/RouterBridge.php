@@ -17,6 +17,7 @@
 
     use Luna\Bridge\Bridge;
     use Luna\Component\Exception\BridgeException;
+    use Luna\Component\HTTP\Request\RequestBuilder;
     use Luna\Component\Routing\Router;
     use Luna\Component\Routing\RouterInterface;
 
@@ -58,12 +59,12 @@
             }
         }
 
-        public function init()
+        public function init(RequestBuilder $requestBuilder)
         {
             switch (get_class($this->class)) {
                 case self::APP_ROUTER_NAMESPACE :
                 default :
-                    $this->class->init();
+                    $this->class->init($requestBuilder);
                     break;
 
             }

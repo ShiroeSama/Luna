@@ -114,10 +114,13 @@
 		
 		/** @var array */
 		protected $parameters;
-		
-		/**
-		 * MySQLQuery constructor.
-		 */
+
+        /**
+         * MySQLQuery constructor.
+         *
+         * @param string $entityName
+         * @param string $queryString
+         */
 		public function __construct(string $entityName, string $queryString)
 		{
 			$this->dbConnexion = DatabaseConnexion::getInstance()->getConnection();

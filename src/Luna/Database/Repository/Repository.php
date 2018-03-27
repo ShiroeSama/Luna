@@ -16,5 +16,33 @@
 	namespace Luna\Database\Repository;
 	
 	interface Repository
-	{}
+	{
+        /**
+         * @return array
+         */
+        public function findAll(): array;
+
+
+        /**
+         * @param array $criteria
+         * @param string|NULL $orderBy
+         * @param bool $strict
+         * @return array
+         */
+        public function findBy(array $criteria = [], string $orderBy = NULL, bool $strict = false): array;
+
+
+        /**
+         * @param array $criteria
+         * @param bool $strict
+         * @return array|mixed
+         */
+        public function findOneBy(array $criteria = [], bool $strict = false);
+
+
+        /**
+         * @return int
+         */
+        public function count(): int;
+    }
 ?>

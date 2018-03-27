@@ -19,6 +19,9 @@
 	
 	class Entity
 	{
+	    /** @var string */
+	    protected $table;
+
 		/** @var Config */
 		protected $ConfigModule;
 		
@@ -29,6 +32,11 @@
 		{
 			$this->ConfigModule = Config::getInstance();
 		}
+
+		public function getTable(): string
+        {
+            return $this->table;
+        }
 		
 		public function __get($key) {}
 		public function __set($name, $value) {}

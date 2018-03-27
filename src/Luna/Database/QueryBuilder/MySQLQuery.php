@@ -137,11 +137,13 @@
 			return $this;
 		}
 		
-		public function setParameters(array $params)
+		public function setParameters(array $params): MySQLQuery
 		{
 			foreach ($params as $key => $value) {
 				$this->setParameter($key, $value);
 			}
+
+            return $this;
 		}
 		
 		public function setFetchMode(int $mode): MySQLQuery
@@ -150,6 +152,11 @@
 			
 			return $this;
 		}
+
+		public function getLQL(): string
+        {
+            return $this->queryString;
+        }
 		
 		public function getResult(bool $one = false)
 		{
@@ -215,4 +222,4 @@
 			}
 		}
 	}
-	?>
+?>

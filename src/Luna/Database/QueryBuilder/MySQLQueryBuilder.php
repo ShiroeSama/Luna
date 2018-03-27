@@ -62,18 +62,23 @@
 		 */
 		public function select(string $condition): MySQLQueryBuilder
 		{
-			$this->querySelectPart = "SELECT {$condition}";
+			if (is_null($this->querySelectPart)) {
+                $this->querySelectPart = "SELECT {$condition}";
+            } else {
+                $this->querySelectPart .= ", {$condition}";
+            }
 			
 			return $this;
 		}
-		
-		/**
-		 * FROM Part
-		 *
-		 * @param string $table
-		 * @return MySQLQueryBuilder
-		 */
-		public function from(string $table): MySQLQueryBuilder
+
+        /**
+         * FROM Part
+         *
+         * @param string $table
+         * @param string|null $alias
+         * @return MySQLQueryBuilder
+         */
+		public function from(string $table, string $alias = NULL): MySQLQueryBuilder
 		{
             if (class_exists($table) && is_a($table, Entity::class)) {
                 /** @var Entity $entity */
@@ -82,10 +87,14 @@
             }
 
 			if (is_null($this->queryFromPart)) {
-				$this->queryFromPart = 'FROM ' . $table;
+				$this->queryFromPart = "FROM {$table}";
 			} else {
-				$this->queryFromPart .= ', ' . $table;
+				$this->queryFromPart .= ", {$table}";
 			}
+
+			if(!is_null($alias)) {
+                $this->queryFromPart .= " {$alias}";
+            }
 			
 			return $this;
 		}
@@ -166,7 +175,7 @@
 		 */
 		public function orderBy(string $condition): MySQLQueryBuilder
 		{
-			$this->queryOrderByPart .= "ORDER BY {$condition}";
+			$this->queryOrderByPart = "ORDER BY {$condition}";
 			
 			return $this;
 		}
@@ -180,7 +189,7 @@
 		 */
 		public function groupBy(string $condition): MySQLQueryBuilder
 		{
-			$this->queryOrderByPart .= "GROUP BY {$condition}";
+			$this->queryGroupByPart = "GROUP BY {$condition}";
 			
 			return $this;
 		}

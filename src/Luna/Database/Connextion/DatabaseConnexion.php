@@ -33,10 +33,11 @@
 		
 		/** @var PDO */
 		protected $DBModule;
-		
-		/**
-		 * DatabaseConnexion constructor.
-		 */
+
+        /**
+         * DatabaseConnexion constructor.
+         * @throws \Luna\Component\Exception\ConfigException
+         */
 		protected function __construct()
 		{
 			$this->ConfigModule = Config::getInstance();

@@ -15,17 +15,18 @@
 
 	namespace Luna\Database\Repository;
 
-    use Luna\Database\QueryBuilder\MySQLQuery;
-    use Luna\Database\QueryBuilder\MySQLQueryBuilder;
+
+    use Luna\Database\QueryBuilder\MySQL\Query;
+    use Luna\Database\QueryBuilder\MySQL\QueryBuilder;
 
     class MySQLRepository implements Repository
 	{
 	    /** @var string */
 	    protected $entity;
 
-        protected function createBuilder(): MySQLQueryBuilder
+        protected function createBuilder(): QueryBuilder
         {
-            return new MySQLQueryBuilder($this->entity);
+            return new QueryBuilder($this->entity);
         }
 
         /**
@@ -131,7 +132,7 @@
                 ->select('count(*) as length')
                 ->from($this->entity)
                 ->getQuery()
-                ->setFetchMode(MySQLQuery::FETCH_ASSOC)
+                ->setFetchMode(Query::FETCH_ASSOC)
                 ->getResult(true)['length'];
         }
     }

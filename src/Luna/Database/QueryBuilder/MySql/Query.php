@@ -7,18 +7,18 @@
 	 *   @Author : Alexandre Caillot
 	 *   @WebSite : https://www.shiros.fr
 	 *
-	 *   @File : MySQLQuery.php
+	 *   @File : Query.php
 	 *   @Created_at : 11/03/2018
 	 *   @Update_at : 11/03/2018
 	 * --------------------------------------------------------------------------
 	 */
 	
-	namespace Luna\Database\QueryBuilder;
+	namespace Luna\Database\QueryBuilder\MySQL;
 	
 	use \PDO;
 	use Luna\Database\Connexion\DatabaseConnexion;
 	
-	class MySQLQuery
+	class Query
 	{
 		/**
 		 * Specifies that the fetch method shall return each row as an array indexed
@@ -130,14 +130,14 @@
 			$this->parameters = [];
 		}
 		
-		public function setParameter(string $key, string $value): MySQLQuery
+		public function setParameter(string $key, string $value): Query
 		{
 			$this->parameters[":{$key}"] = $value;
 			
 			return $this;
 		}
 		
-		public function setParameters(array $params): MySQLQuery
+		public function setParameters(array $params): Query
 		{
 			foreach ($params as $key => $value) {
 				$this->setParameter($key, $value);
@@ -146,7 +146,7 @@
             return $this;
 		}
 		
-		public function setFetchMode(int $mode): MySQLQuery
+		public function setFetchMode(int $mode): Query
 		{
 			$this->fetchMode = $mode;
 			

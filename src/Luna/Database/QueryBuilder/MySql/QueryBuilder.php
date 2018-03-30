@@ -16,8 +16,11 @@
 	namespace Luna\Database\QueryBuilder\MySQL;
 
     use Luna\Database\QueryBuilder\MySQL\QueryComponent\AbstractComponent;
+    use Luna\Database\QueryBuilder\MySQL\QueryComponent\DeleteComponent;
+    use Luna\Database\QueryBuilder\MySQL\QueryComponent\InsertComponent;
     use Luna\Database\QueryBuilder\MySQL\QueryComponent\LQLComponent;
     use Luna\Database\QueryBuilder\MySQL\QueryComponent\SelectComponent;
+    use Luna\Database\QueryBuilder\MySQL\QueryComponent\UpdateComponent;
 
     class QueryBuilder
 	{
@@ -47,6 +50,45 @@
         public function select(string $condition) : SelectComponent
         {
             $this->queryComponent = new SelectComponent($this, $condition);
+            return $this->queryComponent;
+        }
+
+
+        /**
+         * Insert Component
+         *
+         * @param string $table
+         * @return InsertComponent
+         */
+        public function insert(string $table) : InsertComponent
+        {
+            $this->queryComponent = new InsertComponent($this, $table);
+            return $this->queryComponent;
+        }
+
+
+        /**
+         * Update Component
+         *
+         * @param string $table
+         * @return UpdateComponent
+         */
+        public function update(string $table) : UpdateComponent
+        {
+            $this->queryComponent = new UpdateComponent($this, $table);
+            return $this->queryComponent;
+        }
+
+
+        /**
+         * Delete Component
+         *
+         * @param string $table
+         * @return DeleteComponent
+         */
+        public function delete(string $table) : DeleteComponent
+        {
+            $this->queryComponent = new DeleteComponent($this, $table);
             return $this->queryComponent;
         }
 

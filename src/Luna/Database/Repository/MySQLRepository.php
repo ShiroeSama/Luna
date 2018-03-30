@@ -15,9 +15,11 @@
 
 	namespace Luna\Database\Repository;
 
-
+    use \ReflectionClass;
+    use \ReflectionProperty;
     use Luna\Database\QueryBuilder\MySQL\Query;
     use Luna\Database\QueryBuilder\MySQL\QueryBuilder;
+    use Luna\Entity\Entity;
 
     class MySQLRepository implements Repository
 	{
@@ -81,7 +83,8 @@
                     if (!$strict) {
                         $searchParam = "CONCAT(\"%\",{$searchParam},\"%\")";
                     }
-                    $queryBuilder->andWhere("$whereKey LIKE $searchParam");
+                    $queryBuilder->and();
+                    $queryBuilder->where("$whereKey LIKE $searchParam");
                 }
             }
 
@@ -89,7 +92,7 @@
                 $queryBuilder->orderBy(":$orderBy");
             }
 
-            $rawQuery = $queryBuilder->getQuery();
+            $rawQuery = $queryBuilder->validate()->getQuery();
             $preparedQuery = $rawQuery->setParameters($criteria);
 
             return $preparedQuery->getResult($one);
@@ -131,9 +134,41 @@
             return $this->createBuilder()
                 ->select('count(*) as length')
                 ->from($this->entity)
+                ->validate()
                 ->getQuery()
                 ->setFetchMode(Query::FETCH_ASSOC)
                 ->getResult(true)['length'];
+        }
+
+
+        public function insert(Entity $entity): Entity
+        {
+            if (is_null($this->entity)) {
+                // TODO : Throw RepositoryException (Entity var is not define)
+            }
+
+            $reflectionClass = new ReflectionClass($this->entity);
+            $properties = $reflectionClass->getProperties();
+
+            $builderQuery = $this->createBuilder()
+                ->insert(get_class($this->entity));
+
+            $values = [];
+            /** @var ReflectionProperty $property */
+            foreach ($properties as $property) {
+                $propertyName = ucfirst($property->getName());
+
+                $method = "get{$propertyName}";
+                if (!method_exists($entity, $method)) {
+                    // TODO : Throw RepositoryException (Entity get_class($entity) haven't getter for attribute $propertyName);
+                }
+
+                $value = $entity->$method();
+                array_push($values, $value);
+            }
+
+            // TODO : Call Find method to refresh object
+            return $entity;
         }
     }
 ?>

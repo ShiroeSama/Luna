@@ -7,35 +7,35 @@
      *   @Author : Alexandre Caillot
      *   @WebSite : https://www.shiros.fr
      *
-     *   @File : GroupBy.php
+     *   @File : OrderBy.php
      *   @Created_at : 29/03/2018
      *   @Update_at : 29/03/2018
      * --------------------------------------------------------------------------
      */
 
-    namespace Luna\Database\QueryBuilder\MySQL\QueryComponent\Action;
+    namespace Luna\Database\QueryBuilder\MySQL\QueryComponent\Traits;
 
-    trait GroupBy
+    trait OrderBy
     {
         /** @var string */
-        protected $groupByQuery;
+        protected $orderByQuery;
 
         /** @var array */
-        protected $groupByPart;
+        protected $orderByPart;
 
         /* -------------------------------------------------------------------------- */
         /* QUERY */
 
         /**
-         * GROUP BY Part
+         * ORDER BY Part
          *
          * @param string $column
          *
-         * @return mixed
+         * @return self
          */
-        public function groupBy(string $column)
+        public function orderBy(string $column): self
         {
-            array_push($this->groupByPart, $column);
+            array_push($this->orderByPart, $column);
 
             return $this;
         }
@@ -44,11 +44,11 @@
         /* -------------------------------------------------------------------------- */
         /* PREPARE QUERY */
 
-        protected function prepareGroupByPart()
+        protected function prepareOrderByPart()
         {
-            $this->groupByQuery = 'GROUP BY ';
-            $this->groupByQuery .= implode(', ', $this->groupByPart);
-            $this->groupByQuery = " {$this->groupByQuery} ";
+            $this->orderByQuery = 'ORDER BY ';
+            $this->orderByQuery .= implode(', ', $this->orderByPart);
+            $this->orderByQuery = " {$this->orderByQuery} ";
         }
     }
 ?>

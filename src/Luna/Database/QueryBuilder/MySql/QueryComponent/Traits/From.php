@@ -13,7 +13,7 @@
      * --------------------------------------------------------------------------
      */
 
-    namespace Luna\Database\QueryBuilder\MySQL\QueryComponent\Action;
+    namespace Luna\Database\QueryBuilder\MySQL\QueryComponent\Traits;
 
     use Luna\Entity\Entity;
 
@@ -34,9 +34,9 @@
          * @param string $table
          * @param string|null $alias
          *
-         * @return mixed
+         * @return self
          */
-        public function from(string $table, string $alias = NULL)
+        public function from(string $table, string $alias = NULL): self
         {
             if (class_exists($table) && is_a($table, Entity::class)) {
                 /** @var Entity $entity */

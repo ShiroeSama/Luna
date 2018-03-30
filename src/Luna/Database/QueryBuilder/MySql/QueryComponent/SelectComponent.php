@@ -16,15 +16,16 @@
     namespace Luna\Database\QueryBuilder\MySQL\QueryComponent;
 
     use Luna\Database\QueryBuilder\MySQL\QueryBuilder;
-    use Luna\Database\QueryBuilder\MySQL\QueryComponent\Action\From;
-    use Luna\Database\QueryBuilder\MySQL\QueryComponent\Action\GroupBy;
-    use Luna\Database\QueryBuilder\MySQL\QueryComponent\Action\OrderBy;
-    use Luna\Database\QueryBuilder\MySQL\QueryComponent\Action\Where;
+    use Luna\Database\QueryBuilder\MySQL\QueryComponent\Traits\From;
+    use Luna\Database\QueryBuilder\MySQL\QueryComponent\Traits\GroupBy;
+    use Luna\Database\QueryBuilder\MySQL\QueryComponent\Traits\OrderBy;
+    use Luna\Database\QueryBuilder\MySQL\QueryComponent\Traits\Where;
+    use Luna\Entity\Entity;
 
     class SelectComponent extends AbstractComponent
     {
         /* -------------------------------------------------------------------------- */
-        /* ACTION */
+        /* TRAITS */
 
         use From;
         use Where;
@@ -87,6 +88,12 @@
          */
         public function leftJoin(string $table, string $keyword, string $condition): SelectComponent
         {
+            if (class_exists($table) && is_a($table, Entity::class)) {
+                /** @var Entity $entity */
+                $entity = new $table();
+                $table = $entity->getTable();
+            }
+
             $leftJoinQuery = "LEFT JOIN {$table} {$keyword} {$condition}";
             array_push($this->leftJoinPart, $leftJoinQuery);
 
@@ -119,12 +126,14 @@
             $this->prepareSelectPart();
             $this->prepareFromPart();
             $this->prepareLeftJoinPart();
+            $this->prepareWherePart();
             $this->prepareOrderByPart();
             $this->prepareGroupByPart();
 
             $this->queryString = $this->selectQuery
                 . $this->fromQuery
                 . $this->leftJoinQuery
+                . $this->whereQuery
                 . $this->orderByQuery
                 . $this->groupByQuery;
 

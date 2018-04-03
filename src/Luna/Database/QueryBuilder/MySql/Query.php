@@ -15,7 +15,8 @@
 	
 	namespace Luna\Database\QueryBuilder\MySQL;
 	
-	use \PDO;
+	use Luna\Component\Exception\DBException;
+    use \PDO;
 	use Luna\Database\Connexion\DatabaseConnexion;
 	
 	class Query
@@ -129,15 +130,34 @@
 			$this->queryString = $queryString;
 			$this->parameters = [];
 		}
-		
-		public function setParameter(string $key, string $value): Query
+
+        /**
+         * Allow to set an parameter in the query string
+         *
+         * Example :
+         *
+         *  Query : SELECT * FROM TestTable TT WHERE TT.id = :id
+         *  After : $query->setParameter('id', 0);
+         *
+         *
+         * @param string $key
+         * @param string $value
+         * @return Query
+         */
+        public function setParameter(string $key, string $value): Query
 		{
 			$this->parameters[":{$key}"] = $value;
 			
 			return $this;
 		}
-		
-		public function setParameters(array $params): Query
+
+        /**
+         * That the same thing of 'setParameter' method, but for an array of values
+         *
+         * @param array $params
+         * @return Query
+         */
+        public function setParameters(array $params): Query
 		{
 			foreach ($params as $key => $value) {
 				$this->setParameter($key, $value);
@@ -145,81 +165,115 @@
 
             return $this;
 		}
-		
-		public function setFetchMode(int $mode): Query
+
+        /**
+         * Permit to change the fetch mode of PDO
+         *
+         * @param int $mode
+         * @return Query
+         */
+        public function setFetchMode(int $mode): Query
 		{
 			$this->fetchMode = $mode;
 			
 			return $this;
 		}
 
-		public function getLQL(): string
+        /**
+         * Get the LQL Query String
+         *
+         * @return string
+         */
+        public function getLQL(): string
         {
             return $this->queryString;
         }
-		
-		public function getResult(bool $one = false)
+
+        /**
+         * Retrieves the result of the query and in the case of an exception, a rollback is performed.
+         *
+         * @param bool $one
+         *
+         * @return array|mixed|string
+         *
+         * @throws DBException
+         */
+        public function getResult(bool $one = false)
 		{
-			if (empty($this->parameters)) {
-				$result = $this->dbConnexion->query($this->queryString);
-			} else {
-				$request = $this->dbConnexion->prepare($this->queryString);
-				$result = $request->execute($this->parameters);
-			}
-			
-			if(stripos(trim($this->queryString), 'UPDATE') === 0
-				|| stripos(trim($this->queryString), 'INSERT') === 0
-				|| stripos(trim($this->queryString), 'DELETE') === 0)
-			{
-				return $result;
-			} else {
-				$class = $this->entityName;
-				
-				switch ($this->fetchMode) {
-					case static::FETCH_ASSOC :
-						$request->setFetchMode(static::FETCH_ASSOC);
-						break;
-						
-					case static::FETCH_BOTH :
-						$request->setFetchMode(static::FETCH_BOTH);
-						break;
-					
-					case static::FETCH_BOUND :
-						$request->setFetchMode(static::FETCH_BOUND);
-						break;
-					
-					case static::FETCH_CLASS :
-						$request->setFetchMode(static::FETCH_CLASS, $class);
-						break;
-					
-					case static::FETCH_INTO :
-						$class = new $class();
-						$request->setFetchMode(static::FETCH_INTO, $class);
-						break;
-					
-					case static::FETCH_LAZY :
-						$request->setFetchMode(static::FETCH_LAZY);
-						break;
-					
-					case static::FETCH_NAMED :
-						$request->setFetchMode(static::FETCH_NAMED);
-						break;
-					
-					case static::FETCH_NUM :
-						$request->setFetchMode(static::FETCH_NUM);
-						break;
-					
-					case static::FETCH_OBJ :
-						$request->setFetchMode(static::FETCH_OBJ);
-						break;
-					
-					default :
-						$request->setFetchMode(static::FETCH_CLASS);
-						break;
-				}
-				
-				return (($one) ? $request->fetch() : $request->fetchAll());
-			}
+		    try {
+                $this->dbConnexion->beginTransaction();
+
+                if (empty($this->parameters)) {
+                    $request = $this->dbConnexion->query($this->queryString);
+                    $result = $request->execute();
+                } else {
+                    $request = $this->dbConnexion->prepare($this->queryString);
+                    $result = $request->execute($this->parameters);
+                }
+
+                $this->dbConnexion->commit();
+
+                if(stripos(trim($this->queryString), 'UPDATE') === 0
+                    || stripos(trim($this->queryString), 'INSERT') === 0
+                    || stripos(trim($this->queryString), 'DELETE') === 0)
+                {
+                    if ($result) {
+                        return $this->dbConnexion->lastInsertId();
+                    } else {
+                        throw new DBException("Request {$this->queryString} Failed");
+                    }
+                } else {
+                    $class = $this->entityName;
+
+                    switch ($this->fetchMode) {
+                        case static::FETCH_ASSOC :
+                            $request->setFetchMode(static::FETCH_ASSOC);
+                            break;
+
+                        case static::FETCH_BOTH :
+                            $request->setFetchMode(static::FETCH_BOTH);
+                            break;
+
+                        case static::FETCH_BOUND :
+                            $request->setFetchMode(static::FETCH_BOUND);
+                            break;
+
+                        case static::FETCH_CLASS :
+                            $request->setFetchMode(static::FETCH_CLASS, $class);
+                            break;
+
+                        case static::FETCH_INTO :
+                            $class = new $class();
+                            $request->setFetchMode(static::FETCH_INTO, $class);
+                            break;
+
+                        case static::FETCH_LAZY :
+                            $request->setFetchMode(static::FETCH_LAZY);
+                            break;
+
+                        case static::FETCH_NAMED :
+                            $request->setFetchMode(static::FETCH_NAMED);
+                            break;
+
+                        case static::FETCH_NUM :
+                            $request->setFetchMode(static::FETCH_NUM);
+                            break;
+
+                        case static::FETCH_OBJ :
+                            $request->setFetchMode(static::FETCH_OBJ);
+                            break;
+
+                        default :
+                            $request->setFetchMode(static::FETCH_CLASS);
+                            break;
+                    }
+
+                    return (($one) ? $request->fetch() : $request->fetchAll());
+                }
+            } catch (\PDOException $PDOException) {
+		        $this->dbConnexion->rollBack();
+		        throw $PDOException;
+            }
 		}
 	}
 ?>

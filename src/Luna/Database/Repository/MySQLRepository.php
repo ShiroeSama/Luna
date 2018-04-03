@@ -15,6 +15,7 @@
 
 	namespace Luna\Database\Repository;
 
+    use Luna\Component\Exception\RepositoryException;
     use \ReflectionClass;
     use \ReflectionProperty;
     use Luna\Database\QueryBuilder\MySQL\Query;
@@ -33,11 +34,13 @@
 
         /**
          * @return array
+         *
+         * @throws RepositoryException
          */
         public function findAll(): array
         {
             if (is_null($this->entity)) {
-                // TODO : Throw RepositoryException (Entity var is not define)
+                throw new RepositoryException('Entity var is not define');
             }
 
             return $this->createBuilder()
@@ -53,12 +56,16 @@
          * @param string|NULL $orderBy
          * @param bool $one
          * @param bool $strict
+         *
          * @return array|mixed
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
          */
         protected function find(array $criteria = [], string $orderBy = NULL, bool $one = false, bool $strict = false)
         {
             if (is_null($this->entity)) {
-                // TODO : Throw RepositoryException (Entity var is not define)
+                throw new RepositoryException('Entity var is not define');
             }
 
             $queryBuilder = $this->createBuilder()
@@ -103,7 +110,11 @@
          * @param array $criteria
          * @param string|NULL $orderBy
          * @param bool $strict
+         *
          * @return array
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
          */
         public function findBy(array $criteria = [], string $orderBy = NULL, bool $strict = false): array
         {
@@ -114,7 +125,11 @@
         /**
          * @param array $criteria
          * @param bool $strict
+         *
          * @return array|mixed
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
          */
         public function findOneBy(array $criteria = [], bool $strict = false)
         {
@@ -124,11 +139,14 @@
 
         /**
          * @return int
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
          */
         public function count(): int
         {
             if (is_null($this->entity)) {
-                // TODO : Throw RepositoryException (Entity var is not define)
+                throw new RepositoryException('Entity var is not define');
             }
 
             return $this->createBuilder()
@@ -141,10 +159,18 @@
         }
 
 
+        /**
+         * @param Entity $entity
+         *
+         * @return Entity
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
+         */
         public function insert(Entity $entity): Entity
         {
             if (is_null($this->entity)) {
-                // TODO : Throw RepositoryException (Entity var is not define)
+                throw new RepositoryException('Entity var is not define');
             }
 
             $reflectionClass = new ReflectionClass($this->entity);
@@ -160,15 +186,18 @@
 
                 $method = "get{$propertyName}";
                 if (!method_exists($entity, $method)) {
-                    // TODO : Throw RepositoryException (Entity get_class($entity) haven't getter for attribute $propertyName);
+                    throw new RepositoryException('Entity '.  get_class($entity) . " haven't getter for attribute $propertyName");
                 }
 
                 $value = $entity->$method();
                 array_push($values, $value);
             }
 
-            // TODO : Call Find method to refresh object
-            return $entity;
+            $resultId = $builderQuery->validate()
+                ->getQuery()
+                ->getResult();
+
+            return $this->findOneBy(['id' => $resultId]);
         }
     }
 ?>

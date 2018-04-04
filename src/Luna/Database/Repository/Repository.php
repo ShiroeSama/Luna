@@ -15,7 +15,10 @@
 	
 	namespace Luna\Database\Repository;
 	
-	interface Repository
+	use Luna\Component\Exception\RepositoryException;
+    use Luna\Entity\Entity;
+
+    interface Repository
 	{
         /**
          * @return array
@@ -44,5 +47,16 @@
          * @return int
          */
         public function count(): int;
+
+
+        /**
+         * @param Entity $entity
+         *
+         * @return Entity
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
+         */
+        public function insert(Entity $entity): Entity;
     }
 ?>

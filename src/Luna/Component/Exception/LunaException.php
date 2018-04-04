@@ -15,12 +15,13 @@
 	
 	namespace Luna\Component\Exception;
 	use \Exception;
+    use Luna\Component\HTTP\HTTP;
     use \Throwable;
 
 	class LunaException extends Exception
 	{
         protected const DEFAULT_MESSAGE = 'Error Processing Request';
-        public const DEFAULT_CODE = 500;
+        public const DEFAULT_CODE = HTTP::INTERNAL_SERVER_ERROR;
 
         /**
          * LunaException constructor.

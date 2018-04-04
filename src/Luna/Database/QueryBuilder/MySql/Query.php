@@ -190,6 +190,16 @@
         }
 
         /**
+         * Retrieve the identifier of the last inserted object
+         *
+         * @return int
+         */
+        public function getLastInsertId(): int
+        {
+            return $this->dbConnexion->lastInsertId();
+        }
+
+        /**
          * Retrieves the result of the query and in the case of an exception, a rollback is performed.
          *
          * @param bool $one
@@ -211,65 +221,57 @@
                     $result = $request->execute($this->parameters);
                 }
 
+                if (!$result) {
+                    throw new DBException("Request {$this->queryString} Failed");
+                }
+
                 $this->dbConnexion->commit();
 
-                if(stripos(trim($this->queryString), 'UPDATE') === 0
-                    || stripos(trim($this->queryString), 'INSERT') === 0
-                    || stripos(trim($this->queryString), 'DELETE') === 0)
-                {
-                    if ($result) {
-                        return $this->dbConnexion->lastInsertId();
-                    } else {
-                        throw new DBException("Request {$this->queryString} Failed");
-                    }
-                } else {
-                    $class = $this->entityName;
+                $class = $this->entityName;
+                switch ($this->fetchMode) {
+                    case static::FETCH_ASSOC :
+                        $request->setFetchMode(static::FETCH_ASSOC);
+                        break;
 
-                    switch ($this->fetchMode) {
-                        case static::FETCH_ASSOC :
-                            $request->setFetchMode(static::FETCH_ASSOC);
-                            break;
+                    case static::FETCH_BOTH :
+                        $request->setFetchMode(static::FETCH_BOTH);
+                        break;
 
-                        case static::FETCH_BOTH :
-                            $request->setFetchMode(static::FETCH_BOTH);
-                            break;
+                    case static::FETCH_BOUND :
+                        $request->setFetchMode(static::FETCH_BOUND);
+                        break;
 
-                        case static::FETCH_BOUND :
-                            $request->setFetchMode(static::FETCH_BOUND);
-                            break;
+                    case static::FETCH_CLASS :
+                        $request->setFetchMode(static::FETCH_CLASS, $class);
+                        break;
 
-                        case static::FETCH_CLASS :
-                            $request->setFetchMode(static::FETCH_CLASS, $class);
-                            break;
+                    case static::FETCH_INTO :
+                        $class = new $class();
+                        $request->setFetchMode(static::FETCH_INTO, $class);
+                        break;
 
-                        case static::FETCH_INTO :
-                            $class = new $class();
-                            $request->setFetchMode(static::FETCH_INTO, $class);
-                            break;
+                    case static::FETCH_LAZY :
+                        $request->setFetchMode(static::FETCH_LAZY);
+                        break;
 
-                        case static::FETCH_LAZY :
-                            $request->setFetchMode(static::FETCH_LAZY);
-                            break;
+                    case static::FETCH_NAMED :
+                        $request->setFetchMode(static::FETCH_NAMED);
+                        break;
 
-                        case static::FETCH_NAMED :
-                            $request->setFetchMode(static::FETCH_NAMED);
-                            break;
+                    case static::FETCH_NUM :
+                        $request->setFetchMode(static::FETCH_NUM);
+                        break;
 
-                        case static::FETCH_NUM :
-                            $request->setFetchMode(static::FETCH_NUM);
-                            break;
+                    case static::FETCH_OBJ :
+                        $request->setFetchMode(static::FETCH_OBJ);
+                        break;
 
-                        case static::FETCH_OBJ :
-                            $request->setFetchMode(static::FETCH_OBJ);
-                            break;
-
-                        default :
-                            $request->setFetchMode(static::FETCH_CLASS);
-                            break;
-                    }
-
-                    return (($one) ? $request->fetch() : $request->fetchAll());
+                    default :
+                        $request->setFetchMode(static::FETCH_CLASS);
+                        break;
                 }
+
+                return (($one) ? $request->fetch() : $request->fetchAll());
             } catch (\PDOException $PDOException) {
 		        $this->dbConnexion->rollBack();
 		        throw $PDOException;

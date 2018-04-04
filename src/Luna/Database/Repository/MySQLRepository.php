@@ -25,33 +25,164 @@
     class MySQLRepository implements Repository
 	{
 	    /** @var string */
-	    protected $entity;
+	    protected $entityName;
 
-        protected function createBuilder(): QueryBuilder
-        {
-            return new QueryBuilder($this->entity);
-        }
+
+
+
+        /* -------------------------------------------------------------------------- */
+        /* FIND REQUEST */
 
         /**
+         * FIND ALL
+         *
          * @return array
          *
          * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
          */
         public function findAll(): array
         {
-            if (is_null($this->entity)) {
-                throw new RepositoryException('Entity var is not define');
+            if (is_null($this->entityName)) {
+                throw new RepositoryException('Entity name is not define');
             }
 
             return $this->createBuilder()
                 ->select('*')
-                ->from($this->entity)
+                ->from($this->entityName)
+                ->validate()
+                ->getQuery()
+                ->getResult();
+        }
+
+        /**
+         * FIND BY
+         *
+         * @param array $criteria
+         * @param string|NULL $orderBy
+         * @param bool $strict
+         *
+         * @return array
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
+         */
+        public function findBy(array $criteria = [], string $orderBy = NULL, bool $strict = false): array
+        {
+            return $this->find($criteria, $orderBy, false, $strict);
+        }
+
+        /**
+         * FIND ONE BY
+         *
+         * @param array $criteria
+         * @param bool $strict
+         *
+         * @return array|mixed
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
+         */
+        public function findOneBy(array $criteria = [], bool $strict = false)
+        {
+            return $this->find($criteria, NULL, true, $strict);
+        }
+
+
+
+
+        /* -------------------------------------------------------------------------- */
+        /* COUNT REQUEST */
+
+        /**
+         * COUNT
+         *
+         * @return int
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
+         */
+        public function count(): int
+        {
+            if (is_null($this->entityName)) {
+                throw new RepositoryException('Entity name is not define');
+            }
+
+            return $this->createBuilder()
+                ->select('count(*) as length')
+                ->from($this->entityName)
+                ->validate()
+                ->getQuery()
+                ->setFetchMode(Query::FETCH_ASSOC)
+                ->getResult(true)['length'];
+        }
+
+
+
+
+        /* -------------------------------------------------------------------------- */
+        /* INSERT REQUEST */
+
+        /**
+         * @param Entity $entity
+         *
+         * @return Entity
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
+         */
+        public function insert(Entity $entity): Entity
+        {
+            // Get the Object Property
+            $reflectionClass = new ReflectionClass($entity);
+            $properties = $reflectionClass->getProperties();
+
+
+            // Prepare the Insert Component
+            $builderQuery = $this->createBuilder()->insert(get_class($entity));
+
+
+            // Call all getters to prepare the values ​​to insert
+            $values = [];
+            /** @var ReflectionProperty $property */
+            foreach ($properties as $property) {
+                $propertyName = ucfirst($property->getName());
+
+                $method = "get{$propertyName}";
+                if (!method_exists($entity, $method)) {
+                    throw new RepositoryException('Entity '.  get_class($entity) . " haven't getter for attribute $propertyName");
+                }
+
+                $value = $entity->$method();
+                array_push($values, $value);
+            }
+
+
+            // Exec the Query
+            return $builderQuery->validate()
                 ->getQuery()
                 ->getResult();
         }
 
 
+
+
+        /* -------------------------------------------------------------------------- */
+        /* SETTINGS */
+
         /**
+         * Create the Query Builder
+         *
+         * @return QueryBuilder
+         */
+        protected function createBuilder(): QueryBuilder
+        {
+            return new QueryBuilder($this->entityName);
+        }
+
+        /**
+         * FIND
+         *
          * @param array $criteria
          * @param string|NULL $orderBy
          * @param bool $one
@@ -64,13 +195,13 @@
          */
         protected function find(array $criteria = [], string $orderBy = NULL, bool $one = false, bool $strict = false)
         {
-            if (is_null($this->entity)) {
-                throw new RepositoryException('Entity var is not define');
+            if (is_null($this->entityName)) {
+                throw new RepositoryException('Entity name is not define');
             }
 
             $queryBuilder = $this->createBuilder()
                 ->select('*')
-                ->from($this->entity);
+                ->from($this->entityName);
 
             if (!empty($criteria)) {
                 $whereKey = array_search(reset($criteria), $criteria);
@@ -103,101 +234,6 @@
             $preparedQuery = $rawQuery->setParameters($criteria);
 
             return $preparedQuery->getResult($one);
-        }
-
-
-        /**
-         * @param array $criteria
-         * @param string|NULL $orderBy
-         * @param bool $strict
-         *
-         * @return array
-         *
-         * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
-         */
-        public function findBy(array $criteria = [], string $orderBy = NULL, bool $strict = false): array
-        {
-            return $this->find($criteria, $orderBy, false, $strict);
-        }
-
-
-        /**
-         * @param array $criteria
-         * @param bool $strict
-         *
-         * @return array|mixed
-         *
-         * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
-         */
-        public function findOneBy(array $criteria = [], bool $strict = false)
-        {
-            return $this->find($criteria, NULL, true, $strict);
-        }
-
-
-        /**
-         * @return int
-         *
-         * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
-         */
-        public function count(): int
-        {
-            if (is_null($this->entity)) {
-                throw new RepositoryException('Entity var is not define');
-            }
-
-            return $this->createBuilder()
-                ->select('count(*) as length')
-                ->from($this->entity)
-                ->validate()
-                ->getQuery()
-                ->setFetchMode(Query::FETCH_ASSOC)
-                ->getResult(true)['length'];
-        }
-
-
-        /**
-         * @param Entity $entity
-         *
-         * @return Entity
-         *
-         * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
-         */
-        public function insert(Entity $entity): Entity
-        {
-            if (is_null($this->entity)) {
-                throw new RepositoryException('Entity var is not define');
-            }
-
-            $reflectionClass = new ReflectionClass($this->entity);
-            $properties = $reflectionClass->getProperties();
-
-            $builderQuery = $this->createBuilder()
-                ->insert(get_class($this->entity));
-
-            $values = [];
-            /** @var ReflectionProperty $property */
-            foreach ($properties as $property) {
-                $propertyName = ucfirst($property->getName());
-
-                $method = "get{$propertyName}";
-                if (!method_exists($entity, $method)) {
-                    throw new RepositoryException('Entity '.  get_class($entity) . " haven't getter for attribute $propertyName");
-                }
-
-                $value = $entity->$method();
-                array_push($values, $value);
-            }
-
-            $resultId = $builderQuery->validate()
-                ->getQuery()
-                ->getResult();
-
-            return $this->findOneBy(['id' => $resultId]);
         }
     }
 ?>

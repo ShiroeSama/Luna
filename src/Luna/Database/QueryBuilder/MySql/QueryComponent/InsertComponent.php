@@ -84,14 +84,20 @@
         /* -------------------------------------------------------------------------- */
         /* VALIDATE */
 
-        public function validate(): QueryBuilder
+        /**
+         * Validate the Query and build it
+         *
+         * @return AbstractComponent
+         * @throws \Luna\Component\Exception\QueryComponentException
+         */
+        public function validate(): AbstractComponent
         {
             $this->prepareInsertPart();
             $this->prepareValuesPart();
 
             $this->queryString = $this->insertQuery . $this->valuesQuery;
 
-            return $this->builder;
+            return $this;
         }
     }
 ?>

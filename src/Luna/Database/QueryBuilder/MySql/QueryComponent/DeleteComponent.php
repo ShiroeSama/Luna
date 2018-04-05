@@ -84,14 +84,21 @@
         /* -------------------------------------------------------------------------- */
         /* VALIDATE */
 
-        public function validate(): QueryBuilder
+
+
+        /**
+         * Validate the Query and build it
+         *
+         * @return AbstractComponent
+         */
+        public function validate(): AbstractComponent
         {
             $this->prepareDeletePart();
             $this->prepareWherePart();
 
             $this->queryString = $this->deleteQuery . $this->whereQuery;
 
-            return $this->builder;
+            return $this;
         }
     }
 ?>

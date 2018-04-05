@@ -40,6 +40,7 @@
          *
          * @throws RepositoryException
          * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function findAll(): array
         {
@@ -66,6 +67,7 @@
          *
          * @throws RepositoryException
          * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function findBy(array $criteria = [], string $orderBy = NULL, bool $strict = false): array
         {
@@ -82,6 +84,7 @@
          *
          * @throws RepositoryException
          * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function findOneBy(array $criteria = [], bool $strict = false)
         {
@@ -101,6 +104,7 @@
          *
          * @throws RepositoryException
          * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function count(): int
         {
@@ -130,6 +134,7 @@
          *
          * @throws RepositoryException
          * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function insert(Entity $entity): Entity
         {
@@ -143,7 +148,6 @@
 
 
             // Call all getters to prepare the values ​​to insert
-            $values = [];
             /** @var ReflectionProperty $property */
             foreach ($properties as $property) {
                 $propertyName = ucfirst($property->getName());
@@ -154,14 +158,13 @@
                 }
 
                 $value = $entity->$method();
-                array_push($values, $value);
+                $builderQuery->value($propertyName, $value);
             }
-
 
             // Exec the Query
             return $builderQuery->validate()
                 ->getQuery()
-                ->getResult();
+                ->getResult(true);
         }
 
 
@@ -192,6 +195,7 @@
          *
          * @throws RepositoryException
          * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\QueryComponentException
          */
         protected function find(array $criteria = [], string $orderBy = NULL, bool $one = false, bool $strict = false)
         {

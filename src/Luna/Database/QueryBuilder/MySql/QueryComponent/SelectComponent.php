@@ -121,7 +121,12 @@
         /* -------------------------------------------------------------------------- */
         /* VALIDATE */
 
-        public function validate(): QueryBuilder
+        /**
+         * Validate the Query and build it
+         *
+         * @return AbstractComponent
+         */
+        public function validate(): AbstractComponent
         {
             $this->prepareSelectPart();
             $this->prepareFromPart();
@@ -137,7 +142,7 @@
                 . $this->orderByQuery
                 . $this->groupByQuery;
 
-            return $this->builder;
+            return $this;
         }
     }
 ?>

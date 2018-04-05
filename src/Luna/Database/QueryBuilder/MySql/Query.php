@@ -141,13 +141,18 @@
          *
          *
          * @param string $key
-         * @param string $value
+         * @param $value
+         *
          * @return Query
          */
-        public function setParameter(string $key, string $value): Query
+        public function setParameter(string $key, $value): Query
 		{
-			$this->parameters[":{$key}"] = $value;
-			
+		    $key = trim($key);
+            $value = trim($value);
+
+		    if (stripos($key, ':') !== 0) { $key = ":{$key}";}
+            $this->parameters[$key] = $value;
+
 			return $this;
 		}
 

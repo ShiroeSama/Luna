@@ -86,7 +86,12 @@
         /* -------------------------------------------------------------------------- */
         /* VALIDATE */
 
-        public function validate(): QueryBuilder
+        /**
+         * Validate the Query and build it
+         *
+         * @return AbstractComponent
+         */
+        public function validate(): AbstractComponent
         {
             $this->prepareUpdatePart();
             $this->prepareSetPart();
@@ -96,7 +101,7 @@
                 . $this->setQuery
                 . $this->whereQuery;
 
-            return $this->builder;
+            return $this;
         }
     }
 ?>

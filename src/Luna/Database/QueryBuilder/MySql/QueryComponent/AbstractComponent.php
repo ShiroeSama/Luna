@@ -15,6 +15,8 @@
 
     namespace Luna\Database\QueryBuilder\MySQL\QueryComponent;
 
+    use Luna\Component\Exception\QueryComponentException;
+    use Luna\Database\QueryBuilder\MySQL\Query;
     use Luna\Database\QueryBuilder\MySQL\QueryBuilder;
 
     class AbstractComponent
@@ -32,20 +34,32 @@
         public function __construct(QueryBuilder $builder)
         {
             $this->builder = $builder;
+            $this->queryString = NULL;
         }
 
         /**
-         * @return string
+         * Validate the Query and build it
+         *
+         * @return AbstractComponent
          */
-        public function getQueryString(): string
+        public function validate(): AbstractComponent
         {
-            return trim($this->queryString);
+            return $this;
         }
 
-        public function validate(): QueryBuilder
+        /**
+         * @return Query
+         * @throws QueryComponentException
+         */
+        public function getQuery(): Query
         {
-            $this->queryString = NULL;
-            return $this->builder;
+            $query = trim($this->queryString);
+
+            if (empty($this->queryString) || is_null($this->queryString)) {
+                throw new QueryComponentException("You can't retrieve the query while it is empty");
+            }
+
+            return new Query($this->builder->getEntityName(), $query);
         }
     }
 ?>

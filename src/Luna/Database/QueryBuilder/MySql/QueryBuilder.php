@@ -105,15 +105,13 @@
 
 			return $this;
 		}
-		
-		
-		/**
-		 * @return Query
-		 */
-		public function getQuery(): Query
-		{
-			$queryString = $this->queryComponent->getQueryString();
-			return new Query($this->entityName, $queryString);
-		}
+
+        /**
+         * @return string
+         */
+        public function getEntityName(): string
+        {
+            return $this->entityName;
+        }
 	}
 ?>

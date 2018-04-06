@@ -58,5 +58,31 @@
          * @throws \Luna\Component\Exception\DBException
          */
         public function insert(Entity $entity): Entity;
+
+
+        /**
+         * @param string $entity
+         * @param array $entities
+         *
+         * @return Entity
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\QueryComponentException
+         */
+        public function inserts(string $entity, array $entities): Entity;
+
+
+        /**
+         * @param Entity $entity
+         * @param string $idName
+         *
+         * @return Entity
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\QueryComponentException
+         */
+        public function delete(Entity $entity, string $idName): Entity;
     }
 ?>

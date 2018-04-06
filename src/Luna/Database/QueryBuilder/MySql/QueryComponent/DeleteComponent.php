@@ -31,10 +31,11 @@
         /* ATTRIBUTES */
 
         /** @var string */
-        protected $deletePart;
-
-        /** @var string */
         protected $deleteQuery;
+
+        /** @var array */
+        protected $deletePart = [];
+
 
         /**
          * SelectComponent constructor.

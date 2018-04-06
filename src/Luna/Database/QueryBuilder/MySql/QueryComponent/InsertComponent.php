@@ -15,6 +15,7 @@
 
     namespace Luna\Database\QueryBuilder\MySQL\QueryComponent;
 
+    use Luna\Database\QueryBuilder\MySQL\Query;
     use Luna\Database\QueryBuilder\MySQL\QueryBuilder;
     use Luna\Database\QueryBuilder\MySQL\QueryComponent\Traits\Values;
     use Luna\Entity\Entity;
@@ -31,10 +32,11 @@
         /* ATTRIBUTES */
 
         /** @var string */
-        protected $insertPart;
-
-        /** @var string */
         protected $insertQuery;
+
+        /** @var array */
+        protected $insertPart = [];
+
 
         /**
          * SelectComponent constructor.
@@ -77,7 +79,10 @@
 
         protected function prepareInsertPart()
         {
-            $this->insertQuery = " INSERT INTO {$this->insertPart} ";
+            $columns = implode(', ', $this->insertColumns);
+            $columns = str_replace(':', '', "({$columns})");
+
+            $this->insertQuery = " INSERT INTO {$this->insertPart} {$columns} ";
         }
 
 
@@ -98,6 +103,18 @@
             $this->queryString = $this->insertQuery . $this->valuesQuery;
 
             return $this;
+        }
+
+        /**
+         * @return Query
+         * @throws \Luna\Component\Exception\QueryComponentException
+         */
+        public function getQuery(): Query
+        {
+            $query = parent::getQuery();
+            $query->setParameters($this->paramsBag);
+
+            return $query;
         }
     }
 ?>

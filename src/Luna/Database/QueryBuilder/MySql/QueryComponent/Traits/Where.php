@@ -21,7 +21,7 @@
         protected $whereQuery;
 
         /** @var array */
-        protected $wherePart;
+        protected $wherePart = [];
 
         /* -------------------------------------------------------------------------- */
         /* QUERY */

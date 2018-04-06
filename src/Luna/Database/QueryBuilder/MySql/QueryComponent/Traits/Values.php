@@ -28,17 +28,20 @@
         /** @var ?string */
         protected $insertMethod = NULL;
 
+        /** @var array */
+        protected $insertColumns = [];
+
         /** @var string */
         protected $valuesQuery;
 
         /** @var array */
-        protected $valuePart;
+        protected $valuePart = [];
 
         /** @var array */
-        protected $valuesPart;
+        protected $valuesPart = [];
 
         /** @var array */
-        protected $paramsBag;
+        protected $paramsBag = [];
 
         /** @var int */
         protected $count = 0;
@@ -61,7 +64,8 @@
                     $this->insertMethod = self::$VALUE_METHOD;
                 }
 
-                $paramsBag[$key] = $value;
+                $this->paramsBag[$key] = $value;
+                array_push($this->insertColumns, $key);
                 array_push($this->valuePart, $key);
             }
 
@@ -80,6 +84,9 @@
             if (is_null($this->insertMethod) || $this->insertMethod == self::$VALUES_METHOD) {
                 if (is_null($this->insertMethod)) {
                     $this->insertMethod = self::$VALUES_METHOD;
+
+                    $keys = array_keys($datas);
+                    $this->insertColumns = $keys;
                 }
 
                 foreach ($datas as &$key => &$value) { $key = "{$key}_{$this->count}"; }

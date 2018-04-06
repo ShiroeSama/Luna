@@ -19,7 +19,7 @@
     use Luna\Database\QueryBuilder\MySQL\Query;
     use Luna\Database\QueryBuilder\MySQL\QueryBuilder;
 
-    class AbstractComponent
+    abstract class AbstractComponent
     {
         /** @var string */
         protected $queryString;

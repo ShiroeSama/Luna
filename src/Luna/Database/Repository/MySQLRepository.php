@@ -27,9 +27,6 @@
 	    /** @var string */
 	    protected $entityName;
 
-
-
-
         /* -------------------------------------------------------------------------- */
         /* FIND REQUEST */
 
@@ -138,28 +135,93 @@
          */
         public function insert(Entity $entity): Entity
         {
-            // Get the Object Property
-            $reflectionClass = new ReflectionClass($entity);
-            $properties = $reflectionClass->getProperties();
-
-
             // Prepare the Insert Component
             $builderQuery = $this->createBuilder()->insert(get_class($entity));
 
+            $values = $this->getInsertParamsBag($entity);
+            $builderQuery->values($values);
 
-            // Call all getters to prepare the values ​​to insert
-            /** @var ReflectionProperty $property */
-            foreach ($properties as $property) {
-                $propertyName = ucfirst($property->getName());
+            // Exec the Query
+            return $builderQuery->validate()
+                ->getQuery()
+                ->getResult(true);
+        }
 
-                $method = "get{$propertyName}";
-                if (!method_exists($entity, $method)) {
-                    throw new RepositoryException('Entity '.  get_class($entity) . " haven't getter for attribute $propertyName");
-                }
-
-                $value = $entity->$method();
-                $builderQuery->value($propertyName, $value);
+        /**
+         * @param string $entity
+         * @param array $entities
+         *
+         * @return Entity
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\QueryComponentException
+         */
+        public function inserts(string $entity, array $entities): Entity
+        {
+            if (empty($entities)) {
+                throw new RepositoryException("You can't persist an empty list");
             }
+
+            // Prepare the Insert Component
+            $builderQuery = $this->createBuilder()->insert($entity);
+
+            foreach ($entities as $entity) {
+                $values = $this->getInsertParamsBag($entity);
+                $builderQuery->values($values);
+            }
+
+            // Exec the Query
+            return $builderQuery->validate()
+                ->getQuery()
+                ->getResult();
+        }
+
+
+
+
+
+
+        /* -------------------------------------------------------------------------- */
+        /* DELETE REQUEST */
+
+        /**
+         * @param Entity $entity
+         * @param string $idName
+         *
+         * @return Entity
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\QueryComponentException
+         */
+        public function delete(Entity $entity, string $idName): Entity
+        {
+            // Prepare the Insert Component
+            $builderQuery = $this->createBuilder()->delete(get_class($entity));
+
+            if (!property_exists($entity, $idName)) {
+                throw new RepositoryException('Entity '.  get_class($entity) . " haven't attribute {$idName}");
+            }
+
+            $methods = [];
+            array_push($methods, 'get' . ucfirst($idName));
+            array_push($methods, "get{$idName}");
+            array_push($methods, "get_{$idName}");
+
+            $getter = false;
+            foreach ($methods as $method) {
+                if (method_exists($entity, $method)) {
+                    $getter = $method;
+                }
+            }
+
+            if (!$getter) {
+                throw new RepositoryException('Entity '.  get_class($entity) . " haven't getter for id");
+            }
+
+            $idValue = $entity->$getter();
+            $builderQuery->where("{$idName} = $idValue");
 
             // Exec the Query
             return $builderQuery->validate()
@@ -238,6 +300,51 @@
             $preparedQuery = $rawQuery->setParameters($criteria);
 
             return $preparedQuery->getResult($one);
+        }
+
+        /**
+         * Returns an associative attribute/value array of an entity
+         *
+         * @param Entity $entity
+         *
+         * @return array
+         *
+         * @throws RepositoryException
+         */
+        protected function getInsertParamsBag(Entity $entity): array
+        {
+            // Get the Object Property
+            $reflectionClass = new ReflectionClass($entity);
+            $properties = $reflectionClass->getProperties();
+
+            $values = [];
+
+            // Call all getters to prepare the values ​​to insert
+            /** @var ReflectionProperty $property */
+            foreach ($properties as $property) {
+                $propertyName = ucfirst($property->getName());
+
+                $methods = [];
+                array_push($methods, 'get' . ucfirst($propertyName));
+                array_push($methods, "get{$propertyName}");
+                array_push($methods, "get_{$propertyName}");
+
+                $getter = false;
+                foreach ($methods as $method) {
+                    if (method_exists($entity, $method)) {
+                        $getter = $method;
+                    }
+                }
+
+                if (!$getter) {
+                    throw new RepositoryException('Entity '.  get_class($entity) . " haven't getter for attribute $propertyName");
+                }
+
+                $value = $entity->$getter();
+                $values[$propertyName] = $value;
+            }
+
+            return $values;
         }
     }
 ?>

@@ -23,7 +23,7 @@
         protected $fromQuery;
 
         /** @var array */
-        protected $fromPart;
+        protected $fromPart = [];
 
         /* -------------------------------------------------------------------------- */
         /* QUERY */

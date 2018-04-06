@@ -33,10 +33,11 @@
         /* ATTRIBUTES */
 
         /** @var string */
-        protected $updatePart;
-
-        /** @var string */
         protected $updateQuery;
+
+        /** @var array */
+        protected $updatePart = [];
+
 
         /**
          * SelectComponent constructor.

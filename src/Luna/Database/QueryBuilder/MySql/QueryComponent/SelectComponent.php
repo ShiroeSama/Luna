@@ -40,13 +40,13 @@
         protected $selectQuery;
 
         /** @var array */
-        protected $selectPart;
+        protected $selectPart = [];
 
         /** @var string */
         protected $leftJoinQuery;
 
         /** @var array */
-        protected $leftJoinPart;
+        protected $leftJoinPart = [];
 
         /**
          * SelectComponent constructor.

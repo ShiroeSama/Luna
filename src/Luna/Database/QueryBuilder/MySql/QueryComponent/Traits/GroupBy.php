@@ -21,7 +21,7 @@
         protected $groupByQuery;
 
         /** @var array */
-        protected $groupByPart;
+        protected $groupByPart = [];
 
         /* -------------------------------------------------------------------------- */
         /* QUERY */

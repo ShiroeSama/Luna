@@ -21,7 +21,7 @@
         protected $orderByQuery;
 
         /** @var array */
-        protected $orderByPart;
+        protected $orderByPart = [];
 
         /* -------------------------------------------------------------------------- */
         /* QUERY */

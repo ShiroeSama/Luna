@@ -21,7 +21,7 @@
         protected $setQuery;
 
         /** @var array */
-        protected $setPart;
+        protected $setPart = [];
 
         /* -------------------------------------------------------------------------- */
         /* QUERY */

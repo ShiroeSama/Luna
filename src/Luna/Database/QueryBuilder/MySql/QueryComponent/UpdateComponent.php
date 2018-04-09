@@ -15,6 +15,7 @@
 
     namespace Luna\Database\QueryBuilder\MySQL\QueryComponent;
 
+    use Luna\Database\QueryBuilder\MySQL\Query;
     use Luna\Database\QueryBuilder\MySQL\QueryBuilder;
     use Luna\Database\QueryBuilder\MySQL\QueryComponent\Traits\Set;
     use Luna\Database\QueryBuilder\MySQL\QueryComponent\Traits\Where;
@@ -103,6 +104,18 @@
                 . $this->whereQuery;
 
             return $this;
+        }
+
+        /**
+         * @return Query
+         * @throws \Luna\Component\Exception\QueryComponentException
+         */
+        public function getQuery(): Query
+        {
+            $query = parent::getQuery();
+            $query->setParameters($this->paramsBag);
+
+            return $query;
         }
     }
 ?>

@@ -138,7 +138,7 @@
             // Prepare the Insert Component
             $builderQuery = $this->createBuilder()->insert(get_class($entity));
 
-            $values = $this->getInsertParamsBag($entity);
+            $values = $this->getParamsBag($entity);
             $builderQuery->values($values);
 
             // Exec the Query
@@ -167,7 +167,7 @@
             $builderQuery = $this->createBuilder()->insert($entity);
 
             foreach ($entities as $entity) {
-                $values = $this->getInsertParamsBag($entity);
+                $values = $this->getParamsBag($entity);
                 $builderQuery->values($values);
             }
 
@@ -175,6 +175,47 @@
             return $builderQuery->validate()
                 ->getQuery()
                 ->getResult();
+        }
+
+
+
+
+
+
+        /* -------------------------------------------------------------------------- */
+        /* UPDATE REQUEST */
+
+        /**
+         * @param Entity $entity
+         * @param string $idName
+         *
+         * @return Entity
+         *
+         * @throws RepositoryException
+         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\QueryComponentException
+         */
+        public function update(Entity $entity, string $idName): Entity
+        {
+            // Prepare the Insert Component
+            $builderQuery = $this->createBuilder()->update(get_class($entity));
+
+            if (!property_exists($entity, $idName)) {
+                throw new RepositoryException('Entity '.  get_class($entity) . " haven't attribute {$idName}");
+            }
+
+            $idValue = $this->getId($entity, $idName);
+            $builderQuery->where("{$idName} = $idValue");
+
+            $values = $this->getParamsBag($entity);
+            foreach ($values as $key => $value) {
+                $builderQuery->set($key, $value);
+            }
+
+            // Exec the Query
+            return $builderQuery->validate()
+                ->getQuery()
+                ->getResult(true);
         }
 
 
@@ -204,23 +245,7 @@
                 throw new RepositoryException('Entity '.  get_class($entity) . " haven't attribute {$idName}");
             }
 
-            $methods = [];
-            array_push($methods, 'get' . ucfirst($idName));
-            array_push($methods, "get{$idName}");
-            array_push($methods, "get_{$idName}");
-
-            $getter = false;
-            foreach ($methods as $method) {
-                if (method_exists($entity, $method)) {
-                    $getter = $method;
-                }
-            }
-
-            if (!$getter) {
-                throw new RepositoryException('Entity '.  get_class($entity) . " haven't getter for id");
-            }
-
-            $idValue = $entity->$getter();
+            $idValue = $this->getId($entity, $idName);
             $builderQuery->where("{$idName} = $idValue");
 
             // Exec the Query
@@ -287,8 +312,9 @@
                     if (!$strict) {
                         $searchParam = "CONCAT(\"%\",{$searchParam},\"%\")";
                     }
-                    $queryBuilder->and();
-                    $queryBuilder->where("$whereKey LIKE $searchParam");
+                    $queryBuilder
+                        ->and()
+                        ->where("$whereKey LIKE $searchParam");
                 }
             }
 
@@ -303,6 +329,29 @@
         }
 
         /**
+         * @param Entity $entity
+         * @param string $idName
+         *
+         * @return mixed
+         * @throws RepositoryException
+         */
+        public function getId(Entity $entity, string $idName)
+        {
+            $methods = [];
+            array_push($methods, 'get' . ucfirst($idName));
+            array_push($methods, "get{$idName}");
+            array_push($methods, "get_{$idName}");
+
+            foreach ($methods as $method) {
+                if (method_exists($entity, $method)) {
+                    return $entity->$method();
+                }
+            }
+
+            throw new RepositoryException('Entity '.  get_class($entity) . " haven't getter for id");
+        }
+
+        /**
          * Returns an associative attribute/value array of an entity
          *
          * @param Entity $entity
@@ -311,7 +360,7 @@
          *
          * @throws RepositoryException
          */
-        protected function getInsertParamsBag(Entity $entity): array
+        protected function getParamsBag(Entity $entity): array
         {
             // Get the Object Property
             $reflectionClass = new ReflectionClass($entity);

@@ -17,11 +17,17 @@
 
     trait Set
     {
+        /** @var array */
+        protected $updateColumns = [];
+
         /** @var string */
         protected $setQuery;
 
         /** @var array */
         protected $setPart = [];
+
+        /** @var array */
+        protected $paramsBag = [];
 
         /* -------------------------------------------------------------------------- */
         /* QUERY */
@@ -29,15 +35,16 @@
         /**
          * VALUE Part
          *
-         * @param string $column
          * @param string $key
          *
+         * @param $value
          * @return self
          */
-        public function set(string $column, string $key): self
+        public function set(string $key, $value): self
         {
-            $setString = "{$column} = {$key}";
-            array_push($this->setPart, $setString);
+            $this->paramsBag[$key] = $value;
+            array_push($this->updateColumns, $key);
+            array_push($this->setPart, "{$key} = :{$key}");
 
             return $this;
         }

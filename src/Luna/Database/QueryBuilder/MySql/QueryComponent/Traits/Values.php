@@ -66,7 +66,7 @@
 
                 $this->paramsBag[$key] = $value;
                 array_push($this->insertColumns, $key);
-                array_push($this->valuePart, $key);
+                array_push($this->valuePart, ":{$key}");
             }
 
             return $this;
@@ -89,7 +89,7 @@
                     $this->insertColumns = $keys;
                 }
 
-                foreach ($datas as &$key => &$value) { $key = "{$key}_{$this->count}"; }
+                foreach ($datas as &$key => &$value) { $key = ":{$key}_{$this->count}"; }
                 unset($key);
                 unset($value);
                 $this->count++;

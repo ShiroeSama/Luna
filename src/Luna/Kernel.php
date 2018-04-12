@@ -9,7 +9,7 @@
 	 *
 	 *   @File : Kernel.php
 	 *   @Created_at : 03/12/2017
-	 *   @Update_at : 26/12/2017
+	 *   @Update_at : 12/04/2018
 	 * --------------------------------------------------------------------------
 	 */
 	
@@ -23,19 +23,31 @@
 
     class Kernel
 	{
+        /** @var Config */
+	    protected $ConfigModule;
+
+        /** @var RouterBridge */
+        protected $RouterBridgeModule;
+
         /** @var ExceptionHandlerBridge */
         protected $ExceptionHandlerBridgeModule;
 
-	    /** @var RouterBridge */
-	    protected $RouterBridgeModule;
 
-		/**
+        # -------------------------------------------------------------
+        #   Global Vars
+        # -------------------------------------------------------------
+
+        /** @var string */
+        protected static $environement;
+
+
+        /**
 		 * Kernel constructor.
 		 */
 		public function __construct()
 		{
             # ----------------------------------------------------------
-			# LUNA Constant
+			# LUNA Constants
 
             define('LUNA_ROOT', __DIR__);
 			define('LUNA_CONFIG_DIR', LUNA_ROOT . '/Config/files');
@@ -43,7 +55,7 @@
 
 
 			# ----------------------------------------------------------
-			# APP Constant
+			# APP Constants
 
             $luna_root = LUNA_ROOT;
 			$app_root = preg_replace('#/vendor/([^<]*)$#', '', $luna_root);
@@ -51,19 +63,28 @@
 			define('APP_ROOT', $app_root);
 			define('APP_CONFIG_DIR', APP_ROOT . '/config');
 
-
-
-            # ----------------------------------------------------------
-            # Prepare Singleton Instance
-
-            Config::getInstance();
-
-
-
-            # ----------------------------------------------------------
-            # Construct Object
-
             try {
+
+                # ----------------------------------------------------------
+                # Prepare Singleton Instance
+
+                $this->ConfigModule = Config::getInstance();
+
+
+
+
+                # ----------------------------------------------------------
+                # Define Global vars
+
+                self::$environement = $this->ConfigModule->get('Luna.Environement');
+
+
+
+
+                # ----------------------------------------------------------
+                # Construct Object
+
+
                 $this->RouterBridgeModule = new RouterBridge();
                 $this->RouterBridgeModule->bridge();
             } catch (Throwable $throwable) {
@@ -109,6 +130,14 @@
                     $exceptionHandler->onKernelException();
                 }
             }
+        }
+
+        /**
+         * @return string
+         */
+        public static function getEnv(): string
+        {
+            return self::$environement;
         }
 	}
 ?>

@@ -36,7 +36,7 @@
          * @return array
          *
          * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\DatabaseException
          * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function findAll(): array
@@ -63,7 +63,7 @@
          * @return array
          *
          * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\DatabaseException
          * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function findBy(array $criteria = [], string $orderBy = NULL, bool $strict = false): array
@@ -80,7 +80,7 @@
          * @return array|mixed
          *
          * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\DatabaseException
          * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function findOneBy(array $criteria = [], bool $strict = false)
@@ -100,7 +100,7 @@
          * @return int
          *
          * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\DatabaseException
          * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function count(): int
@@ -130,7 +130,7 @@
          * @return Entity
          *
          * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\DatabaseException
          * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function insert(Entity $entity): Entity
@@ -154,7 +154,7 @@
          * @return Entity
          *
          * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\DatabaseException
          * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function inserts(string $entity, array $entities): Entity
@@ -192,7 +192,7 @@
          * @return Entity
          *
          * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\DatabaseException
          * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function update(Entity $entity, string $idName): Entity
@@ -233,7 +233,7 @@
          * @return Entity
          *
          * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\DatabaseException
          * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function delete(Entity $entity, string $idName): Entity
@@ -281,7 +281,7 @@
          * @return array|mixed
          *
          * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\DatabaseException
          * @throws \Luna\Component\Exception\QueryComponentException
          */
         protected function find(array $criteria = [], string $orderBy = NULL, bool $one = false, bool $strict = false)

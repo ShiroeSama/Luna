@@ -15,11 +15,21 @@
 
     namespace Luna\Component\Handler\Exception;
 
+    use Luna\Kernel;
+    use Monolog\Handler\StreamHandler;
+    use Monolog\Logger;
+    use Psr\Log\LoggerInterface;
     use \Throwable;
 
 
-    abstract class ExceptionHandlerAbstract
+    abstract class ExceptionHandlerAbstract implements ExceptionHandlerInterface
     {
+        /** @var string */
+        protected $logPath;
+
+        /** @var LoggerInterface */
+        protected $logger;
+
         /** @var Throwable */
         protected $throwable;
 
@@ -29,7 +39,24 @@
          */
         public function __construct(Throwable $throwable)
         {
+            $this->logPath = APP_ROOT . '/var/log/' . Kernel::getEnv() . '/exception.log';
+            $this->logger = new Logger(new StreamHandler($this->logPath));
+
             $this->throwable = $throwable;
+        }
+
+        public function logException()
+        {
+            $this->logger->error('--------------------------------');
+            $this->logger->error(__METHOD__ . ' : ' . $this->throwable->getMessage());
+            $this->logger->error('--------------------------------');
+        }
+
+        public function showException()
+        {
+            $code = $this->throwable->getCode();
+
+            // TODO : Render the Exception
         }
     }
 ?>

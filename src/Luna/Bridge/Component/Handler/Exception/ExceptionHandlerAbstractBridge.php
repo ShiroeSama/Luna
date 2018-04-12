@@ -54,7 +54,7 @@
 
 
         /**
-         * ExceptionHandlerBridgeTrait constructor.
+         * ExceptionHandlerAbstractBridge constructor.
          * @param Throwable $throwable
          *
          * @throws ConfigException

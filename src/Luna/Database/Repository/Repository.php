@@ -55,7 +55,7 @@
          * @return Entity
          *
          * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\DatabaseException
          */
         public function insert(Entity $entity): Entity;
 
@@ -67,7 +67,7 @@
          * @return Entity
          *
          * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\DatabaseException
          * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function inserts(string $entity, array $entities): Entity;
@@ -80,7 +80,7 @@
          * @return Entity
          *
          * @throws RepositoryException
-         * @throws \Luna\Component\Exception\DBException
+         * @throws \Luna\Component\Exception\DatabaseException
          * @throws \Luna\Component\Exception\QueryComponentException
          */
         public function delete(Entity $entity, string $idName): Entity;

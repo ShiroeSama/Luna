@@ -15,7 +15,7 @@
 	
 	namespace Luna\Database\QueryBuilder\MySQL;
 	
-	use Luna\Component\Exception\DBException;
+	use Luna\Component\Exception\DatabaseException;
     use \PDO;
 	use Luna\Database\Connexion\DatabaseConnexion;
 	
@@ -211,7 +211,7 @@
          *
          * @return array|mixed|string
          *
-         * @throws DBException
+         * @throws DatabaseException
          */
         public function getResult(bool $one = false)
 		{
@@ -227,7 +227,7 @@
                 }
 
                 if (!$result) {
-                    throw new DBException("Request {$this->queryString} Failed");
+                    throw new DatabaseException("Request {$this->queryString} Failed");
                 }
 
                 $this->dbConnexion->commit();

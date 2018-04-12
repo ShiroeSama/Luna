@@ -7,16 +7,18 @@
      *   @Author : Alexandre Caillot
      *   @WebSite : https://www.shiros.fr
      *
-     *   @File : DBException.php
-     *   @Created_at : 03/04/2018
-     *   @Update_at : 03/04/2018
+     *   @File : ExceptionDispatcherInterface.php
+     *   @Created_at : 12/04/2018
+     *   @Update_at : 12/04/2018
      * --------------------------------------------------------------------------
      */
 
-    namespace Luna\Component\Exception;
+    namespace Luna\Component\Dispatcher\Exception;
 
-    class DBException extends LunaException
+    use \Throwable;
+
+    interface ExceptionDispatcherInterface
     {
-        protected const DEFAULT_MESSAGE = 'Error Processing Database Request';
+        public function dispatcher(Throwable $throwable);
     }
 ?>

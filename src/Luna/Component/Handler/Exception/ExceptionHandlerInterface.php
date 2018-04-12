@@ -7,23 +7,18 @@
      *   @Author : Alexandre Caillot
      *   @WebSite : https://www.shiros.fr
      *
-     *   @File : ExceptionHandler.php
+     *   @File : ExceptionHandlerInterface.php
      *   @Created_at : 14/03/2018
-     *   @Update_at : 21/03/2018
+     *   @Update_at : 12/04/2018
      * --------------------------------------------------------------------------
      */
 
     namespace Luna\Component\Handler\Exception;
 
-    class ExceptionHandler extends ExceptionHandlerAbstract
+    interface ExceptionHandlerInterface
     {
-        public function onKernelException()
-        {
-            // Log the Exception
-            $this->logException();
+        public function logException();
 
-            // Show the exception
-            $this->showException();
-        }
+        public function showException();
     }
 ?>

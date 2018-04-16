@@ -9,22 +9,24 @@
      *
      *   @File : RoutingExceptionHandlerBridge.php
      *   @Created_at : 15/03/2018
-     *   @Update_at : 15/03/2018
+     *   @Update_at : 16/04/2018
      * --------------------------------------------------------------------------
      */
 
     namespace Luna\Bridge\Component\Handler\Exception;
 
-    use \Throwable;
     use Luna\Component\Handler\Exception\RoutingExceptionHandler;
+    use Luna\Component\Handler\Exception\RoutingExceptionHandlerInterface;
 
-    class RoutingExceptionHandlerBridge extends ExceptionHandlerAbstractBridge
+    class RoutingExceptionHandlerBridge extends AbstractExceptionHandlerBridge
     {
 	    # ----------------------------------------------------------
         # Constant
 
-            protected const EXCEPTION_HANDLER_NAME = 'Routing';
-            protected const DEFAULT_HANDLER_METHOD = 'onRoutingException';
-            protected const LUNA_HANDLER_EXCEPTION_NAMESPACE = RoutingExceptionHandler::class;
+            protected const HANDLER_TYPE = 'Exception';
+            protected const HANDLER_NAME = 'Routing';
+            protected const HANDLER_METHOD = 'onRoutingException';
+            protected const HANDLER_INTERFACE = RoutingExceptionHandlerInterface::class;
+            protected const LUNA_HANDLER_NAMESPACE = RoutingExceptionHandler::class;
     }
 ?>

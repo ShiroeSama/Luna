@@ -15,7 +15,7 @@
 
     namespace Luna\Component\Handler\Exception;
 
-    class ExceptionHandler extends ExceptionHandlerAbstract
+    class ExceptionHandler extends ExceptionHandlerAbstract implements ExceptionHandlerInterface
     {
         public function onKernelException()
         {

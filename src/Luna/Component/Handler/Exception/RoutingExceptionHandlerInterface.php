@@ -7,23 +7,20 @@
      *   @Author : Alexandre Caillot
      *   @WebSite : https://www.shiros.fr
      *
-     *   @File : RoutingExceptionHandler.php
-     *   @Created_at : 14/03/2018
+     *   @File : RoutingExceptionHandlerInterface.php
+     *   @Created_at : 16/04/2018
      *   @Update_at : 16/04/2018
      * --------------------------------------------------------------------------
      */
 
     namespace Luna\Component\Handler\Exception;
 
-    class RoutingExceptionHandler extends ExceptionHandlerAbstract implements RoutingExceptionHandlerInterface
+    interface RoutingExceptionHandlerInterface
     {
-        public function onRoutingException()
-        {
-            // Log the Exception
-            $this->logException();
+        public function logException();
 
-            // Show the exception
-            $this->showException();
-        }
+        public function showException();
+
+        public function onRoutingException();
     }
 ?>

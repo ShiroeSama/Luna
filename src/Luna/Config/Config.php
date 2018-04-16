@@ -24,12 +24,16 @@
 	    protected const DEFAULT_GENERAL_CONFIG_PATH = LUNA_CONFIG_DIR . '/config.php';
         protected const DEFAULT_DATABASE_CONFIG_PATH = LUNA_CONFIG_DIR . '/database.php';
 		protected const DEFAULT_ROUTING_CONFIG_PATH = LUNA_CONFIG_DIR . '/routing.php';
+        protected const DEFAULT_DISPATCHER_CONFIG_PATH = LUNA_CONFIG_DIR . '/dispatcher.php';
         protected const DEFAULT_HANDLER_CONFIG_PATH = LUNA_CONFIG_DIR . '/handler.php';
+        protected const DEFAULT_SUBSCRIBER_CONFIG_PATH = LUNA_CONFIG_DIR . '/subscriber.php';
 
         protected const GENERAL_CONFIG_PATH = APP_CONFIG_DIR . '/config.php';
         protected const DATABASE_CONFIG_PATH = APP_CONFIG_DIR . '/database.php';
         protected const ROUTING_CONFIG_PATH = APP_CONFIG_DIR . '/routing.php';
+        protected const DISPATCHER_CONFIG_PATH = APP_CONFIG_DIR . '/dispatcher.php';
         protected const HANDLER_CONFIG_PATH = APP_CONFIG_DIR . '/handler.php';
+        protected const SUBSCRIBER_CONFIG_PATH = APP_CONFIG_DIR . '/subscriber.php';
 
 
 		/** @var Config */
@@ -59,13 +63,17 @@
             $this->getConfigFile(self::DEFAULT_GENERAL_CONFIG_PATH);
 	        $this->getConfigFile(self::DEFAULT_DATABASE_CONFIG_PATH, 'Database');
 	        $this->getConfigFile(self::DEFAULT_ROUTING_CONFIG_PATH, 'Routing');
+            $this->getConfigFile(self::DEFAULT_DISPATCHER_CONFIG_PATH, 'Dispatcher');
             $this->getConfigFile(self::DEFAULT_HANDLER_CONFIG_PATH, 'Handler');
+            $this->getConfigFile(self::DEFAULT_SUBSCRIBER_CONFIG_PATH, 'Subscriber');
 
             # Config
             $this->getConfigFile(self::GENERAL_CONFIG_PATH, NULL, false);
             $this->getConfigFile(self::DATABASE_CONFIG_PATH, 'Database', false);
 	        $this->getConfigFile(self::ROUTING_CONFIG_PATH, 'Routing', false);
+            $this->getConfigFile(self::DISPATCHER_CONFIG_PATH, 'Dispatcher', false);
             $this->getConfigFile(self::HANDLER_CONFIG_PATH, 'Handler', false);
+            $this->getConfigFile(self::SUBSCRIBER_CONFIG_PATH, 'Subscriber', false);
 		}
 
 
@@ -119,9 +127,9 @@
 			public function getRouting(?string $key = NULL)
 			{
 				if(is_null($key)) {
-					return $this->get('Luna.Routing');
+					return $this->get(self::ROOT_CONFIG . '.Routing');
 				} else {
-					return $this->get('Luna.Routing.' . $key);
+					return $this->get(self::ROOT_CONFIG . '.Routing.' . $key);
 				}
 			}
 
@@ -136,14 +144,31 @@
             public function getDatabase(?string $key = NULL)
             {
                 if(is_null($key)) {
-                    return $this->get('Luna.Database');
+                    return $this->get(self::ROOT_CONFIG . '.Database');
                 } else {
-                    return $this->get('Luna.Database.' . $key);
+                    return $this->get(self::ROOT_CONFIG . '.Database.' . $key);
                 }
             }
 
             /**
-             * Get the database key
+             * Get the dispatcher key
+             *
+             * @param string $key
+             * @return mixed
+             *
+             * @throws ConfigException
+             */
+            public function getDispatcher(?string $key = NULL)
+            {
+                if(is_null($key)) {
+                    return $this->get(self::ROOT_CONFIG . '.Dispatcher');
+                } else {
+                    return $this->get(self::ROOT_CONFIG . '.Dispatcher.' . $key);
+                }
+            }
+
+            /**
+             * Get the handler key
              *
              * @param string $key
              * @return mixed
@@ -153,9 +178,26 @@
             public function getHandler(?string $key = NULL)
             {
                 if(is_null($key)) {
-                    return $this->get('Luna.Handler');
+                    return $this->get(self::ROOT_CONFIG . '.Handler');
                 } else {
-                    return $this->get('Luna.Handler.' . $key);
+                    return $this->get(self::ROOT_CONFIG . '.Handler.' . $key);
+                }
+            }
+
+            /**
+             * Get the subscriber key
+             *
+             * @param string $key
+             * @return mixed
+             *
+             * @throws ConfigException
+             */
+            public function getSubscriber(?string $key = NULL)
+            {
+                if(is_null($key)) {
+                    return $this->get(self::ROOT_CONFIG . '.Handler');
+                } else {
+                    return $this->get(self::ROOT_CONFIG . '.Handler.' . $key);
                 }
             }
 		

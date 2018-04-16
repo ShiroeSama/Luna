@@ -22,7 +22,7 @@
     use \Throwable;
 
 
-    abstract class ExceptionHandlerAbstract implements ExceptionHandlerInterface
+    abstract class ExceptionHandlerAbstract
     {
         /** @var string */
         protected $logPath;

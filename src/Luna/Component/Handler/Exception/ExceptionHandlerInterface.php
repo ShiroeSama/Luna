@@ -20,5 +20,7 @@
         public function logException();
 
         public function showException();
+
+        public function onKernelException();
     }
 ?>

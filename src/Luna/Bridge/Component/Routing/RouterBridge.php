@@ -9,7 +9,7 @@
      *
      *   @File : RouterBridge.php
      *   @Created_at : 14/03/2018
-     *   @Update_at : 14/03/2018
+     *   @Update_at : 16/04/2018
      * --------------------------------------------------------------------------
      */
 
@@ -33,7 +33,7 @@
         # ----------------------------------------------------------
         # Attributes
 
-            /** @var RouterInterface */
+            /** @var string */
             protected $class;
 
 
@@ -41,30 +41,36 @@
          * Allow to instance the Luna Router or the App Router
          * Make bridge between the app and the framework
          *
+         * @return string
          * @throws BridgeException
-         * @throws \Luna\Component\Exception\DependencyInjectorException
          */
-        public function bridge()
+        public function bridge(): string
         {
-            if (class_exists(self::APP_ROUTER_NAMESPACE)) {
-                $appRouterNamespace = self::APP_ROUTER_NAMESPACE;
+            $this->class = self::LUNA_ROUTER_NAMESPACE;
 
-                if (is_subclass_of($appRouterNamespace, RouterInterface::class)) {
-                    $this->class = $this->DIModule->callConstructor($appRouterNamespace);
-                } else {
+            if (class_exists(self::APP_ROUTER_NAMESPACE)) {
+                $this->class = self::APP_ROUTER_NAMESPACE;
+
+                if (is_subclass_of($this->class, RouterInterface::class)) {
                     throw new BridgeException('App Router doesnt implements the RouterInterface');
                 }
-            } else {
-                $this->class = $this->DIModule->callConstructor(self::LUNA_ROUTER_NAMESPACE);
             }
+
+            return $this->class;
         }
 
+        /**
+         * @param RequestBuilder $requestBuilder
+         * @throws \Luna\Component\Exception\DependencyInjectorException
+         */
         public function init(RequestBuilder $requestBuilder)
         {
+            $router = $this->DIModule->callConstructor($this->class);
+
             switch (get_class($this->class)) {
                 case self::APP_ROUTER_NAMESPACE :
                 default :
-                    $this->class->init($requestBuilder);
+                    $router->init($requestBuilder);
                     break;
 
             }

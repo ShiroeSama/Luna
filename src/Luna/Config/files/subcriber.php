@@ -7,50 +7,37 @@
      *   @Author : Alexandre Caillot
      *   @WebSite : https://www.shiros.fr
      *
-     *   @File : handler.php
-     *   @Created_at : 15/03/2018
-     *   @Update_at : 15/03/2018
+     *   @File : subscriber.php
+     *   @Created_at : 16/04/2018
+     *   @Update_at : 16/04/2018
      * --------------------------------------------------------------------------
      */
 
     /*
     |--------------------------------------------------------------------------
-    | Handler Configuration
+    | Subscriber Configuration
     |--------------------------------------------------------------------------
     |
     */
 
-    $Handler = [
+    $Subscriber = [
 
         /*
         |--------------------------------------------------------------------------
-        | Default Handler
+        | Dependency Injector Subscriber
         |--------------------------------------------------------------------------
         |
         */
 
-        'Default' => [
-            'Exception' => NULL
-        ],
-
-        /*
-        |--------------------------------------------------------------------------
-        | Routing Handler
-        |--------------------------------------------------------------------------
-        |
-        */
-
-        'Routing' => [
-            'Exception' => NULL
-        ],
+        'DependencyInjector' => NULL
     ];
 
     /*
     |--------------------------------------------------------------------------
-    | Return Handler Configuration
+    | Return Subscriber Configuration
     |--------------------------------------------------------------------------
     |
     */
 
-    return $Handler;
+    return $Subscriber;
 ?>

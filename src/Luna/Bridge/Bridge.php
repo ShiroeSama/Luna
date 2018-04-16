@@ -40,9 +40,11 @@
 
         /**
          * Make bridge between the app and the framework
+         *
+         * @return string
          * @throws BridgeException
          */
-	    public function bridge()
+	    public function bridge(): string
 	    {
             throw new BridgeException('Bridge method can be override in subclass');
 	    }

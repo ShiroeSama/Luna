@@ -32,36 +32,16 @@
             protected const HANDLER_INTERFACE = ExceptionHandlerInterface::class;
             protected const LUNA_HANDLER_NAMESPACE = ExceptionHandler::class;
 
-        # ----------------------------------------------------------
-        # Attributes
-
-            /** @var \Throwable */
-            protected $throwable;
-
-
-        /**
-         * AbstractExceptionHandlerBridge constructor.
-         *
-         * @param \Throwable $throwable
-         *
-         * @throws BridgeException
-         * @throws ConfigException
-         */
-        public function __construct(\Throwable $throwable)
-        {
-            parent::__construct();
-            $this->throwable = $throwable;
-        }
-
 
         /**
          * Call the handler
          *
+         * @param \Throwable $throwable
+         *
          * @throws \Luna\Component\Exception\DependencyInjectorException
          */
-        public function catchException()
+        public function catchException(\Throwable $throwable)
         {
-            $throwable = $this->throwable;
             $args = compact('throwable');
 
             $exceptionHandler = $this->DIModule->callConstructor($this->class, $args);

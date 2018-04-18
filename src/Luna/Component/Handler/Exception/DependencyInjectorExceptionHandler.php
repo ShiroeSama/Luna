@@ -7,17 +7,17 @@
      *   @Author : Alexandre Caillot
      *   @WebSite : https://www.shiros.fr
      *
-     *   @File : RoutingExceptionHandler.php
-     *   @Created_at : 14/03/2018
-     *   @Update_at : 16/04/2018
+     *   @File : DependencyInjectorExceptionHandler.php
+     *   @Created_at : 18/04/2018
+     *   @Update_at : 18/04/2018
      * --------------------------------------------------------------------------
      */
 
     namespace Luna\Component\Handler\Exception;
 
-    class RoutingExceptionHandler extends ExceptionHandlerAbstract implements RoutingExceptionHandlerInterface
+    class DependencyInjectorExceptionHandler extends ExceptionHandlerAbstract implements DependencyInjectorExceptionHandlerInterface
     {
-        public function onRoutingException()
+        public function onDependencyInjectorException()
         {
             // Log the Exception
             $this->logException();

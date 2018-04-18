@@ -7,14 +7,20 @@
      *   @Author : Alexandre Caillot
      *   @WebSite : https://www.shiros.fr
      *
-     *   @File : ExceptionHandlerBridge.php
-     *   @Created_at : 15/03/2018
+     *   @File : RepositoryExceptionHandlerInterface
+     *   @Created_at : 16/04/2018
      *   @Update_at : 16/04/2018
      * --------------------------------------------------------------------------
      */
 
-    namespace Luna\Bridge\Component\Handler\Exception;
+    namespace Luna\Component\Handler\Exception;
 
-    class ExceptionHandlerBridge extends AbstractExceptionHandlerBridge
-    {}
+    interface RepositoryExceptionHandlerInterface
+    {
+        public function logException();
+
+        public function showException();
+
+        public function onRepositoryException();
+    }
 ?>

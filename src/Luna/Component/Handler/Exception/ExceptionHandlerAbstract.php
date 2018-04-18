@@ -41,8 +41,6 @@
         {
             $this->logPath = APP_ROOT . '/var/log/' . Kernel::getEnv() . '/exception.log';
             $this->logger = new Logger(new StreamHandler($this->logPath));
-
-            $this->throwable = $throwable;
         }
 
         public function logException()

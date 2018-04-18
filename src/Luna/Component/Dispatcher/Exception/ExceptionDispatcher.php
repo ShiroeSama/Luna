@@ -15,6 +15,7 @@
 
     namespace Luna\Component\Dispatcher\Exception;
 
+    use Luna\Bridge\Component\Handler\Exception\ExceptionHandlerBridge;
     use \PDOException;
     use \Throwable;
 
@@ -30,6 +31,9 @@
 
     class ExceptionDispatcher implements ExceptionDispatcherInterface
     {
+        /** @var ExceptionHandlerBridge */
+        protected $defaultExceptionHanlderBridge;
+
         /**
          * ExceptionDispatcher constructor.
          */
@@ -42,58 +46,71 @@
         {
             try {
                 // TODO : Instanciate the Bridge
+
+                // Default Exception Handler
+                $this->defaultExceptionHanlderBridge = new ExceptionHandlerBridge();
             } catch (Throwable $throwable) {
                 $handler = new ExceptionHandler($throwable);
                 $handler->onKernelException();
             }
         }
 
-        public function dispatcher(Throwable $throwable)
+        /**
+         * Dispatch the throwable in the correct handler
+         *
+         * @param Throwable $throwable
+         */
+        public function dispatch(Throwable $throwable)
         {
-            switch (get_class($throwable)) {
-                // Other Exception
+            try {
+                switch (get_class($throwable)) {
+                    // Other Exception
 
-                case PDOException::class:
-                    // TODO : Call the Bridge
-                    break;
+                    case PDOException::class:
+                        // TODO : Call the Bridge
+                        break;
 
-                // Luna Exception
+                    // Luna Exception
 
-                case BridgeException::class:
-                    // TODO : Call the Bridge
-                    break;
+                    case BridgeException::class:
+                        // TODO : Call the Bridge
+                        break;
 
-                case ConfigException::class:
-                    // TODO : Call the Bridge
-                    break;
+                    case ConfigException::class:
+                        // TODO : Call the Bridge
+                        break;
 
-                case ControllerException::class:
-                    // TODO : Call the Bridge
-                    break;
+                    case ControllerException::class:
+                        // TODO : Call the Bridge
+                        break;
 
-                case DatabaseException::class:
-                    // TODO : Call the Bridge
-                    break;
+                    case DatabaseException::class:
+                        // TODO : Call the Bridge
+                        break;
 
-                case DependencyInjectorException::class:
-                    // TODO : Call the Bridge
-                    break;
+                    case DependencyInjectorException::class:
+                        // TODO : Call the Bridge
+                        break;
 
-                case QueryComponentException::class:
-                    // TODO : Call the Bridge
-                    break;
+                    case QueryComponentException::class:
+                        // TODO : Call the Bridge
+                        break;
 
-                case RepositoryException::class:
-                    // TODO : Call the Bridge
-                    break;
+                    case RepositoryException::class:
+                        // TODO : Call the Bridge
+                        break;
 
-                case RouteException::class:
-                    // TODO : Call the Bridge
-                    break;
+                    case RouteException::class:
+                        // TODO : Call the Bridge
+                        break;
 
-                default:
-                    // TODO : Call the Bridge
-                    break;
+                    default:
+                        $this->defaultExceptionHanlderBridge->catchException($throwable);
+                        break;
+                }
+            } catch (Throwable $throwable) {
+                $handler = new ExceptionHandler($throwable);
+                $handler->onKernelException();
             }
         }
     }

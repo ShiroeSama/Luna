@@ -19,6 +19,11 @@
 
     interface ExceptionDispatcherInterface
     {
-        public function dispatcher(Throwable $throwable);
+        /**
+         * Dispatch the throwable in the correct handler
+         *
+         * @param Throwable $throwable
+         */
+        public function dispatch(Throwable $throwable);
     }
 ?>

@@ -16,6 +16,8 @@
     namespace Luna\Component\HTTP;
 
 
+    use Luna\Component\Bag\ParameterBag;
+
     class Header
     {
         /** @var int */
@@ -27,17 +29,18 @@
         /** @var string */
         protected $header;
 
-        /** @var array */
+        /** @var ParameterBag */
         protected $options;
 
         /**
          * Header constructor.
          * @param int $code
+         * @param array $options
          */
         public function __construct(int $code, array $options = [])
         {
             $this->code = $code;
-            $this->options = $options;
+            $this->options = new ParameterBag($options);
 
             $this->generateName();
             $this->generateHeader();
@@ -235,7 +238,7 @@
              */
             public function getOptions(): array
             {
-                return $this->options;
+                return $this->options->all();
             }
     }
 ?>

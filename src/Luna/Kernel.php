@@ -89,8 +89,9 @@
                 $this->RouterBridgeModule->bridge();
             } catch (Throwable $throwable) {
                 try {
-                    $this->ExceptionHandlerBridgeModule = new ExceptionHandlerBridge($throwable);
+                    $this->ExceptionHandlerBridgeModule = new ExceptionHandlerBridge();
                     $this->ExceptionHandlerBridgeModule->bridge();
+                    $this->ExceptionHandlerBridgeModule->catchException($throwable);
                 } catch (Throwable $throwable) {
                     $exceptionHandler = new ExceptionHandler($throwable);
                     $exceptionHandler->onKernelException();
@@ -124,7 +125,7 @@
 
             } catch (Throwable $throwable) {
                 try {
-                    $this->ExceptionHandlerBridgeModule->catchException();
+                    $this->ExceptionHandlerBridgeModule->catchException($throwable);
                 } catch (Throwable $throwable) {
                     $exceptionHandler = new ExceptionHandler($throwable);
                     $exceptionHandler->onKernelException();

@@ -15,19 +15,24 @@
 
     namespace Luna\Component\HTTP\Request;
 
+    use Luna\Component\Bag\ParameterBag;
+
     class Request
     {
         public const GET = 'GET';
         public const POST = 'POST';
 
-        /** @var array */
+        /** @var ParameterBag */
         protected $server;
 
-        /** @var array */
+        /** @var ParameterBag */
         protected $get;
 
-        /** @var array */
+        /** @var ParameterBag */
         protected $post;
+
+        /** @var ParameterBag */
+        protected $cookie;
 
         /** @var string */
         protected $rule;
@@ -47,82 +52,74 @@
          */
         public function __construct(string $ruleName, string $rule, string $userRequest)
         {
-            # Set Default value for server, get & post var.
-            $this->server = [];
-            $this->get = [];
-            $this->post = [];
-
-
             $this->rule = $rule;
             $this->ruleName = $ruleName;
             $this->userRequest = $userRequest;
+
+            # Set Default value for server, get & post var.
+            $this->initialize();
         }
 
-        public function init()
+        protected function initialize()
         {
-            if (isset($_SERVER)) { $this->server =& $_SERVER; }
-            if (isset($_GET)) { $this->get =& $_GET; }
-            if (isset($_POST)) { $this->post =& $_POST; }
+            $this->server = (isset($_SERVER)) ? new ParameterBag($_SERVER) : new ParameterBag();
+            $this->get = (isset($_GET)) ? new ParameterBag($_GET) : new ParameterBag();
+            $this->post = (isset($_POST)) ? new ParameterBag($_POST) : new ParameterBag();
+            $this->cookie = (isset($_COOKIE)) ? new ParameterBag($_COOKIE) : new ParameterBag();
         }
 
 
 
         /* ------------------------ Getter ------------------------ */
 
-            // TODO : Create getter for Server Var
-
-            public function getGetRequest(): array { return $this->get; }
-            public function getPostRequest(): array { return $this->post; }
+            public function getServer(): ParameterBag { return $this->server; }
+            public function getCookie(): ParameterBag { return $this->cookie; }
+            public function getGetRequest(): ParameterBag { return $this->get; }
+            public function getPostRequest(): ParameterBag { return $this->post; }
 
             public function getRule(): string { return $this->rule; }
             public function getRuleName(): string { return $this->ruleName; }
             public function getUserRequest(): string { return $this->userRequest; }
-            public function getMethod(): ?string { return (isset($this->server['REQUEST_METHOD']) ? $this->server['REQUEST_METHOD'] : NULL); }
+            public function getMethod(): ?string { return $this->server->get('REQUEST_METHOD'); }
 
 
 
         /* ------------------------ Request Process ------------------------ */
 
-            protected function requestProcess(string $httpMethod, array $params): bool
+            /**
+             * @param string $httpMethod
+             * @param ParameterBag $bag
+             * @param ParameterBag $params
+             *
+             * @return bool
+             */
+            protected function requestProcess(string $httpMethod, ParameterBag $bag, ParameterBag $params): bool
             {
-                switch ($httpMethod) {
-                    case self::GET:
-                        $varName = 'get';
-                        $method = self::GET;
-                        break;
-
-                    case self::POST:
-                        $varName = 'post';
-                        $method = self::POST;
-                        break;
-
-                    default:
-                        return false;
-                }
-
-
-                if (!empty($this->$varName) && ($this->getMethod() === $method)) {
-                    foreach ($params as $param) {
-                        if (!isset($this->$varName[$param])) {
-                            return false;
-                            break;
-                        }
-                    }
+                if (!$bag->isEmpty() && ($this->getMethod() === $httpMethod)) {
+                    return $bag->has($params);
                 } else {
                     return false;
                 }
-
-                return true;
             }
 
+            /**
+             * @param string[] ...$params
+             * @return bool
+             */
             public function isGetRequest(string ...$params): bool
             {
-                return $this->requestProcess(self::GET, $params);
+                $params = new ParameterBag($params);
+                return $this->requestProcess(static::GET, $this->get, $params);
             }
 
+            /**
+             * @param string[] ...$params
+             * @return bool
+             */
             public function isPostRequest(string ...$params): bool
             {
-                return $this->requestProcess(self::POST, $params);
+                $params = new ParameterBag($params);
+                return $this->requestProcess(static::POST, $this->post, $params);
             }
     }
 ?>

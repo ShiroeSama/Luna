@@ -58,10 +58,7 @@
 
         public function getRequest(): Request
         {
-            $request = new Request();
-            $request->init();
-
-            return $request;
+            return new Request($this->ruleName, $this->rule, $this->userRequest);
         }
     }
 ?>

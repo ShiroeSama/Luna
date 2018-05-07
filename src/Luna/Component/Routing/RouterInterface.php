@@ -9,21 +9,24 @@
      *
      *   @File : RouterInterface.php
      *   @Created_at : 14/03/2018
-     *   @Update_at : 26/03/2018
+     *   @Update_at : 07/05/2018
      * --------------------------------------------------------------------------
      */
 
     namespace Luna\Component\Routing;
 
-    use Luna\Component\HTTP\Request\RequestBuilder;
+    use Luna\Component\HTTP\Request\Request;
+    use Luna\Component\HTTP\Request\ResponseInterface;
 
     interface RouterInterface
     {
         /**
          * Start the router and exec the routing system
          *
-         * @param RequestBuilder $requestBuilder
+         * @param Request $request
+         *
+         * @return ResponseInterface
          */
-        public function init(RequestBuilder $requestBuilder);
+        public function init(Request $request): ResponseInterface;
     }
 ?>

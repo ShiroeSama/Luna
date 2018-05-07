@@ -9,17 +9,18 @@
 	 *
 	 *   @File : Kernel.php
 	 *   @Created_at : 03/12/2017
-	 *   @Update_at : 12/04/2018
+     *   @Update_at : 07/05/2018
 	 * --------------------------------------------------------------------------
 	 */
 	
 	namespace Luna;
 
 	use Luna\Bridge\Component\Handler\Exception\ExceptionHandlerBridge;
+	use Luna\Bridge\Component\Routing\RouterBridge;
     use Luna\Component\Handler\Exception\ExceptionHandler;
     use Luna\Component\HTTP\Request\RequestBuilder;
+    use Luna\Component\HTTP\Request\ResponseInterface;
     use \Throwable;
-	use Luna\Bridge\Component\Routing\RouterBridge;
 
     class Kernel
 	{
@@ -31,6 +32,9 @@
 
         /** @var ExceptionHandlerBridge */
         protected $ExceptionHandlerBridgeModule;
+
+        /** @var ResponseInterface */
+        protected $response;
 
 
         # -------------------------------------------------------------
@@ -113,16 +117,42 @@
 		    try {
 
                 # ----------------------------------------------------------
-                # Request Builder
+                # Build the Request
 
-                $requestBuilder = new RequestBuilder();
+                $request = RequestBuilder::create();
+
+                // TODO : Set the request in the LunaContainer
 
 
                 # ----------------------------------------------------------
                 # Routing Init
 
-                $this->RouterBridgeModule->init($requestBuilder);
+                $this->response = $this->RouterBridgeModule->init($request);
 
+            } catch (Throwable $throwable) {
+                try {
+                    $this->ExceptionHandlerBridgeModule->catchException($throwable);
+                } catch (Throwable $throwable) {
+                    $exceptionHandler = new ExceptionHandler($throwable);
+                    $exceptionHandler->onKernelException();
+                }
+            }
+        }
+
+
+        /**
+         * Send response to the client.
+         * Configure headers and display content
+         */
+        public function send()
+        {
+            try {
+                if (is_null($this->response)) {
+                    // TODO : Throw Kernel Exception
+                }
+
+                $this->response->getHeaders();
+                $this->response->getContent();
             } catch (Throwable $throwable) {
                 try {
                     $this->ExceptionHandlerBridgeModule->catchException($throwable);

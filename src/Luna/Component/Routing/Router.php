@@ -9,23 +9,24 @@
 	 *
 	 *   @File : Router.php
 	 *   @Created_at : 03/12/2017
-	 *   @Update_at : 26/03/2018
+	 *   @Update_at : 07/05/2018
 	 * --------------------------------------------------------------------------
 	 */
 	
 	namespace Luna\Component\Routing;
 	
     use Luna\Component\DI\DependencyInjector;
-    use Luna\Component\HTTP\Request\RequestBuilder;
-	use Luna\Component\Routing\Builder\RouteBuilder;
+    use Luna\Component\HTTP\Request\Request;
+    use Luna\Component\HTTP\Request\ResponseInterface;
+    use Luna\Component\Routing\Builder\RouteBuilder;
 
 	class Router implements RouterInterface
 	{
         /** @var DependencyInjector */
         protected $DIModule;
 
-        /** @var RequestBuilder */
-        protected $requestBuilder;
+        /** @var Request */
+        protected $request;
 
         /**
          * Router constructor.
@@ -40,15 +41,17 @@
             /**
              * Start the router and exec the routing system
              *
-             * @param RequestBuilder $requestBuilder
+             * @param Request $request
+             *
+             * @return ResponseInterface
              *
              * @throws \Luna\Component\Exception\DependencyInjectorException
              * @throws \Luna\Component\Exception\RouteException
              */
-			public function init(RequestBuilder $requestBuilder)
+			public function init(Request $request): ResponseInterface
 			{
-			    $this->requestBuilder = $requestBuilder;
-                $this->launch();
+			    $this->request = $request;
+                return $this->launch();
 			}
 		
 		/* ------------------------ System ------------------------ */
@@ -56,10 +59,12 @@
             /**
              * Exec the routing system
              *
+             * @return ResponseInterface
+             *
              * @throws \Luna\Component\Exception\DependencyInjectorException
              * @throws \Luna\Component\Exception\RouteException
              */
-			protected function launch()
+			protected function launch(): ResponseInterface
 			{
 				# Get the Request URI
 				$REQUEST_URI	= $_SERVER['REQUEST_URI'];
@@ -69,14 +74,18 @@
 				$requestTab = $this->prepareUserRequestURI($REQUEST_URI, $SCRIPT_NAME);
 				
 				# Build the Route
-				$routeBuilder = new RouteBuilder($this->requestBuilder, $requestTab);
+				$routeBuilder = new RouteBuilder($this->request, $requestTab);
 				$routeBuilder->prepare();
 				
 				$route = $routeBuilder->getRoute();
 				
 				// TODO : Call RoutingAccessHandler (Check the User Permissions)
 
-                $this->DIModule->callMethod($route->getMethod(), $route->getController(), $route->getParams());
+                $response = $this->DIModule->callMethod($route->getMethod(), $route->getController(), $route->getParams());
+
+                // TODO : Check if the response is correct
+
+                return $response;
 			}
 		
 		

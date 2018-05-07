@@ -9,7 +9,7 @@
      *
      *   @File : ParameterBag.php
      *   @Created_at : 19/04/2018
-     *   @Update_at : 19/04/2018
+     *   @Update_at : 07/05/2018
      * --------------------------------------------------------------------------
      */
 
@@ -75,10 +75,14 @@
          *
          * @param mixed $key
          * @param mixed $value
+         *
+         * @return self
          */
-        public function set($key, $value)
+        public function set($key, $value): self
         {
             $this->parameters[$key] = $value;
+
+            return $this;
         }
 
         /**

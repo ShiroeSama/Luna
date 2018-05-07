@@ -15,9 +15,10 @@
 	
 	namespace Luna\Component\Routing\Builder;
 	
-	use Luna\Component\DI\DependencyInjector;
+	use Luna\Component\Bag\ServerBag;
+    use Luna\Component\DI\DependencyInjector;
     use Luna\Component\Exception\RouteException;
-    use Luna\Component\HTTP\Request\RequestBuilder;
+    use Luna\Component\HTTP\Request\Request;
     use Luna\Component\Routing\Route;
 	use Luna\Config;
 	use Luna\Controller\Controller;
@@ -30,11 +31,11 @@
         /** @var DependencyInjector */
         protected $DIModule;
 
-        /** @var RequestBuilder */
-        protected $requestBuilder;
+        /** @var Request */
+        protected $request;
 		
 		/** @var string */
-		protected $request;
+		protected $userRequest;
 		
 		/** @var array */
 		protected $requestTab;
@@ -61,17 +62,18 @@
         /**
          * RouteBuilder constructor.
          *
-         * @param RequestBuilder $requestBuilder
+         * @param Request $request
          * @param array $requestTab
+         *
          * @throws \Luna\Component\Exception\ConfigException
          */
-		public function __construct(RequestBuilder $requestBuilder, array $requestTab)
+		public function __construct(Request $request, array $requestTab)
 		{
 			$this->ConfigModule = Config::getInstance();
 			$this->DIModule = new DependencyInjector();
-			$this->requestBuilder = $requestBuilder;
+			$this->request = $request;
 			
-			$this->request = (sizeof($requestTab) === 0) ? '/' : implode('/', $requestTab);
+			$this->userRequest = (sizeof($requestTab) === 0) ? '/' : implode('/', $requestTab);
 			$this->requestTab = $requestTab;
 			$this->routes = $this->ConfigModule->getRouting('ROUTES');
 			$this->rootFolder = $this->ConfigModule->getRouting('ROOT_FOLDER');
@@ -107,10 +109,11 @@
 			$action = explode('.', $action);
 
             # Prepare RequestBuilder
-            $this->requestBuilder
-                ->setRule($this->routes[$key]['Rule'])
-                ->setRuleName($key)
-                ->setUserRequest($this->request);
+            $this->request->getServer()
+                ->set(ServerBag::RULE, $this->routes[$key]['Rule'])
+                ->set(ServerBag::RULE_NAME, $key)
+                ->set(ServerBag::PATH_INFO, $this->userRequest)
+            ;
 
 			# Get Controller
 			$keyForMethodName = array_search($action, end($action));
@@ -123,7 +126,7 @@
 			$controllerNamespace = str_replace('/',	'\\', $this->rootFolder);
 			$controllerClassName = $controllerNamespace . '\\' . implode('\\', $action);
 
-			$this->controller = $this->DIModule->callController($controllerClassName, $this->requestBuilder);
+			$this->controller = $this->DIModule->callController($controllerClassName, $this->request);
 			
 			# Get Method
 			$this->method = end($action);
@@ -225,7 +228,7 @@
 				if (!isset($route['Method'])) { return true; }
 				
 				$routeMethod = $route['Method'];
-				$requestMethod = (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : NULL);
+				$requestMethod = $this->request->getServer()->get('REQUEST_METHOD');
 				
 				return strtolower($routeMethod) === strtolower($requestMethod);
 			}

@@ -16,7 +16,7 @@
     namespace Luna\Component\DI;
 
     use Luna\Component\Exception\DependencyInjectorException;
-    use Luna\Component\HTTP\Request\RequestBuilder;
+    use Luna\Component\HTTP\Request\Request;
     use \ReflectionClass;
     use \ReflectionMethod;
     use \ReflectionParameter;
@@ -34,20 +34,21 @@
          * Prepare the construct's args and the controller object
          *
          * @param string $className
+         * @param Request $request
          * @param array $args
          * @return Controller
          *
          * @throws DependencyInjectorException
          */
-        public function callController(string $className, RequestBuilder $requestBuilder, array $args = []): Controller
+        public function callController(string $className, Request $request, array $args = []): Controller
         {
             if (!is_a($className, Controller::class)) {
                 throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "{$className} is not a Controller");
             }
 
             /** @var Controller $controller*/
-            $controller = $this->callController($className, $args);
-            $controller->setRequest($requestBuilder->getRequest());
+            $controller = $this->callConstructor($className, $args);
+            $controller->setRequest($request);
 
             return $controller;
 

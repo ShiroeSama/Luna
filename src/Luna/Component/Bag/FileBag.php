@@ -7,19 +7,16 @@
      *   @Author : Alexandre Caillot
      *   @WebSite : https://www.shiros.fr
      *
-     *   @File : RequestBuilder.php
-     *   @Created_at : 26/03/2018
-     *   @Update_at : 26/03/2018
+     *   @File : FileBag.php
+     *   @Created_at : 07/05/2018
+     *   @Update_at : 07/05/2018
      * --------------------------------------------------------------------------
      */
 
-    namespace Luna\Component\HTTP\Request;
+    namespace Luna\Component\Bag;
 
-    class RequestBuilder
+    class FileBag extends ParameterBag
     {
-        public static function create(): Request
-        {
-            return new Request($_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, []);
-        }
+        // TODO : Make some methods for files bag
     }
 ?>

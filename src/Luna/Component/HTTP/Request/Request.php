@@ -15,7 +15,9 @@
 
     namespace Luna\Component\HTTP\Request;
 
+    use Luna\Component\Bag\FileBag;
     use Luna\Component\Bag\ParameterBag;
+    use Luna\Component\Bag\ServerBag;
 
     class Request
     {
@@ -23,49 +25,41 @@
         public const POST = 'POST';
 
         /** @var ParameterBag */
-        protected $server;
-
-        /** @var ParameterBag */
         protected $get;
 
         /** @var ParameterBag */
         protected $post;
 
+        /** @var FileBag */
+        protected $files;
+
         /** @var ParameterBag */
         protected $cookie;
 
-        /** @var string */
-        protected $rule;
+        /** @var ServerBag */
+        protected $server;
 
-        /** @var string */
-        protected $ruleName;
-
-        /** @var string */
-        protected $userRequest;
+        /** @var ParameterBag */
+        protected $parameters;
 
         /**
          * Request constructor.
          *
-         * @param string $rule
-         * @param string $ruleName
-         * @param string $userRequest
+         * @param array $get
+         * @param array $post
+         * @param array $files
+         * @param array $cookies
+         * @param array $server
+         * @param array $parameters
          */
-        public function __construct(string $ruleName, string $rule, string $userRequest)
+        public function __construct(array $get = [], array $post = [], array $files = [], array $cookies = [], array $server = [], array $parameters = [])
         {
-            $this->rule = $rule;
-            $this->ruleName = $ruleName;
-            $this->userRequest = $userRequest;
-
-            # Set Default value for server, get & post var.
-            $this->initialize();
-        }
-
-        protected function initialize()
-        {
-            $this->server = (isset($_SERVER)) ? new ParameterBag($_SERVER) : new ParameterBag();
-            $this->get = (isset($_GET)) ? new ParameterBag($_GET) : new ParameterBag();
-            $this->post = (isset($_POST)) ? new ParameterBag($_POST) : new ParameterBag();
-            $this->cookie = (isset($_COOKIE)) ? new ParameterBag($_COOKIE) : new ParameterBag();
+            $this->get = new ParameterBag($get);
+            $this->post = new ParameterBag($post);
+            $this->files = new FileBag($files);
+            $this->cookie = new ParameterBag($cookies);
+            $this->server = new ServerBag($server);
+            $this->parameters = new ParameterBag($parameters);
         }
 
 
@@ -77,9 +71,9 @@
             public function getGetRequest(): ParameterBag { return $this->get; }
             public function getPostRequest(): ParameterBag { return $this->post; }
 
-            public function getRule(): string { return $this->rule; }
-            public function getRuleName(): string { return $this->ruleName; }
-            public function getUserRequest(): string { return $this->userRequest; }
+            public function getRule(): ?string { return $this->server->getRule(); }
+            public function getRuleName(): ?string { return $this->server->getRuleName(); }
+            public function getPathInfo(): ?string { return $this->server->getPathInfo(); }
             public function getMethod(): ?string { return $this->server->get('REQUEST_METHOD'); }
 
 

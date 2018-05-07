@@ -9,7 +9,7 @@
      *
      *   @File : RouterBridge.php
      *   @Created_at : 14/03/2018
-     *   @Update_at : 16/04/2018
+     *   @Update_at : 07/05/2018
      * --------------------------------------------------------------------------
      */
 
@@ -17,7 +17,8 @@
 
     use Luna\Bridge\Bridge;
     use Luna\Component\Exception\BridgeException;
-    use Luna\Component\HTTP\Request\RequestBuilder;
+    use Luna\Component\HTTP\Request\Request;
+    use Luna\Component\HTTP\Request\ResponseInterface;
     use Luna\Component\Routing\Router;
     use Luna\Component\Routing\RouterInterface;
 
@@ -60,17 +61,21 @@
         }
 
         /**
-         * @param RequestBuilder $requestBuilder
+         * @param Request $request
+         *
+         * @return ResponseInterface
+         *
          * @throws \Luna\Component\Exception\DependencyInjectorException
          */
-        public function init(RequestBuilder $requestBuilder)
+        public function init(Request $request): ResponseInterface
         {
+            /** @var RouterInterface $router */
             $router = $this->DIModule->callConstructor($this->class);
 
             switch (get_class($this->class)) {
                 case self::APP_ROUTER_NAMESPACE :
                 default :
-                    $router->init($requestBuilder);
+                    return $router->init($request);
                     break;
 
             }

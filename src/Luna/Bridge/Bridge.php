@@ -17,7 +17,7 @@
 
     use Luna\Component\DI\DependencyInjector;
     use Luna\Component\Exception\BridgeException;
-    use Luna\Config;
+    use Luna\Config\Config;
 
     abstract class Bridge
     {

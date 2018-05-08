@@ -15,7 +15,7 @@
 	
 	namespace Luna\Database;
 	use \PDO;
-	use Luna\Config;
+	use Luna\Config\Config;
 	
 	class MySQLDatabase implements Database
 	{

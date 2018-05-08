@@ -16,7 +16,7 @@
 	namespace Luna\Database\Connexion;
 	
 	use \PDO;
-	use Luna\Config;
+	use Luna\Config\Config;
 	use Luna\Database\Database;
 	use Luna\Database\MySQLDatabase;
 	

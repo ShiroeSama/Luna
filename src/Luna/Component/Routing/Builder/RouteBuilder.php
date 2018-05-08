@@ -20,7 +20,7 @@
     use Luna\Component\Exception\RouteException;
     use Luna\Component\HTTP\Request\Request;
     use Luna\Component\Routing\Route;
-	use Luna\Config;
+	use Luna\Config\Config;
 	use Luna\Controller\Controller;
 	
 	class RouteBuilder

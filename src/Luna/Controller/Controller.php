@@ -17,7 +17,7 @@
 
 	use Luna\Component\Exception\ControllerException;
     use Luna\Component\HTTP\Request\Request;
-    use Luna\Config;
+    use Luna\Config\Config;
 
     class Controller
 	{

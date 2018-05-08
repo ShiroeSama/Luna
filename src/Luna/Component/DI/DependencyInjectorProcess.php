@@ -19,7 +19,7 @@
     use Luna\Component\DI\Modules\DependencyInjectorSubscriberInterface;
     use Luna\Component\Exception\ConfigException;
     use Luna\Component\Exception\DependencyInjectorException;
-    use Luna\Config;
+    use Luna\Config\Config;
 
     use \ReflectionClass;
     use \ReflectionMethod;
@@ -30,7 +30,7 @@
     {
     	protected const DI_SUBSCRIBER = 'DependencyInjector';
     	
-    	/** @var Config */
+    	/** @var Config\ */
 		protected $ConfigModule;
 	
 	    /** @var DependencyInjector */

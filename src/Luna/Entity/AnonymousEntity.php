@@ -15,7 +15,7 @@
 	
 	namespace Luna\Entity;
 	
-	use Luna\Config;
+	use Luna\Config\Config;
 	
 	class AnonymousEntity
 	{

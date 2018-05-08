@@ -13,7 +13,7 @@
 	 * --------------------------------------------------------------------------
 	 */
 
-	namespace Luna;
+	namespace Luna\Config;
 
 	use Luna\Component\Exception\ConfigException;
 

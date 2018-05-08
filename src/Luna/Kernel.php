@@ -17,7 +17,8 @@
 
 	use Luna\Bridge\Component\Handler\Exception\ExceptionHandlerBridge;
 	use Luna\Bridge\Component\Routing\RouterBridge;
-    use Luna\Component\Handler\Exception\ExceptionHandler;
+	use Luna\Component\Exception\KernelException;
+	use Luna\Component\Handler\Exception\ExceptionHandler;
     use Luna\Component\HTTP\Request\RequestBuilder;
     use Luna\Component\HTTP\Request\ResponseInterface;
     use \Throwable;
@@ -127,7 +128,17 @@
                 # ----------------------------------------------------------
                 # Routing Init
 
-                $this->response = $this->RouterBridgeModule->init($request);
+                $response = $this->RouterBridgeModule->init($request);
+                
+                if (!is_a($response, ResponseInterface::class)) {
+                	$message = 'The controller must return a response.';
+                	
+                	if ($response === null) {
+                		$message .= ' Did you forget to add a return statement in your controller ?';
+	                }
+	                
+	                throw new KernelException($message);
+                }
 
             } catch (Throwable $throwable) {
                 try {
@@ -148,7 +159,7 @@
         {
             try {
                 if (is_null($this->response)) {
-                    // TODO : Throw Kernel Exception
+                	throw new KernelException('');
                 }
 
                 $this->response->getHeaders();

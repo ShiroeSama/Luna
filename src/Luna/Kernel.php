@@ -22,7 +22,9 @@
 	use Luna\Component\Handler\Exception\ExceptionHandler;
     use Luna\Component\HTTP\Request\RequestBuilder;
     use Luna\Component\HTTP\Request\ResponseInterface;
-    use \Throwable;
+	use Luna\Config\Config;
+	
+	use \Throwable;
 
     class Kernel implements KernelInterface
 	{
@@ -90,7 +92,7 @@
                 # ----------------------------------------------------------
                 # Define Global vars
 
-                $this->env = $this->ConfigModule->get('Luna.Environement');
+                $this->env = $this->ConfigModule->get('Luna.Environment');
 
 
                 # ----------------------------------------------------------

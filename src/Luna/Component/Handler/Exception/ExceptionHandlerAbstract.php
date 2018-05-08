@@ -41,7 +41,8 @@
         public function __construct(KernelInterface $kernel, Throwable $throwable)
         {
 	        $env = $kernel->getEnv();
-        	
+	
+	        $this->throwable = $throwable;
             $this->logPath = APP_ROOT . '/var/log/' . $env . '/exception.log';
             $this->logger = new Logger(new StreamHandler($this->logPath));
         }

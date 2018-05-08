@@ -28,6 +28,10 @@
 
     class Kernel implements KernelInterface
 	{
+	    protected const ENV_PROD = 'prod';
+	    protected const ENV_DEV = 'dev';
+	    protected const ENV_TEST = 'test';
+	    
         /** @var Config */
 	    protected $ConfigModule;
 	    
@@ -73,6 +77,13 @@
 			
 			define('APP_ROOT', $app_root);
 			define('APP_CONFIG_DIR', APP_ROOT . '/config');
+			
+			
+			
+			# ----------------------------------------------------------
+			# Default Constants
+			
+			$this->env = self::ENV_DEV;
 
             try {
 
@@ -91,8 +102,8 @@
 
                 # ----------------------------------------------------------
                 # Define Global vars
-
-                $this->env = $this->ConfigModule->get('Luna.Environment');
+	
+	            $this->env = is_null($this->ConfigModule->get('Luna.Environment')) ? self::ENV_DEV : $this->ConfigModule->get('Luna.Environment');
 
 
                 # ----------------------------------------------------------

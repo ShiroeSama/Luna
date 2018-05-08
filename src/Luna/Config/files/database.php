@@ -63,5 +63,5 @@
     |
     */
 
-    return $Config;
+    return $Database;
 ?>

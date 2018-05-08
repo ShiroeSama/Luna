@@ -73,7 +73,7 @@
             }
 
             $reflectionClass = new ReflectionClass($className);
-            $process = new DependencyInjectorProcess(new ParameterBag($args));
+            $process = new DependencyInjectorProcess($this, new ParameterBag($args));
 
             return $process->construct($reflectionClass);
         }
@@ -103,7 +103,7 @@
                 $class = $this->callConstructor($class, $args);
             }
             
-	        $process = new DependencyInjectorProcess(new ParameterBag($args));
+	        $process = new DependencyInjectorProcess($this, new ParameterBag($args));
 
             return $process->method($reflectionMethod, $class);
         }

@@ -195,9 +195,9 @@
             public function getSubscriber(?string $key = NULL)
             {
                 if(is_null($key)) {
-                    return $this->get(self::ROOT_CONFIG . '.Handler');
+                    return $this->get(self::ROOT_CONFIG . '.Subscriber');
                 } else {
-                    return $this->get(self::ROOT_CONFIG . '.Handler.' . $key);
+                    return $this->get(self::ROOT_CONFIG . '.Subscriber.' . $key);
                 }
             }
 		

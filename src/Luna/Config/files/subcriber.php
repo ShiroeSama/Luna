@@ -29,7 +29,7 @@
         |
         */
 
-        'DependencyInjector' => NULL
+        'DependencyInjector' => []
     ];
 
     /*

@@ -17,16 +17,20 @@
 
 	use Luna\Bridge\Component\Handler\Exception\ExceptionHandlerBridge;
 	use Luna\Bridge\Component\Routing\RouterBridge;
+	use Luna\Component\Container\LunaContainer;
 	use Luna\Component\Exception\KernelException;
 	use Luna\Component\Handler\Exception\ExceptionHandler;
     use Luna\Component\HTTP\Request\RequestBuilder;
     use Luna\Component\HTTP\Request\ResponseInterface;
     use \Throwable;
 
-    class Kernel
+    class Kernel implements KernelInterface
 	{
         /** @var Config */
 	    protected $ConfigModule;
+	    
+	    /** @var LunaContainer */
+	    protected $ContainerModule;
 
         /** @var RouterBridge */
         protected $RouterBridgeModule;
@@ -34,16 +38,16 @@
         /** @var ExceptionHandlerBridge */
         protected $ExceptionHandlerBridgeModule;
 
-        /** @var ResponseInterface */
-        protected $response;
-
 
         # -------------------------------------------------------------
-        #   Global Vars
+        #   Information Vars
         # -------------------------------------------------------------
-
-        /** @var string */
-        protected static $environement;
+	
+	    /** @var string */
+	    protected $env;
+	
+	    /** @var ResponseInterface */
+	    protected $response;
 
 
         /**
@@ -74,16 +78,19 @@
                 # Prepare Singleton Instance
 
                 $this->ConfigModule = Config::getInstance();
-
-
+	            $this->ContainerModule = LunaContainer::getInstance();
+	
+	
+	            # ----------------------------------------------------------
+	            # Define Kernel on Container
+	            
+	            $this->ContainerModule->setKernel($this);
 
 
                 # ----------------------------------------------------------
                 # Define Global vars
 
-                self::$environement = $this->ConfigModule->get('Luna.Environement');
-
-
+                $this->env = $this->ConfigModule->get('Luna.Environement');
 
 
                 # ----------------------------------------------------------
@@ -98,7 +105,7 @@
                     $this->ExceptionHandlerBridgeModule->bridge();
                     $this->ExceptionHandlerBridgeModule->catchException($throwable);
                 } catch (Throwable $throwable) {
-                    $exceptionHandler = new ExceptionHandler($throwable);
+                    $exceptionHandler = new ExceptionHandler($this, $throwable);
                     $exceptionHandler->onKernelException();
                 }
             }
@@ -121,8 +128,8 @@
                 # Build the Request
 
                 $request = RequestBuilder::create();
-
-                // TODO : Set the request in the LunaContainer
+                
+                $this->ContainerModule->setRequest($request);
 
 
                 # ----------------------------------------------------------
@@ -144,7 +151,7 @@
                 try {
                     $this->ExceptionHandlerBridgeModule->catchException($throwable);
                 } catch (Throwable $throwable) {
-                    $exceptionHandler = new ExceptionHandler($throwable);
+                    $exceptionHandler = new ExceptionHandler($this, $throwable);
                     $exceptionHandler->onKernelException();
                 }
             }
@@ -157,29 +164,29 @@
          */
         public function send()
         {
-            try {
-                if (is_null($this->response)) {
-                	throw new KernelException('');
-                }
-
-                $this->response->getHeaders();
-                $this->response->getContent();
-            } catch (Throwable $throwable) {
-                try {
-                    $this->ExceptionHandlerBridgeModule->catchException($throwable);
-                } catch (Throwable $throwable) {
-                    $exceptionHandler = new ExceptionHandler($throwable);
-                    $exceptionHandler->onKernelException();
-                }
-            }
+	        $this->response->getHeaders();
+	        $this->response->getContent();
         }
-
-        /**
-         * @return string
-         */
-        public static function getEnv(): string
-        {
-            return self::$environement;
-        }
+	
+	
+	
+	    /* -------------------------------------------------------------------------- */
+	    /* Informations */
+		
+	    /**
+	     * @return string
+	     */
+	    public function getEnv(): string
+	    {
+		    return $this->env;
+	    }
+	
+	    /**
+	     * @return ResponseInterface
+	     */
+	    public function getResponse(): ResponseInterface
+	    {
+		    return $this->response;
+	    }
 	}
 ?>

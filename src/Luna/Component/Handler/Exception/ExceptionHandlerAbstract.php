@@ -16,6 +16,7 @@
     namespace Luna\Component\Handler\Exception;
 
     use Luna\Kernel;
+    use Luna\KernelInterface;
     use Monolog\Handler\StreamHandler;
     use Monolog\Logger;
     use Psr\Log\LoggerInterface;
@@ -37,9 +38,11 @@
          * ExceptionHandlerTrait constructor.
          * @param Throwable $throwable
          */
-        public function __construct(Throwable $throwable)
+        public function __construct(KernelInterface $kernel, Throwable $throwable)
         {
-            $this->logPath = APP_ROOT . '/var/log/' . Kernel::getEnv() . '/exception.log';
+	        $env = $kernel->getEnv();
+        	
+            $this->logPath = APP_ROOT . '/var/log/' . $env . '/exception.log';
             $this->logger = new Logger(new StreamHandler($this->logPath));
         }
 

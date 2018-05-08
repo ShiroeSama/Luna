@@ -24,7 +24,6 @@
     use \ReflectionClass;
     use \ReflectionMethod;
     use \ReflectionParameter;
-    use \stdClass;
 
     class DependencyInjectorProcess
     {
@@ -54,12 +53,12 @@
 	     *
 	     * @param ReflectionClass $reflectionClass
 	     *
-	     * @return stdClass
+	     * @return mixed
 	     *
 	     * @throws ConfigException
 	     * @throws DependencyInjectorException
 	     */
-	    public function construct(ReflectionClass $reflectionClass): stdClass
+	    public function construct(ReflectionClass $reflectionClass)
 	    {
 	    	// Get name of the class
 		    $className = $reflectionClass->getName();
@@ -70,7 +69,7 @@
 	    	if (!is_null($subscriber)) {
 	    		$object = $subscriber->process($reflectionClass, $this->args);
 	    		
-	    		if (!is_a($object, stdClass::class)) {
+	    		if (!is_object($object)) {
 	    			$subscriberName = get_class($subscriber);
 				    throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "The subscriber '{$subscriberName}' must be return an object");
 			    }
@@ -102,14 +101,14 @@
 	     * System to call the method
 	     *
 	     * @param ReflectionMethod $reflectionMethod
-	     * @param stdClass $object
+	     * @param $object
 	     *
 	     * @return mixed
 	     *
 	     * @throws ConfigException
 	     * @throws DependencyInjectorException
 	     */
-	    public function method(ReflectionMethod $reflectionMethod, stdClass $object)
+	    public function method(ReflectionMethod $reflectionMethod, $object)
 	    {
 		    $reflectionMethodArgs = $reflectionMethod->getParameters();
 		

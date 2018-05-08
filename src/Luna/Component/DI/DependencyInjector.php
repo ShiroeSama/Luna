@@ -21,7 +21,6 @@
     use Luna\Component\HTTP\Request\Request;
     use \ReflectionClass;
     use \ReflectionMethod;
-    use \stdClass;
 
     use Luna\Controller\Controller;
 
@@ -61,12 +60,12 @@
 	     * @param string $className
 	     * @param array $args
 	     *
-	     * @return stdClass
+	     * @return mixed
 	     *
 	     * @throws ConfigException
 	     * @throws DependencyInjectorException
 	     */
-        public function callConstructor(string $className, array $args = []): stdClass
+        public function callConstructor(string $className, array $args = [])
         {
             if (!class_exists($className)) {
                 throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Class {$className} doesn't exist");

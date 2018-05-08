@@ -30,7 +30,7 @@
     {
     	protected const DI_SUBSCRIBER = 'DependencyInjector';
     	
-    	/** @var Config\ */
+    	/** @var Config */
 		protected $ConfigModule;
 	
 	    /** @var DependencyInjector */

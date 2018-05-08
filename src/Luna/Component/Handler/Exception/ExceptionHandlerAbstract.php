@@ -25,6 +25,8 @@
 
     abstract class ExceptionHandlerAbstract
     {
+    	protected const LOGGER_NAME = 'Luna.Exception';
+    	
         /** @var string */
         protected $logPath;
 
@@ -43,14 +45,17 @@
 	        $env = $kernel->getEnv();
 	
 	        $this->throwable = $throwable;
+	        
             $this->logPath = APP_ROOT . '/var/log/' . $env . '/exception.log';
-            $this->logger = new Logger(new StreamHandler($this->logPath));
+            $this->logger = new Logger(self::LOGGER_NAME);
+            $this->logger->pushHandler(new StreamHandler($this->logPath));
         }
 
         public function logException()
         {
             $this->logger->error('--------------------------------');
-            $this->logger->error(__METHOD__ . ' : ' . $this->throwable->getMessage());
+	        $this->logger->error('Exception Class : ' . get_class($this->throwable));
+            $this->logger->error('Message : ' . $this->throwable->getMessage());
             $this->logger->error('--------------------------------');
         }
 

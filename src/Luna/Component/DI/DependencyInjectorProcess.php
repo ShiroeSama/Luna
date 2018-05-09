@@ -71,7 +71,7 @@
 	    		
 	    		if (!is_object($object)) {
 	    			$subscriberName = get_class($subscriber);
-				    throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "The subscriber '{$subscriberName}' must be return an object");
+				    throw new DependencyInjectorException("The subscriber '{$subscriberName}' must be return an object");
 			    }
 			    return $object;
 		    } else {
@@ -92,7 +92,7 @@
 				
 				    return (empty($constructArgs) ? new $className() : $reflectionClass->newInstanceArgs($constructArgs));
 			    } else {
-				    throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Class {$className} not instantiable (private or protected constructor)");
+				    throw new DependencyInjectorException("Class {$className} not instantiable (private or protected constructor)");
 			    }
 		    }
 	    }
@@ -172,13 +172,13 @@
 		
 		    $className = $parameter->getType()->getName();
 		    if (!class_exists($className)) {
-			    throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Class {$className} doesn't exist)");
+			    throw new DependencyInjectorException("Class {$className} doesn't exist)");
 		    }
 		
 		    $parameterClass = $parameter->getClass();
 		
 		    if (is_null($parameterClass)) {
-			    throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Cannot inject a value for attribut {$parameterName}");
+			    throw new DependencyInjectorException("Cannot inject a value for attribut {$parameterName}");
 		    }
 		
 		    return $this->construct($parameterClass);

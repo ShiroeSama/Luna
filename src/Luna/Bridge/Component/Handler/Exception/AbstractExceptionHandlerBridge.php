@@ -16,8 +16,8 @@
     namespace Luna\Bridge\Component\Handler\Exception;
 
     use Luna\Bridge\Component\Handler\HandlerAbstractBridge;
-    use Luna\Component\Exception\BridgeException;
     use Luna\Component\Exception\ConfigException;
+    use Luna\Component\Exception\DependencyInjectorException;
     use Luna\Component\Handler\Exception\ExceptionHandler;
     use Luna\Component\Handler\Exception\ExceptionHandlerInterface;
 
@@ -31,15 +31,16 @@
             protected const HANDLER_METHOD = 'onKernelException';
             protected const HANDLER_INTERFACE = ExceptionHandlerInterface::class;
             protected const LUNA_HANDLER_NAMESPACE = ExceptionHandler::class;
-
-
-        /**
-         * Call the handler
-         *
-         * @param \Throwable $throwable
-         *
-         * @throws \Luna\Component\Exception\DependencyInjectorException
-         */
+	
+	
+	    /**
+	     * Call the handler
+	     *
+	     * @param \Throwable $throwable
+	     *
+	     * @throws ConfigException
+	     * @throws DependencyInjectorException
+	     */
         public function catchException(\Throwable $throwable)
         {
             $args = compact('throwable');

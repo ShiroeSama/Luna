@@ -65,11 +65,13 @@
 
 
         /* ------------------------ Getter ------------------------ */
-
-            public function getServer(): ParameterBag { return $this->server; }
+	
+            public function getServer(): ServerBag { return $this->server; }
+	        public function getFileRequest(): FileBag { return $this->files; }
             public function getCookie(): ParameterBag { return $this->cookie; }
-            public function getGetRequest(): ParameterBag { return $this->get; }
-            public function getPostRequest(): ParameterBag { return $this->post; }
+		    public function getGetRequest(): ParameterBag { return $this->get; }
+		    public function getPostRequest(): ParameterBag { return $this->post; }
+	        public function getParametersRequest(): ParameterBag { return $this->parameters; }
 
             public function getRule(): ?string { return $this->server->getRule(); }
             public function getRuleName(): ?string { return $this->server->getRuleName(); }

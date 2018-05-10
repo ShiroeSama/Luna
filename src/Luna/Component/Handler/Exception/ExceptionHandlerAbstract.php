@@ -9,7 +9,7 @@
      *
      *   @File : ExceptionHandlerAbstract.php
      *   @Created_at : 21/03/2018
-     *   @Update_at : 21/03/2018
+     *   @Update_at : 10/05/2018
      * --------------------------------------------------------------------------
      */
 
@@ -40,15 +40,12 @@
          * ExceptionHandlerTrait constructor.
          * @param Throwable $throwable
          */
-        public function __construct(KernelInterface $kernel, Throwable $throwable)
+        public function __construct(KernelInterface $kernel, LoggerInterface $logger, Throwable $throwable)
         {
 	        $env = $kernel->getEnv();
 	
 	        $this->throwable = $throwable;
-	        
-            $this->logPath = APP_ROOT . '/var/log/' . $env . '/exception.log';
-            $this->logger = new Logger(self::LOGGER_NAME);
-            $this->logger->pushHandler(new StreamHandler($this->logPath));
+            $this->logger = $logger;
         }
 
         public function logException()

@@ -45,6 +45,11 @@
 		public function getEnv(): string;
 		
 		/**
+		 * @return string
+		 */
+		public function getLogPath(): string;
+		
+		/**
 		 * @return ResponseInterface
 		 */
 		public function getResponse(): ResponseInterface;

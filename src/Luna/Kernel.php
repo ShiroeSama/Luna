@@ -15,9 +15,10 @@
 	
 	namespace Luna;
 
-	use Luna\Bridge\Component\Handler\Exception\ExceptionHandlerBridge;
+	use Luna\Bridge\Component\Dispatcher\Exception\ExceptionDispatcherBridge;
 	use Luna\Bridge\Component\Routing\RouterBridge;
 	use Luna\Component\Container\LunaContainer;
+	use Luna\Component\DI\Builder\LoggerBuilder;
 	use Luna\Component\Exception\KernelException;
 	use Luna\Component\Handler\Exception\ExceptionHandler;
     use Luna\Component\HTTP\Request\RequestBuilder;
@@ -28,9 +29,33 @@
 
     class Kernel implements KernelInterface
 	{
-	    protected const ENV_PROD = 'prod';
-	    protected const ENV_DEV = 'dev';
-	    protected const ENV_TEST = 'test';
+	    # -------------------------------------------------------------
+	    #   Constants
+	    # -------------------------------------------------------------
+		
+	    // ----------------
+	    // App Name
+	    
+	    public const APP_NAME = 'Luna';
+	    
+	
+	    // ----------------
+	    // LOG
+	    
+		public const LOG_EXCEPTION = 'Exception';
+		
+	
+	    // ----------------
+	    // Environment
+	    
+	    public const ENV_PROD = 'prod';
+	    public const ENV_DEV = 'dev';
+	    public const ENV_TEST = 'test';
+	
+	
+	    # -------------------------------------------------------------
+	    #   Vars
+	    # -------------------------------------------------------------
 	    
         /** @var Config */
 	    protected $ConfigModule;
@@ -41,8 +66,8 @@
         /** @var RouterBridge */
         protected $RouterBridgeModule;
 
-        /** @var ExceptionHandlerBridge */
-        protected $ExceptionHandlerBridgeModule;
+        /** @var ExceptionDispatcherBridge */
+        protected $ExceptionDispatcherBridgeModule;
 
 
         # -------------------------------------------------------------
@@ -114,11 +139,12 @@
                 $this->RouterBridgeModule->bridge();
             } catch (Throwable $throwable) {
                 try {
-                    $this->ExceptionHandlerBridgeModule = new ExceptionHandlerBridge();
-                    $this->ExceptionHandlerBridgeModule->bridge();
-                    $this->ExceptionHandlerBridgeModule->catchException($throwable);
+                    $this->ExceptionDispatcherBridgeModule = new ExceptionDispatcherBridge();
+                    $this->ExceptionDispatcherBridgeModule->bridge();
+                    $this->ExceptionDispatcherBridgeModule->dispatch($throwable);
                 } catch (Throwable $throwable) {
-                    $exceptionHandler = new ExceptionHandler($this, $throwable);
+	                $logger = LoggerBuilder::createExceptionLogger();
+	                $exceptionHandler = new ExceptionHandler($this, $logger, $throwable);
                     $exceptionHandler->onKernelException();
                 }
             }
@@ -162,9 +188,12 @@
 
             } catch (Throwable $throwable) {
                 try {
-                    $this->ExceptionHandlerBridgeModule->catchException($throwable);
+	                $this->ExceptionDispatcherBridgeModule = new ExceptionDispatcherBridge();
+	                $this->ExceptionDispatcherBridgeModule->bridge();
+                    $this->ExceptionDispatcherBridgeModule->dispatch($throwable);
                 } catch (Throwable $throwable) {
-                    $exceptionHandler = new ExceptionHandler($this, $throwable);
+	                $logger = LoggerBuilder::createExceptionLogger();
+                    $exceptionHandler = new ExceptionHandler($this, $logger, $throwable);
                     $exceptionHandler->onKernelException();
                 }
             }
@@ -192,6 +221,14 @@
 	    public function getEnv(): string
 	    {
 		    return $this->env;
+	    }
+	
+	    /**
+	     * @return string
+	     */
+	    public function getLogPath(): string
+	    {
+		    return APP_ROOT . DIRECTORY_SEPARATOR . 'var' . DIRECTORY_SEPARATOR . 'log' . DIRECTORY_SEPARATOR . $this->getEnv();
 	    }
 	
 	    /**

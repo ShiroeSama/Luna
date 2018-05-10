@@ -17,8 +17,10 @@
 	
 	use Luna\Component\Bag\ServerBag;
     use Luna\Component\DI\DependencyInjector;
-    use Luna\Component\Exception\RouteException;
-    use Luna\Component\HTTP\Request\Request;
+	use Luna\Component\Exception\ConfigException;
+	use Luna\Component\Exception\DependencyInjectorException;
+	use Luna\Component\Exception\RouteException;
+	use Luna\Component\HTTP\Request\Request;
     use Luna\Component\Routing\Route;
 	use Luna\Config\Config;
 	use Luna\Controller\Controller;
@@ -78,16 +80,17 @@
 			$this->routes = $this->ConfigModule->getRouting('ROUTES');
 			$this->rootFolder = $this->ConfigModule->getRouting('ROOT_FOLDER');
 		}
-
-        /**
-         * Prepare the Route
-         *
-         * - Check if the Controller Dir exist
-         * - Check if the route exist in the config
-         *
-         * @throws \Luna\Component\Exception\DependencyInjectorException
-         * @throws RouteException
-         */
+		
+		/**
+		 * Prepare the Route
+		 *
+		 * - Check if the Controller Dir exist
+		 * - Check if the route exist in the config
+		 *
+		 * @throws ConfigException
+		 * @throws DependencyInjectorException
+		 * @throws RouteException
+		 */
 		public function prepare()
 		{
 			# Prepare the Route's List
@@ -133,6 +136,7 @@
 			
 			# Get Parameters
 			$this->params = $this->getParams($this->routes[$key]['Rule']);
+			$this->request->getParametersRequest()->replace($this->params);
 		}
 		
 		public function getRoute()

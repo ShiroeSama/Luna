@@ -18,6 +18,8 @@
     use Luna\Bridge\Component\Dispatcher\DispatcherAbstractBridge;
     use Luna\Component\Dispatcher\Exception\ExceptionDispatcher;
     use Luna\Component\Dispatcher\Exception\ExceptionDispatcherInterface;
+    use Luna\Component\Exception\ConfigException;
+    use Luna\Component\Exception\DependencyInjectorException;
 
     class ExceptionDispatcherBridge extends DispatcherAbstractBridge
     {
@@ -28,5 +30,21 @@
             protected const DISPATCHER_METHOD = 'dispatch';
             protected const DISPATCHER_INTERFACE = ExceptionDispatcherInterface::class;
             protected const LUNA_DISPATCHER_NAMESPACE = ExceptionDispatcher::class;
+	
+	    /**
+	     * Call the Exception Dispatcher
+	     *
+	     * @param \Throwable $throwable
+	     *
+	     * @throws ConfigException
+	     * @throws DependencyInjectorException
+	     */
+	    public function dispatch(\Throwable $throwable)
+	    {
+		    $args = compact('throwable');
+		
+		    $exceptionDispatcher = $this->DIModule->callConstructor($this->class, $args);
+		    $this->DIModule->callMethod($this->method, $exceptionDispatcher, $args);
+	    }
     }
 ?>

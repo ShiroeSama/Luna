@@ -115,6 +115,15 @@
                 }
 
                 return true;
+            } elseif (is_a($key, ParameterBag::class)) {
+	            /** @var ParameterBag $key */
+	            foreach ($key->all() as $value) {
+		            if (!array_key_exists($value, $this->parameters)) {
+			            return false;
+		            }
+	            }
+	
+	            return true;
             } else {
                 return array_key_exists($key, $this->parameters);
             }

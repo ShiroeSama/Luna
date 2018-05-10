@@ -15,10 +15,14 @@
 	
 	namespace Luna\Component\DI\Modules;
 	
+	use Luna\Component\Container\LunaContainer;
 	use Luna\Component\DI\DependencyInjector;
 	
 	abstract class DependencyInjectorAbstractSubscriber implements DependencyInjectorSubscriberInterface
 	{
+		/** @var LunaContainer */
+		protected $container;
+		
 		/** @var DependencyInjector */
 		protected $dependencyInjector;
 		
@@ -28,6 +32,7 @@
 		 */
 		public function __construct(DependencyInjector $dependencyInjector)
 		{
+			$this->container = LunaContainer::getInstance();
 			$this->dependencyInjector = $dependencyInjector;
 		}
 	}

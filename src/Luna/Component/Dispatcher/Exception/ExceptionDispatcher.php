@@ -15,30 +15,38 @@
 
     namespace Luna\Component\Dispatcher\Exception;
 
-    use \PDOException;
-    use \Throwable;
-
     use Luna\Bridge\Component\Handler\Exception\BridgeExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\ConfigExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\ControllerExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\DatabaseExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\DependencyInjectorExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\ExceptionHandlerBridge;
+    use Luna\Bridge\Component\Handler\Exception\KernelExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\QueryComponentExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\RepositoryExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\RouteExceptionHandlerBridge;
+    use Luna\Component\DI\Builder\LoggerBuilder;
     use Luna\Component\Exception\BridgeException;
     use Luna\Component\Exception\ConfigException;
     use Luna\Component\Exception\ControllerException;
     use Luna\Component\Exception\DatabaseException;
     use Luna\Component\Exception\DependencyInjectorException;
+    use Luna\Component\Exception\KernelException;
     use Luna\Component\Exception\QueryComponentException;
     use Luna\Component\Exception\RepositoryException;
     use Luna\Component\Exception\RouteException;
     use Luna\Component\Handler\Exception\ExceptionHandler;
+    use Luna\KernelInterface;
+
+
+    use \PDOException;
+    use \Throwable;
 
     class ExceptionDispatcher implements ExceptionDispatcherInterface
     {
+	    /** @var KernelInterface */
+	    protected $kernel;
+	    
         /** @var BridgeExceptionHandlerBridge */
         protected $bridgeExceptionHandlerBridge;
 
@@ -53,6 +61,9 @@
 
         /** @var DependencyInjectorExceptionHandlerBridge */
         protected $dependencyInjectorExceptionHandlerBridge;
+	
+	    /** @var KernelExceptionHandlerBridge */
+	    protected $kernelExceptionHandlerBridge;
 
         /** @var QueryComponentExceptionHandlerBridge */
         protected $queryComponentExceptionHandlerBridge;
@@ -69,8 +80,9 @@
         /**
          * ExceptionDispatcher constructor.
          */
-        public function __construct()
+        public function __construct(KernelInterface $kernel)
         {
+        	$this->kernel = $kernel;
             $this->prepareBridge();
         }
 
@@ -91,6 +103,9 @@
 
                 // Dependency Injector Exception Handler
                 $this->dependencyInjectorExceptionHandlerBridge = new DependencyInjectorExceptionHandlerBridge();
+	
+	            // Kernel Component Exception Handler
+	            $this->kernelExceptionHandlerBridge = new KernelExceptionHandlerBridge();
 
                 // Query Component Exception Handler
                 $this->queryComponentExceptionHandlerBridge = new QueryComponentExceptionHandlerBridge();
@@ -104,7 +119,8 @@
                 // Default Exception Handler
                 $this->defaultExceptionHandlerBridge = new ExceptionHandlerBridge();
             } catch (Throwable $throwable) {
-                $handler = new ExceptionHandler($throwable);
+	            $logger = LoggerBuilder::createExceptionLogger();
+	            $handler = new ExceptionHandler($this->kernel, $logger, $throwable);
                 $handler->onKernelException();
             }
         }
@@ -145,6 +161,10 @@
                     case DependencyInjectorException::class:
                         $this->dependencyInjectorExceptionHandlerBridge->catchException($throwable);
                         break;
+	
+	                case KernelException::class:
+		                $this->kernelExceptionHandlerBridge->catchException($throwable);
+		                break;
 
                     case QueryComponentException::class:
                         $this->queryComponentExceptionHandlerBridge->catchException($throwable);
@@ -163,7 +183,8 @@
                         break;
                 }
             } catch (Throwable $throwable) {
-                $handler = new ExceptionHandler($throwable);
+	            $logger = LoggerBuilder::createExceptionLogger();
+	            $handler = new ExceptionHandler($this->kernel, $logger, $throwable);
                 $handler->onKernelException();
             }
         }

@@ -41,7 +41,7 @@
          */
         public function callController(string $className, Request $request, array $args = []): Controller
         {
-            if (!is_a($className, Controller::class)) {
+            if (!is_a($className, Controller::class) || !is_subclass_of($className, Controller::class)) {
                 throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "{$className} is not a Controller");
             }
 

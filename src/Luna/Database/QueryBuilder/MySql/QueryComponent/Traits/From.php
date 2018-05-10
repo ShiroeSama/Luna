@@ -38,7 +38,7 @@
          */
         public function from(string $table, string $alias = NULL): self
         {
-            if (class_exists($table) && is_a($table, Entity::class)) {
+            if (class_exists($table) && (is_a($table, Entity::class) or is_subclass_of($table, Entity::class))) {
                 /** @var Entity $entity */
                 $entity = new $table();
                 $table = $entity->getTable();

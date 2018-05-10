@@ -115,7 +115,7 @@
                 }
 
                 return true;
-            } elseif (is_a($key, ParameterBag::class)) {
+            } elseif (is_a($key, ParameterBag::class) || is_subclass_of($key, ParameterBag::class)) {
 	            /** @var ParameterBag $key */
 	            foreach ($key->all() as $value) {
 		            if (!array_key_exists($value, $this->parameters)) {

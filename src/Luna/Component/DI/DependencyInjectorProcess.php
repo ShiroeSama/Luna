@@ -144,8 +144,10 @@
 		    
 		    if (is_array($DIModules) && !empty($DIModules)) {
 			    foreach ($DIModules as $class => $module) {
-					if (is_a($module, DependencyInjectorSubscriberInterface::class)) {
-						$subscriber = (is_a($class, $className)) ? $module : NULL;
+					if (is_a($module, DependencyInjectorSubscriberInterface::class)
+						or is_subclass_of($module, DependencyInjectorSubscriberInterface::class)
+					) {
+						$subscriber = (is_a($class, $className) or is_subclass_of($class, $className)) ? $module : NULL;
 					}
 			    }
 		    }

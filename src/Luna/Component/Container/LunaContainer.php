@@ -64,7 +64,7 @@
 		{
 			$kernel = $this->container->get(self::KERNEL);
 			
-			if (is_null($kernel) || is_a($kernel, KernelInterface::class)) {
+			if (is_null($kernel) || is_a($kernel, KernelInterface::class) || is_subclass_of($kernel, KernelInterface::class)) {
 				$kernel = new Kernel();
 				$this->setKernel($kernel);
 			}
@@ -95,7 +95,7 @@
 		{
 			$request = $this->container->get(self::REQUEST);
 			
-			if (is_null($request) || is_a($request, Request::class)) {
+			if (is_null($request) || is_a($request, Request::class) || is_subclass_of($request, Request::class)) {
 				$request = RequestBuilder::create();
 				$this->setRequest($request);
 			}

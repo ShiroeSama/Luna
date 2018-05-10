@@ -9,7 +9,7 @@
      *
      *   @File : subscriber.php
      *   @Created_at : 16/04/2018
-     *   @Update_at : 16/04/2018
+     *   @Update_at : 10/05/2018
      * --------------------------------------------------------------------------
      */
 
@@ -30,7 +30,9 @@
         */
 
         'DependencyInjector' => [
-	        \Psr\Log\LoggerInterface::class => \Luna\Component\DI\Modules\LoggerDependencyInjectorSubscriber::class
+	        \Luna\Config\Config::class      => \Luna\Component\DI\Modules\ConfigDependencyInjectorSubscriber::class,
+	        \Luna\KernelInterface::class    => \Luna\Component\DI\Modules\KernelDependencyInjectorSubscriber::class,
+	        \Psr\Log\LoggerInterface::class => \Luna\Component\DI\Modules\LoggerDependencyInjectorSubscriber::class,
         ]
     ];
 

@@ -65,7 +65,7 @@
 		{
 			$kernel = $this->container->get(self::KERNEL);
 			
-			if (is_null($kernel) || ClassManager::checkClassOf($kernel, KernelInterface::class)) {
+			if (is_null($kernel) || !ClassManager::checkClassOf($kernel, KernelInterface::class)) {
 				$kernel = new Kernel();
 				$this->setKernel($kernel);
 			}
@@ -96,7 +96,7 @@
 		{
 			$request = $this->container->get(self::REQUEST);
 			
-			if (is_null($request) || ClassManager::checkClassOf($request, Request::class)) {
+			if (is_null($request) || !ClassManager::checkClassOf($request, Request::class)) {
 				$request = RequestBuilder::create();
 				$this->setRequest($request);
 			}

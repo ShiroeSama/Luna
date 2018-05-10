@@ -15,6 +15,7 @@
 
     namespace Luna\Database\QueryBuilder\MySQL\QueryComponent;
 
+    use Luna\Component\Utils\ClassManager;
     use Luna\Database\QueryBuilder\MySQL\Query;
     use Luna\Database\QueryBuilder\MySQL\QueryBuilder;
     use Luna\Database\QueryBuilder\MySQL\QueryComponent\Traits\Values;
@@ -62,7 +63,7 @@
          */
         protected function insert(string $table): InsertComponent
         {
-            if (class_exists($table) && (is_a($table, Entity::class) or is_subclass_of($table, Entity::class))) {
+            if (class_exists($table) && ClassManager::checkClassOf($table, Entity::class)) {
                 /** @var Entity $entity */
                 $entity = new $table();
                 $table = $entity->getTable();

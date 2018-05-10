@@ -18,6 +18,7 @@
 	use Luna\Component\Bag\ParameterBag;
 	use Luna\Component\HTTP\Request\Request;
 	use Luna\Component\HTTP\Request\RequestBuilder;
+	use Luna\Component\Utils\ClassManager;
 	use Luna\Kernel;
 	use Luna\KernelInterface;
 	
@@ -64,7 +65,7 @@
 		{
 			$kernel = $this->container->get(self::KERNEL);
 			
-			if (is_null($kernel) || is_a($kernel, KernelInterface::class) || is_subclass_of($kernel, KernelInterface::class)) {
+			if (is_null($kernel) || ClassManager::checkClassOf($kernel, KernelInterface::class)) {
 				$kernel = new Kernel();
 				$this->setKernel($kernel);
 			}
@@ -95,7 +96,7 @@
 		{
 			$request = $this->container->get(self::REQUEST);
 			
-			if (is_null($request) || is_a($request, Request::class) || is_subclass_of($request, Request::class)) {
+			if (is_null($request) || ClassManager::checkClassOf($request, Request::class)) {
 				$request = RequestBuilder::create();
 				$this->setRequest($request);
 			}

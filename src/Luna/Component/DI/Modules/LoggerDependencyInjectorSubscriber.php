@@ -18,6 +18,7 @@
 	use Luna\Component\Bag\ParameterBag;
 	use Luna\Component\DI\Builder\LoggerBuilder;
 	use Luna\Component\Handler\Exception\ExceptionHandlerAbstract;
+	use Luna\Component\Utils\ClassManager;
 	use Luna\Kernel;
 	
 	use \ReflectionClass;
@@ -38,7 +39,7 @@
 			$loggerName = Kernel::APP_NAME;
 			$logPath = $path . '.log';
 			
-			if (is_a($className, ExceptionHandlerAbstract::class) || is_subclass_of($className, ExceptionHandlerAbstract::class)) {
+			if (ClassManager::checkClassOf($className, ExceptionHandlerAbstract::class)) {
 				return LoggerBuilder::createExceptionLogger();
 			}
 			

@@ -15,6 +15,7 @@
 
     namespace Luna\Database\QueryBuilder\MySQL\QueryComponent\Traits;
 
+    use Luna\Component\Utils\ClassManager;
     use Luna\Entity\Entity;
 
     trait From
@@ -38,7 +39,7 @@
          */
         public function from(string $table, string $alias = NULL): self
         {
-            if (class_exists($table) && (is_a($table, Entity::class) or is_subclass_of($table, Entity::class))) {
+            if (class_exists($table) && ClassManager::checkClassOf($table, Entity::class)) {
                 /** @var Entity $entity */
                 $entity = new $table();
                 $table = $entity->getTable();

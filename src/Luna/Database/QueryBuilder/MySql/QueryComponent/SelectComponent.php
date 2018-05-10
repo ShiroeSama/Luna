@@ -15,6 +15,7 @@
 
     namespace Luna\Database\QueryBuilder\MySQL\QueryComponent;
 
+    use Luna\Component\Utils\ClassManager;
     use Luna\Database\QueryBuilder\MySQL\QueryBuilder;
     use Luna\Database\QueryBuilder\MySQL\QueryComponent\Traits\From;
     use Luna\Database\QueryBuilder\MySQL\QueryComponent\Traits\GroupBy;
@@ -88,7 +89,7 @@
          */
         public function leftJoin(string $table, string $keyword, string $condition): SelectComponent
         {
-            if (class_exists($table) && (is_a($table, Entity::class) or is_subclass_of($table, Entity::class))) {
+            if (class_exists($table) && ClassManager::checkClassOf($table, Entity::class)) {
                 /** @var Entity $entity */
                 $entity = new $table();
                 $table = $entity->getTable();

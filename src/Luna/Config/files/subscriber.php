@@ -29,7 +29,9 @@
         |
         */
 
-        'DependencyInjector' => []
+        'DependencyInjector' => [
+	        \Psr\Log\LoggerInterface::class => \Luna\Component\DI\Modules\LoggerDependencyInjectorSubscriber::class
+        ]
     ];
 
     /*

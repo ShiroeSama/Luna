@@ -19,6 +19,7 @@
     use Luna\Component\DI\Modules\DependencyInjectorSubscriberInterface;
     use Luna\Component\Exception\ConfigException;
     use Luna\Component\Exception\DependencyInjectorException;
+    use Luna\Component\Utils\ClassManager;
     use Luna\Config\Config;
 
     use \ReflectionClass;
@@ -144,10 +145,8 @@
 		    
 		    if (is_array($DIModules) && !empty($DIModules)) {
 			    foreach ($DIModules as $class => $module) {
-					if (is_a($module, DependencyInjectorSubscriberInterface::class)
-						or is_subclass_of($module, DependencyInjectorSubscriberInterface::class)
-					) {
-						$subscriber = (is_a($class, $className) or is_subclass_of($class, $className)) ? $module : NULL;
+					if (ClassManager::checkClassOf($module, DependencyInjectorSubscriberInterface::class)) {
+						$subscriber = (ClassManager::checkClassOf($class, $className)) ? $module : NULL;
 					}
 			    }
 		    }
@@ -172,13 +171,26 @@
 			    return $this->args[$parameterName];
 		    }
 		
-		    $className = $parameter->getType()->getName();
+		    $parameterClass = $parameter->getClass();
+		    $className = $parameterClass->getName();
+		
+		    // Get subscriber (DI Module)
+		    $subscriber = $this->getDISubscriber($className);
+		
+		    if (!is_null($subscriber)) {
+			    $object = $subscriber->process($parameterClass, $this->args);
+			
+			    if (!is_object($object)) {
+				    $subscriberName = get_class($subscriber);
+				    throw new DependencyInjectorException("The subscriber '{$subscriberName}' must be return an object");
+			    }
+			    return $object;
+		    }
+		    
 		    if (!class_exists($className)) {
 			    throw new DependencyInjectorException("Class {$className} doesn't exist)");
 		    }
-		
-		    $parameterClass = $parameter->getClass();
-		
+				
 		    if (is_null($parameterClass)) {
 			    throw new DependencyInjectorException("Cannot inject a value for attribut {$parameterName}");
 		    }

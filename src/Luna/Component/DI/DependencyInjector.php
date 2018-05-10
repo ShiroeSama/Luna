@@ -19,6 +19,7 @@
     use Luna\Component\Exception\ConfigException;
     use Luna\Component\Exception\DependencyInjectorException;
     use Luna\Component\HTTP\Request\Request;
+    use Luna\Component\Utils\ClassManager;
     use \ReflectionClass;
     use \ReflectionMethod;
 
@@ -41,7 +42,7 @@
          */
         public function callController(string $className, Request $request, array $args = []): Controller
         {
-            if (!is_a($className, Controller::class) || !is_subclass_of($className, Controller::class)) {
+            if (!ClassManager::checkClassOf($className, Controller::class)) {
                 throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "{$className} is not a Controller");
             }
 

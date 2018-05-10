@@ -23,6 +23,7 @@
 	use Luna\Component\Handler\Exception\ExceptionHandler;
     use Luna\Component\HTTP\Request\RequestBuilder;
     use Luna\Component\HTTP\Request\ResponseInterface;
+	use Luna\Component\Utils\ClassManager;
 	use Luna\Config\Config;
 	
 	use \Throwable;
@@ -176,7 +177,7 @@
 
                 $response = $this->RouterBridgeModule->init($request);
                 
-                if (!is_a($response, ResponseInterface::class) || !is_subclass_of($response, ResponseInterface::class)) {
+                if (!ClassManager::checkClassOf($response, ResponseInterface::class)) {
                 	$message = 'The controller must return a response.';
                 	
                 	if ($response === null) {

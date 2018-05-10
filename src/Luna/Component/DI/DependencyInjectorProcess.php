@@ -145,6 +145,7 @@
 		    
 		    if (is_array($DIModules) && !empty($DIModules)) {
 			    foreach ($DIModules as $class => $module) {
+				    if (!is_null($subscriber)) { break; }
 					if (ClassManager::checkClassOf($module, DependencyInjectorSubscriberInterface::class)) {
 						$subscriber = (ClassManager::checkClassOf($class, $className)) ? $module : NULL;
 					}
@@ -184,6 +185,8 @@
 				    $subscriberName = get_class($subscriber);
 				    throw new DependencyInjectorException("The subscriber '{$subscriberName}' must be return an object");
 			    }
+			    
+			    $this->args->set(get_class($object), $object);
 			    return $object;
 		    }
 		    
@@ -195,7 +198,10 @@
 			    throw new DependencyInjectorException("Cannot inject a value for attribut {$parameterName}");
 		    }
 		
-		    return $this->construct($parameterClass);
+		    $object = $this->construct($parameterClass);
+		    $this->args->set(get_class($object), $object);
+		    
+		    return $object;
 	    }
     }
 ?>

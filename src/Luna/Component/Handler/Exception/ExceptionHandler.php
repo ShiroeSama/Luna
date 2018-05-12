@@ -9,13 +9,13 @@
      *
      *   @File : ExceptionHandler.php
      *   @Created_at : 14/03/2018
-     *   @Update_at : 21/03/2018
+     *   @Update_at : 12/05/2018
      * --------------------------------------------------------------------------
      */
 
     namespace Luna\Component\Handler\Exception;
 
-    class ExceptionHandler extends ExceptionHandlerAbstract implements ExceptionHandlerInterface
+    class ExceptionHandler extends ExceptionHandlerAbstract
     {
         public function onKernelException()
         {

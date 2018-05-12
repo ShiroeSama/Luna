@@ -21,27 +21,73 @@
     */
 
     $Handler = [
+	
+	    /*
+		|--------------------------------------------------------------------------
+		| Access Handler
+		|--------------------------------------------------------------------------
+		|
+		*/
+	
+	    'Access' => [],
 
         /*
         |--------------------------------------------------------------------------
-        | Default Handler
+        | Exception Handler
         |--------------------------------------------------------------------------
         |
         */
 
-        'Default' => [
-            'Exception' => NULL
-        ],
+        'Exception' => [
+            'Default' => [
+	            'class' => \Luna\Component\Handler\Exception\ExceptionHandler::class,
+	            'method' => 'onKernelException',
+            ],
 
-        /*
-        |--------------------------------------------------------------------------
-        | Routing Handler
-        |--------------------------------------------------------------------------
-        |
-        */
+            'Bridge' => [
+	            'class' => \Luna\Component\Handler\Exception\BridgeExceptionHandler::class,
+	            'method' => 'onBridgeException',
+            ],
 
-        'Routing' => [
-            'Exception' => NULL
+            'Config' => [
+	            'class' => \Luna\Component\Handler\Exception\ConfigExceptionHandler::class,
+	            'method' => 'onConfigException',
+            ],
+
+            'Controller' => [
+	            'class' => \Luna\Component\Handler\Exception\ControllerExceptionHandler::class,
+	            'method' => 'onControllerException',
+            ],
+
+            'Database' => [
+	            'class' => \Luna\Component\Handler\Exception\DatabaseExceptionHandler::class,
+	            'method' => 'onDatabaseException',
+            ],
+
+            'DependencyInjector' => [
+	            'class' => \Luna\Component\Handler\Exception\DependencyInjectorExceptionHandler::class,
+	            'method' => 'onDependencyInjectorException',
+            ],
+
+            'Kernel' => [
+	            'class' => \Luna\Component\Handler\Exception\KernelExceptionHandler::class,
+	            'method' => 'onKernelException',
+            ],
+
+            'QueryComponent' => [
+	            'class' => \Luna\Component\Handler\Exception\QueryComponentExceptionHandler::class,
+	            'method' => 'onQueryComponentException',
+            ],
+
+            'Repository' => [
+	            'class' => \Luna\Component\Handler\Exception\RepositoryExceptionHandler::class,
+	            'method' => 'onRepositoryException',
+            ],
+
+            'Route' => [
+	            'class' => \Luna\Component\Handler\Exception\RouteExceptionHandler::class,
+	            'method' => 'onRouteException',
+            ],
         ],
     ];
 

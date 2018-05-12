@@ -9,7 +9,7 @@
      *
      *   @File : AbstractExceptionHandlerBridge.php
      *   @Created_at : 15/03/2018
-     *   @Update_at : 16/04/2018
+     *   @Update_at : 12/05/2018
      * --------------------------------------------------------------------------
      */
 
@@ -25,12 +25,8 @@
     {
         # ----------------------------------------------------------
         # Constant
-
-            protected const HANDLER_TYPE = 'Exception';
-            protected const HANDLER_NAME = 'Default';
-            protected const HANDLER_METHOD = 'onKernelException';
-            protected const HANDLER_INTERFACE = ExceptionHandlerInterface::class;
-            protected const LUNA_HANDLER_NAMESPACE = ExceptionHandler::class;
+	
+		    protected const HANDLER_NAME = 'Exception';
 	
 	
 	    /**

@@ -177,7 +177,7 @@
 
                 $response = $this->RouterBridgeModule->init($request);
                 
-                if (!ClassManager::checkClassOf($response, ResponseInterface::class)) {
+                if (!ClassManager::is(ResponseInterface::class, $response)) {
                 	$message = 'The controller must return a response.';
                 	
                 	if ($response === null) {

@@ -39,7 +39,7 @@
 			$loggerName = Kernel::APP_NAME;
 			$logPath = $path . '.log';
 			
-			if (ClassManager::checkClassOf($className, ExceptionHandlerAbstract::class)) {
+			if (ClassManager::is(ExceptionHandlerAbstract::class, $className)) {
 				return LoggerBuilder::createExceptionLogger();
 			}
 			

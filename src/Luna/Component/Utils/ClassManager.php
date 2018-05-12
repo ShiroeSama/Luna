@@ -20,25 +20,37 @@
 		/**
 		 * Allow to check if a class implement a specific interface
 		 *
-		 * @param $interface
+		 * @param string $interface
 		 * @param $class
 		 * @return bool
 		 */
-		public static function checkClassImplement($interface, $class): bool
+		public static function implement(string $interface, $class): bool
 		{
 			return is_subclass_of($class, $interface, true);
 		}
 		
 		/**
-		 * Allow to check if class/object is a specific class or extends/implement a specific class/interface
+		 * Allow to check if a class extend a specific class
 		 *
-		 * @param $object
-		 * @param string $class_name
+		 * @param string $parent_class
+		 * @param $class
 		 * @return bool
 		 */
-		public static function checkClassOf($object, string $class_name): bool
+		public static function extend(string $parent_class, $class): bool
 		{
-			return is_a($object, $class_name, true) or static::checkClassImplement($class_name, $object);
+			return is_subclass_of($class, $parent_class, true);
+		}
+		
+		/**
+		 * Allow to check if class/object is a specific class or extends/implement a specific class/interface
+		 *
+		 * @param string $class_name
+		 * @param $object
+		 * @return bool
+		 */
+		public static function is(string $class_name, $object): bool
+		{
+			return is_a($object, $class_name, true) or static::implement($class_name, $object);
 		}
 	}
 ?>

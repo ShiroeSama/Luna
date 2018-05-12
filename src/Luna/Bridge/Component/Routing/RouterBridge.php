@@ -9,7 +9,7 @@
      *
      *   @File : RouterBridge.php
      *   @Created_at : 14/03/2018
-     *   @Update_at : 07/05/2018
+     *   @Update_at : 12/05/2018
      * --------------------------------------------------------------------------
      */
 
@@ -17,10 +17,13 @@
 
     use Luna\Bridge\Bridge;
     use Luna\Component\Exception\BridgeException;
+    use Luna\Component\Exception\ConfigException;
+    use Luna\Component\Exception\DependencyInjectorException;
     use Luna\Component\HTTP\Request\Request;
     use Luna\Component\HTTP\Request\ResponseInterface;
     use Luna\Component\Routing\Router;
     use Luna\Component\Routing\RouterInterface;
+    use Luna\Component\Utils\ClassManager;
 
     class RouterBridge extends Bridge
     {
@@ -52,21 +55,22 @@
             if (class_exists(self::APP_ROUTER_NAMESPACE)) {
                 $this->class = self::APP_ROUTER_NAMESPACE;
 
-                if (is_subclass_of($this->class, RouterInterface::class)) {
+                if (ClassManager::extend(RouterInterface::class, $this->class)) {
                     throw new BridgeException('App Router doesnt implements the RouterInterface');
                 }
             }
 
             return $this->class;
         }
-
-        /**
-         * @param Request $request
-         *
-         * @return ResponseInterface
-         *
-         * @throws \Luna\Component\Exception\DependencyInjectorException
-         */
+	
+	    /**
+	     * @param Request $request
+	     *
+	     * @return ResponseInterface
+	     *
+	     * @throws ConfigException
+	     * @throws DependencyInjectorException
+	     */
         public function init(Request $request): ResponseInterface
         {
             /** @var RouterInterface $router */

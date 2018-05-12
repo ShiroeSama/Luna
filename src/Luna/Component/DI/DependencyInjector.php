@@ -42,7 +42,7 @@
          */
         public function callController(string $className, Request $request, array $args = []): Controller
         {
-            if (!ClassManager::checkClassOf($className, Controller::class)) {
+            if (!ClassManager::is(Controller::class, $className)) {
                 throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "{$className} is not a Controller");
             }
 

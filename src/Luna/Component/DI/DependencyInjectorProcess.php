@@ -146,8 +146,8 @@
 		    if (is_array($DIModules) && !empty($DIModules)) {
 			    foreach ($DIModules as $class => $module) {
 				    if (!is_null($subscriber)) { break; }
-					if (ClassManager::checkClassOf($module, DependencyInjectorSubscriberInterface::class)) {
-						$subscriber = (ClassManager::checkClassOf($class, $className)) ? $module : NULL;
+					if (ClassManager::is(DependencyInjectorSubscriberInterface::class, $module)) {
+						$subscriber = (ClassManager::is($className, $class)) ? $module : NULL;
 					}
 			    }
 		    }

@@ -117,7 +117,7 @@
                 }
 
                 return true;
-            } elseif (ClassManager::checkClassOf($key, ParameterBag::class)) {
+            } elseif (ClassManager::is(ParameterBag::class, $key)) {
 	            /** @var ParameterBag $key */
 	            foreach ($key->all() as $value) {
 		            if (!array_key_exists($value, $this->parameters)) {

@@ -17,7 +17,6 @@
 
     use Luna\Bridge\Component\Dispatcher\DispatcherAbstractBridge;
     use Luna\Component\Dispatcher\Exception\ExceptionDispatcher;
-    use Luna\Component\Dispatcher\Exception\ExceptionDispatcherInterface;
     use Luna\Component\Exception\ConfigException;
     use Luna\Component\Exception\DependencyInjectorException;
 
@@ -27,9 +26,9 @@
         # Constant
 
             protected const DISPATCHER_NAME = 'Exception';
-            protected const DISPATCHER_METHOD = 'dispatch';
-            protected const DISPATCHER_INTERFACE = ExceptionDispatcherInterface::class;
-            protected const LUNA_DISPATCHER_NAMESPACE = ExceptionDispatcher::class;
+		    protected const DISPATCHER_TYPE = 'Default';
+		    protected const DISPATCHER_CLASS = ExceptionDispatcher::class;
+		    protected const DISPATCHER_METHOD = 'dispatch';
 	
 	    /**
 	     * Call the Exception Dispatcher

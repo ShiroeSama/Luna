@@ -31,7 +31,11 @@
 		public static function create(string $name, string $logPath) : LoggerInterface
 		{
 			$logger = new Logger($name);
-			$logger->pushHandler(new StreamHandler($logPath));
+			
+			try {
+				$streamHandler = new StreamHandler($logPath);
+				$logger->pushHandler($streamHandler);
+			} catch (\Exception $e) {}
 			
 			return $logger;
 		}

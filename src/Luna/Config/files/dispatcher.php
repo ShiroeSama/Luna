@@ -9,7 +9,7 @@
      *
      *   @File : dispatcher.php
      *   @Created_at : 12/04/2018
-     *   @Update_at : 12/04/2018
+     *   @Update_at : 12/05/2018
      * --------------------------------------------------------------------------
      */
 
@@ -29,7 +29,12 @@
         |
         */
 
-        'Exception' => NULL
+        'Exception' => [
+	        'Default' => [
+		        'class' => \Luna\Component\Dispatcher\Exception\ExceptionDispatcher::class,
+		        'method' => 'dispatch',
+	        ],
+        ]
     ];
 
     /*

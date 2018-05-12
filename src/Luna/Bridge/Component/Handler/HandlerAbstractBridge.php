@@ -36,9 +36,6 @@
 
 		# ----------------------------------------------------------
 		# Attributes
-
-            /** @var string */
-            protected $interface;
 		
 			/** @var ParameterBag */
 			protected $bag;
@@ -107,8 +104,8 @@
 			if (is_null($this->class)) {
                 $this->class = static::HANDLER_CLASS;
 			}
-			if (is_null($this->class)) {
-				$this->class = static::HANDLER_METHOD;
+			if (is_null($this->method)) {
+				$this->method = static::HANDLER_METHOD;
 			}
 			
 			
@@ -121,7 +118,6 @@
             
             // Check if the method exist in the class
             
-			$this->method = static::HANDLER_METHOD;
             if (!method_exists($this->class, $this->method)) {
                 throw new BridgeException($this->method . ' doesnt exist in class ' . $this->class);
             }

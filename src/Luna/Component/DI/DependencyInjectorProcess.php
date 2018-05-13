@@ -190,7 +190,7 @@
 			    return $object;
 		    }
 		    
-		    if (!class_exists($className)) {
+		    if (!ClassManager::exist($className)) {
 			    throw new DependencyInjectorException("Class {$className} doesn't exist)");
 		    }
 				

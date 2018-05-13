@@ -65,10 +65,11 @@
 	     *
 	     * @throws ConfigException
 	     * @throws DependencyInjectorException
+	     * @throws \ReflectionException
 	     */
         public function callConstructor(string $className, array $args = [])
         {
-            if (!class_exists($className)) {
+            if (!ClassManager::exist($className)) {
                 throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Class {$className} doesn't exist");
             }
 

@@ -18,6 +18,17 @@
 	class ClassManager
 	{
 		/**
+		 * Allow to check if a class exist
+		 *
+		 * @param $class_name
+		 * @return bool
+		 */
+		public static function exist($class_name): bool
+		{
+			return class_exists($class_name);
+		}
+		
+		/**
 		 * Allow to check if a class implement a specific interface
 		 *
 		 * @param string $interface

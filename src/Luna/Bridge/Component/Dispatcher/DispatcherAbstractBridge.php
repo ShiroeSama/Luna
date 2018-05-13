@@ -19,8 +19,9 @@
     use Luna\Component\Bag\ParameterBag;
     use Luna\Component\Exception\BridgeException;
     use Luna\Component\Exception\ConfigException;
+    use Luna\Component\Utils\ClassManager;
 
-	abstract class DispatcherAbstractBridge extends Bridge
+    abstract class DispatcherAbstractBridge extends Bridge
 	{
         # ----------------------------------------------------------
         # Constant
@@ -112,7 +113,7 @@
 			
 			// Check if the class exist
 			
-			if (!class_exists($this->class)) {
+			if (!ClassManager::exist($this->class)) {
 				throw new BridgeException($this->class . ' doesnt exist');
 			}
 			

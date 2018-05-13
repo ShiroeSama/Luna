@@ -111,7 +111,7 @@
 			
 			// Check if the class exist
    
-			if (!class_exists($this->class)) {
+			if (!ClassManager::exist($this->class)) {
                 throw new BridgeException($this->class . ' doesnt exist');
             }
             

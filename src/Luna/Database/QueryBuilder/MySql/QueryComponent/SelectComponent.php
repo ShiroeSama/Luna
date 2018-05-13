@@ -89,7 +89,7 @@
          */
         public function leftJoin(string $table, string $keyword, string $condition): SelectComponent
         {
-            if (class_exists($table) && ClassManager::is(Entity::class, $table)) {
+            if (ClassManager::exist($table) && ClassManager::is(Entity::class, $table)) {
                 /** @var Entity $entity */
                 $entity = new $table();
                 $table = $entity->getTable();

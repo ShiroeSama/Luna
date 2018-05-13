@@ -62,7 +62,7 @@
          */
         protected function delete(string $table): DeleteComponent
         {
-            if (class_exists($table) && ClassManager::is(Entity::class, $table)) {
+            if (ClassManager::exist($table) && ClassManager::is(Entity::class, $table)) {
                 /** @var Entity $entity */
                 $entity = new $table();
                 $table = $entity->getTable();

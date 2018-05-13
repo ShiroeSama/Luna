@@ -52,7 +52,7 @@
         {
             $this->class = self::LUNA_ROUTER_NAMESPACE;
 
-            if (class_exists(self::APP_ROUTER_NAMESPACE)) {
+            if (ClassManager::exist(self::APP_ROUTER_NAMESPACE)) {
                 $this->class = self::APP_ROUTER_NAMESPACE;
 
                 if (ClassManager::extend(RouterInterface::class, $this->class)) {

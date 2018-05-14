@@ -55,9 +55,10 @@
 
         public function showException()
         {
-            $code = $this->throwable->getCode();
-
             // TODO : Render the Exception
+	        
+	        var_dump($this->throwable);
+	        die();
         }
     }
 ?>

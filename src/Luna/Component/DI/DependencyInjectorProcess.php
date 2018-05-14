@@ -169,7 +169,7 @@
 		    $parameterName = $parameter->getName();
 		
 		    if ($this->args->has($parameterName)) {
-			    return $this->args[$parameterName];
+			    return $this->args->get($parameterName);
 		    }
 		
 		    $parameterClass = $parameter->getClass();

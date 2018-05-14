@@ -16,7 +16,6 @@
 	namespace Luna\Component\Routing;
 	
     use Luna\Bridge\Component\Handler\Access\RoutingAccessHandlerBridge;
-    use Luna\Component\Container\LunaContainer;
     use Luna\Component\DI\DependencyInjector;
     use Luna\Component\Exception\BridgeException;
     use Luna\Component\Exception\ConfigException;

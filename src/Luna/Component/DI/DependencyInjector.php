@@ -79,7 +79,7 @@
 	
 	            return $process->construct($reflectionClass);
             } catch (\Throwable $throwable) {
-            	throw new DependencyInjectorException("Cannot launch the process to construct dynamically {$className}.", LunaException::DEFAULT_CODE, $throwable);
+            	throw new DependencyInjectorException("Cannot launch the process to construct {$className}.", LunaException::DEFAULT_CODE, $throwable);
             }
         }
 
@@ -113,7 +113,7 @@
 		
 		        return $process->method($reflectionMethod, $class);
 	        } catch (\Throwable $throwable) {
-		        throw new DependencyInjectorException("Cannot launch the process to construct dynamically {$className}.", LunaException::DEFAULT_CODE, $throwable);
+		        throw new DependencyInjectorException("Cannot launch the process to call method {$method}.", LunaException::DEFAULT_CODE, $throwable);
 	        }
         }
     }

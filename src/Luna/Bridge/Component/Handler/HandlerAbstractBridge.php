@@ -62,8 +62,8 @@
             $handler = $this->ConfigModule->getHandler(static::HANDLER_NAME . '.' . static::HANDLER_TYPE);
             $this->bag = is_null($handler) ? new ParameterBag() : new ParameterBag($handler);
             
-            $this->class = $this->bag->get(static::HANDLER_KEY_CLASS);
-	        $this->method = $this->bag->get(static::HANDLER_KEY_METHOD);
+            $this->class = $this->bag->get(self::HANDLER_KEY_CLASS);
+	        $this->method = $this->bag->get(self::HANDLER_KEY_METHOD);
         }
 
         /**

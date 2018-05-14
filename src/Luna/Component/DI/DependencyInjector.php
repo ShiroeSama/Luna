@@ -78,7 +78,7 @@
 	            $process = new DependencyInjectorProcess($this, new ParameterBag($args));
 	
 	            return $process->construct($reflectionClass);
-            } catch (\Throwable $throwable) {
+            } catch (\ReflectionException $throwable) {
             	throw new DependencyInjectorException("Cannot launch the process to construct {$className}.", LunaException::DEFAULT_CODE, $throwable);
             }
         }
@@ -112,7 +112,7 @@
 		        $process = new DependencyInjectorProcess($this, new ParameterBag($args));
 		
 		        return $process->method($reflectionMethod, $class);
-	        } catch (\Throwable $throwable) {
+	        } catch (\ReflectionException $throwable) {
 		        throw new DependencyInjectorException("Cannot launch the process to call method {$method}.", LunaException::DEFAULT_CODE, $throwable);
 	        }
         }

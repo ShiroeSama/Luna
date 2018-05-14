@@ -149,6 +149,7 @@
 			protected function formatRequest(string $REQUEST_URI, string $SCRIPT_NAME): array
 			{
 				$REQUEST_URI = preg_replace('#\?[^>]*$#', '', $REQUEST_URI);
+				$REQUEST_URI = urldecode($REQUEST_URI);
 				
 				$requestTab = explode('/', $REQUEST_URI);
 				$scriptTab  = explode('/', $SCRIPT_NAME);

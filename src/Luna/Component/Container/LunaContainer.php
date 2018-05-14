@@ -17,7 +17,7 @@
 	
 	use Luna\Component\Bag\ParameterBag;
 	use Luna\Component\HTTP\Request\Request;
-	use Luna\Component\HTTP\Request\RequestBuilder;
+	use Luna\Component\HTTP\Request\Builder\RequestBuilder;
 	use Luna\Component\Utils\ClassManager;
 	use Luna\Kernel;
 	use Luna\KernelInterface;

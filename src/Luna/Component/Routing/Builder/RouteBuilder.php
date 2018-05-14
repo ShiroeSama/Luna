@@ -117,18 +117,17 @@
                 ->set(ServerBag::RULE_NAME, $key)
                 ->set(ServerBag::PATH_INFO, $this->userRequest)
             ;
-
-			# Get Controller
-			$keyForMethodName = array_search(end($action), $action);
-			unset($action[$keyForMethodName]);
-
-			$controllerNamespace = str_replace('/',	'\\', $this->namespace);
-			$controllerClassName = $controllerNamespace . '\\' . implode('\\', $action);
-
-			$this->controller = $this->DIModule->callController($controllerClassName, $this->request);
 			
 			# Get Method
 			$this->method = end($action);
+			$keyForMethodName = array_search($this->method, $action);
+			unset($action[$keyForMethodName]);
+			
+			# Get Controller
+			$controllerNamespace = str_replace('/',	'\\', $this->namespace);
+			$controllerClassName = $controllerNamespace . '\\' . implode('\\', $action);
+			
+			$this->controller = $this->DIModule->callController($controllerClassName, $this->request);
 			
 			# Get Parameters
 			$this->params = $this->getParams($this->routes[$key]['Rule']);

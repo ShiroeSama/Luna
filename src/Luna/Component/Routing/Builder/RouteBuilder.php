@@ -168,7 +168,7 @@
 			 * Check if the route exist in the config
 			 * @return bool|string
 			 */
-			protected function matchRoute(): bool
+			protected function matchRoute()
 			{
 				foreach ($this->routes as $key => $value) {
 					$rule = $value['Rule'];

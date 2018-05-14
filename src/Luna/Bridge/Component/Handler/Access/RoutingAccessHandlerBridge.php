@@ -39,7 +39,6 @@
 		 *
 		 * @throws ConfigException
 		 * @throws DependencyInjectorException
-		 * @throws \ReflectionException
 		 */
 		public function access(RequestInterface $request)
 		{

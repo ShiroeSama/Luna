@@ -18,6 +18,7 @@
     use Luna\Component\Bag\ParameterBag;
     use Luna\Component\Exception\ConfigException;
     use Luna\Component\Exception\DependencyInjectorException;
+    use Luna\Component\Exception\LunaException;
     use Luna\Component\HTTP\Request\Request;
     use Luna\Component\Utils\ClassManager;
     use \ReflectionClass;
@@ -65,7 +66,6 @@
 	     *
 	     * @throws ConfigException
 	     * @throws DependencyInjectorException
-	     * @throws \ReflectionException
 	     */
         public function callConstructor(string $className, array $args = [])
         {
@@ -73,10 +73,14 @@
                 throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Class {$className} doesn't exist");
             }
 
-            $reflectionClass = new ReflectionClass($className);
-            $process = new DependencyInjectorProcess($this, new ParameterBag($args));
-
-            return $process->construct($reflectionClass);
+            try {
+	            $reflectionClass = new ReflectionClass($className);
+	            $process = new DependencyInjectorProcess($this, new ParameterBag($args));
+	
+	            return $process->construct($reflectionClass);
+            } catch (\Throwable $throwable) {
+            	throw new DependencyInjectorException("Cannot launch the process to construct dynamically {$className}.", LunaException::DEFAULT_CODE, $throwable);
+            }
         }
 
         /**
@@ -97,16 +101,20 @@
                 $className = (is_string($class) ? $class : get_class($class));
                 throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Method {$method} for {$className} doesn't exist)");
             }
-
-            $reflectionMethod = new ReflectionMethod($class, $method);
-
-            if (is_string($class)) {
-                $class = $this->callConstructor($class, $args);
-            }
-            
-	        $process = new DependencyInjectorProcess($this, new ParameterBag($args));
-
-            return $process->method($reflectionMethod, $class);
+	
+	        try {
+		        $reflectionMethod = new ReflectionMethod($class, $method);
+		
+		        if (is_string($class)) {
+			        $class = $this->callConstructor($class, $args);
+		        }
+		
+		        $process = new DependencyInjectorProcess($this, new ParameterBag($args));
+		
+		        return $process->method($reflectionMethod, $class);
+	        } catch (\Throwable $throwable) {
+		        throw new DependencyInjectorException("Cannot launch the process to construct dynamically {$className}.", LunaException::DEFAULT_CODE, $throwable);
+	        }
         }
     }
 ?>

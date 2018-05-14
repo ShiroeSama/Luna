@@ -34,7 +34,6 @@
 	     *
 	     * @throws ConfigException
 	     * @throws DependencyInjectorException
-	     * @throws \ReflectionException
 	     */
         public function catchException(\Throwable $throwable)
         {

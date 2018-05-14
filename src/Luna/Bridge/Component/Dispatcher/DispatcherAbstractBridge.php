@@ -64,8 +64,8 @@
 	        $dispatcher = $this->ConfigModule->getHandler(static::DISPATCHER_NAME . '.' . static::DISPATCHER_TYPE);
 	        $this->bag = is_null($dispatcher) ? new ParameterBag() : new ParameterBag($dispatcher);
 	
-	        $this->class = $this->bag->get(static::DISPATCHER_KEY_CLASS);
-	        $this->method = $this->bag->get(static::DISPATCHER_KEY_METHOD);
+	        $this->class = $this->bag->get(self::DISPATCHER_KEY_CLASS);
+	        $this->method = $this->bag->get(self::DISPATCHER_KEY_METHOD);
         }
 
         /**
@@ -75,7 +75,7 @@
          */
         protected function checkConst()
         {
-            if (is_null(static::DISPATCHER_NAME)) {
+	        if (is_null(static::DISPATCHER_NAME)) {
                 throw new BridgeException('Constant DISPATCHER_NAME is not redefined in subclass ' . static::class);
             }
 	

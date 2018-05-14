@@ -63,7 +63,6 @@
              * @throws ConfigException
              * @throws DependencyInjectorException
              * @throws RouteException
-             * @throws \ReflectionException
              */
 			public function init(Request $request): ResponseInterface
 			{
@@ -81,7 +80,6 @@
 		     * @throws ConfigException
 		     * @throws DependencyInjectorException
 		     * @throws RouteException
-		     * @throws \ReflectionException
 		     */
 			protected function launch(): ResponseInterface
 			{

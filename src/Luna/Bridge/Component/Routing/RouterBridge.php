@@ -75,14 +75,7 @@
         {
             /** @var RouterInterface $router */
             $router = $this->DIModule->callConstructor($this->class);
-
-            switch (get_class($this->class)) {
-                case self::APP_ROUTER_NAMESPACE :
-                default :
-                    return $router->init($request);
-                    break;
-
-            }
+            $router->init($request);
         }
     }
 ?>

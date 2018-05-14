@@ -37,15 +37,17 @@
 		 *
 		 * @param RequestInterface $request
 		 *
+		 * @return bool
+		 *
 		 * @throws ConfigException
 		 * @throws DependencyInjectorException
 		 */
-		public function access(RequestInterface $request)
+		public function access(RequestInterface $request): bool
 		{
 			$args = compact('request');
 			
 			$routingAccessHandler = $this->DIModule->callConstructor($this->class, $args);
-			$this->DIModule->callMethod($this->method, $routingAccessHandler, $args);
+			return $this->DIModule->callMethod($this->method, $routingAccessHandler, $args);
 		}
 	}
 ?>

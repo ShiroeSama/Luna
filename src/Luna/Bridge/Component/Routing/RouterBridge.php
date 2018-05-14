@@ -75,7 +75,7 @@
         {
             /** @var RouterInterface $router */
             $router = $this->DIModule->callConstructor($this->class);
-            $router->init($request);
+            return $router->init($request);
         }
     }
 ?>

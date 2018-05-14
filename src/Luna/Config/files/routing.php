@@ -24,7 +24,7 @@
 		|
 		*/
 		
-		'ROOT_FOLDER' => 'App/Controller',
+		'NAMESPACE' => 'App/Controller',
 		
 		
 		

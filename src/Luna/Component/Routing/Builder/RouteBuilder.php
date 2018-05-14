@@ -45,11 +45,11 @@
 		/** @var array */
 		protected $routes = [];
 		
-		/** @var string */
-		protected $rootFolder;
-		
 		/** @var array */
 		protected $route;
+		
+		/** @var string */
+		protected $namespace;
 		
 		/** @var Controller */
 		protected $controller;
@@ -78,7 +78,7 @@
 			$this->userRequest = (sizeof($requestTab) === 0) ? '/' : implode('/', $requestTab);
 			$this->requestTab = $requestTab;
 			$this->routes = $this->ConfigModule->getRouting('ROUTES');
-			$this->rootFolder = $this->ConfigModule->getRouting('ROOT_FOLDER');
+			$this->namespace = $this->ConfigModule->getRouting('NAMESPACE');
 		}
 		
 		/**
@@ -121,12 +121,8 @@
 			# Get Controller
 			$keyForMethodName = array_search(end($action), $action);
 			unset($action[$keyForMethodName]);
-			
-			if (!$this->checkControllerDir()) {
-                throw new RouteException("Controller Dir '{$this->rootFolder}' doesn't exist");
-			}
 
-			$controllerNamespace = str_replace('/',	'\\', $this->rootFolder);
+			$controllerNamespace = str_replace('/',	'\\', $this->namespace);
 			$controllerClassName = $controllerNamespace . '\\' . implode('\\', $action);
 
 			$this->controller = $this->DIModule->callController($controllerClassName, $this->request);

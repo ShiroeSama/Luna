@@ -119,7 +119,7 @@
             ;
 
 			# Get Controller
-			$keyForMethodName = array_search($action, end($action));
+			$keyForMethodName = array_search(end($action), $action);
 			unset($action[$keyForMethodName]);
 			
 			if (!$this->checkControllerDir()) {

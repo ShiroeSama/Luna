@@ -29,7 +29,12 @@
 		|
 		*/
 	
-	    'Access' => [],
+	    'Access' => [
+		    'Routing' => [
+			    'class' => \Luna\Component\Handler\Access\RoutingAccessHandler::class,
+			    'method' => 'access',
+		    ]
+	    ],
 
         /*
         |--------------------------------------------------------------------------

@@ -18,8 +18,6 @@
     use Luna\Bridge\Component\Handler\HandlerAbstractBridge;
     use Luna\Component\Exception\ConfigException;
     use Luna\Component\Exception\DependencyInjectorException;
-    use Luna\Component\Handler\Exception\ExceptionHandler;
-    use Luna\Component\Handler\Exception\ExceptionHandlerInterface;
 
     abstract class AbstractExceptionHandlerBridge extends HandlerAbstractBridge
     {
@@ -36,6 +34,7 @@
 	     *
 	     * @throws ConfigException
 	     * @throws DependencyInjectorException
+	     * @throws \ReflectionException
 	     */
         public function catchException(\Throwable $throwable)
         {

@@ -139,8 +139,25 @@
 			$this->request->getParametersRequest()->replace($this->params);
 		}
 		
-		public function getRoute()
+		/**
+		 * Get the route request
+		 *
+		 * @return Route
+		 *
+		 * @throws ConfigException
+		 * @throws DependencyInjectorException
+		 * @throws RouteException
+		 */
+		public function getRoute(): Route
 		{
+			if (is_null($this->route)
+				|| is_null($this->controller)
+				|| is_null($this->method)
+				|| is_null($this->params)
+			) {
+				$this->prepare();
+			}
+			
 			return new Route($this->route, $this->controller, $this->method, $this->params);
 		}
 		

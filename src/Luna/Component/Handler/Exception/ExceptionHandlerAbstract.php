@@ -15,10 +15,7 @@
 
     namespace Luna\Component\Handler\Exception;
 
-    use Luna\Kernel;
     use Luna\KernelInterface;
-    use Monolog\Handler\StreamHandler;
-    use Monolog\Logger;
     use Psr\Log\LoggerInterface;
     use \Throwable;
 

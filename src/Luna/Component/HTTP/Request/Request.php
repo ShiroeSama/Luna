@@ -9,7 +9,7 @@
      *
      *   @File : Request.php
      *   @Created_at : 26/03/2018
-     *   @Update_at : 26/03/2018
+     *   @Update_at : 14/05/2018
      * --------------------------------------------------------------------------
      */
 
@@ -19,11 +19,8 @@
     use Luna\Component\Bag\ParameterBag;
     use Luna\Component\Bag\ServerBag;
 
-    class Request
+    class Request implements RequestInterface
     {
-        public const GET = 'GET';
-        public const POST = 'POST';
-
         /** @var ParameterBag */
         protected $get;
 
@@ -66,16 +63,74 @@
 
         /* ------------------------ Getter ------------------------ */
 	
+		    /**
+		     * Get the Server Info
+		     *
+		     * @return ServerBag
+		     */
             public function getServer(): ServerBag { return $this->server; }
+	
+		    /**
+		     * Get the file(s) of the request
+		     *
+		     * @return FileBag
+		     */
 	        public function getFileRequest(): FileBag { return $this->files; }
+		
+		    /**
+		     * Get the cookie of the request
+		     *
+		     * @return ParameterBag
+		     */
             public function getCookie(): ParameterBag { return $this->cookie; }
+	
+		    /**
+		     * Get the query parameters
+		     *
+		     * @return ParameterBag
+		     */
 		    public function getGetRequest(): ParameterBag { return $this->get; }
+	
+		    /**
+		     * Get the request parameters
+		     *
+		     * @return ParameterBag
+		     */
 		    public function getPostRequest(): ParameterBag { return $this->post; }
+	
+		    /**
+		     * Get the url parameters
+		     *
+		     * @return ParameterBag
+		     */
 	        public function getParametersRequest(): ParameterBag { return $this->parameters; }
-
+		
+		    /**
+		     * Get the rule of the request
+		     *
+		     * @return string|null
+		     */
             public function getRule(): ?string { return $this->server->getRule(); }
+	
+		    /**
+		     * Get the rule's name of the request
+		     *
+		     * @return string|null
+		     */
             public function getRuleName(): ?string { return $this->server->getRuleName(); }
+	
+		    /**
+		     * Get the url of the request
+		     *
+		     * @return string|null
+		     */
             public function getPathInfo(): ?string { return $this->server->getPathInfo(); }
+	
+		    /**
+		     * Get the http method of the request
+		     *
+		     * @return string|null
+		     */
             public function getMethod(): ?string { return $this->server->get('REQUEST_METHOD'); }
 
 
@@ -97,6 +152,10 @@
                     return false;
                 }
             }
+	
+	
+	
+	    /* ------------------------ Request Check ------------------------ */
 
             /**
              * @param string[] ...$params

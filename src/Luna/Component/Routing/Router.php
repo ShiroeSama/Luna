@@ -15,25 +15,40 @@
 	
 	namespace Luna\Component\Routing;
 	
+    use Luna\Bridge\Component\Handler\Access\RoutingAccessHandlerBridge;
+    use Luna\Component\Container\LunaContainer;
     use Luna\Component\DI\DependencyInjector;
+    use Luna\Component\Exception\BridgeException;
+    use Luna\Component\Exception\ConfigException;
+    use Luna\Component\Exception\DependencyInjectorException;
+    use Luna\Component\Exception\RouteException;
+    use Luna\Component\HTTP\HTTP;
     use Luna\Component\HTTP\Request\Request;
     use Luna\Component\HTTP\Request\ResponseInterface;
     use Luna\Component\Routing\Builder\RouteBuilder;
+    use Luna\Component\Utils\ClassManager;
 
-	class Router implements RouterInterface
+    class Router implements RouterInterface
 	{
-        /** @var DependencyInjector */
+	    /** @var DependencyInjector */
         protected $DIModule;
+        
+	    /** @var RoutingAccessHandlerBridge */
+	    protected $routingAccessHandlerBridge;
 
         /** @var Request */
         protected $request;
-
-        /**
-         * Router constructor.
-         */
+	
+	    /**
+	     * Router constructor.
+	     *
+	     * @throws BridgeException
+	     * @throws ConfigException
+	     */
         public function __construct()
 		{
             $this->DIModule = new DependencyInjector();
+            $this->routingAccessHandlerBridge = new RoutingAccessHandlerBridge();
 		}
 
 		/* ------------------------ Init Router ------------------------ */
@@ -45,8 +60,10 @@
              *
              * @return ResponseInterface
              *
-             * @throws \Luna\Component\Exception\DependencyInjectorException
-             * @throws \Luna\Component\Exception\RouteException
+             * @throws ConfigException
+             * @throws DependencyInjectorException
+             * @throws RouteException
+             * @throws \ReflectionException
              */
 			public function init(Request $request): ResponseInterface
 			{
@@ -55,15 +72,17 @@
 			}
 		
 		/* ------------------------ System ------------------------ */
-
-            /**
-             * Exec the routing system
-             *
-             * @return ResponseInterface
-             *
-             * @throws \Luna\Component\Exception\DependencyInjectorException
-             * @throws \Luna\Component\Exception\RouteException
-             */
+	
+		    /**
+		     * Exec the routing system
+		     *
+		     * @return ResponseInterface
+		     *
+		     * @throws ConfigException
+		     * @throws DependencyInjectorException
+		     * @throws RouteException
+		     * @throws \ReflectionException
+		     */
 			protected function launch(): ResponseInterface
 			{
 				# Get the Request URI
@@ -79,11 +98,22 @@
 				
 				$route = $routeBuilder->getRoute();
 				
-				// TODO : Call RoutingAccessHandler (Check the User Permissions)
+				$access = $this->routingAccessHandlerBridge->access($this->request);
+				if (!$access) {
+					throw new RouteException('Access Denied', HTTP::UNAUTHORIZED);
+				}
 
                 $response = $this->DIModule->callMethod($route->getMethod(), $route->getController(), $route->getParams());
-
-                // TODO : Check if the response is correct
+				
+				if (!ClassManager::is(ResponseInterface::class, $response)) {
+					$message = 'The controller must return a response.';
+					
+					if ($response === null) {
+						$message .= ' Did you forget to add a return statement in your controller ?';
+					}
+					
+					throw new RouteException($message);
+				}
 
                 return $response;
 			}

@@ -175,18 +175,7 @@
                 # ----------------------------------------------------------
                 # Routing Init
 
-                $response = $this->RouterBridgeModule->init($request);
-                
-                if (!ClassManager::is(ResponseInterface::class, $response)) {
-                	$message = 'The controller must return a response.';
-                	
-                	if ($response === null) {
-                		$message .= ' Did you forget to add a return statement in your controller ?';
-	                }
-	                
-	                throw new KernelException($message);
-                }
-
+                $this->response = $this->RouterBridgeModule->init($request);
             } catch (Throwable $throwable) {
                 try {
 	                $this->ExceptionDispatcherBridgeModule = new ExceptionDispatcherBridge();

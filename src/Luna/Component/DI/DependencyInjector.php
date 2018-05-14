@@ -44,7 +44,7 @@
         public function callController(string $className, Request $request, array $args = []): Controller
         {
             if (!ClassManager::is(Controller::class, $className)) {
-                throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "{$className} is not a Controller");
+                throw new DependencyInjectorException("{$className} is not a Controller");
             }
 
             /** @var Controller $controller*/
@@ -70,7 +70,7 @@
         public function callConstructor(string $className, array $args = [])
         {
             if (!ClassManager::exist($className)) {
-                throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Class {$className} doesn't exist");
+                throw new DependencyInjectorException("Class {$className} doesn't exist");
             }
 
             try {
@@ -99,7 +99,7 @@
         {
             if (!method_exists($class, $method)) {
                 $className = (is_string($class) ? $class : get_class($class));
-                throw new DependencyInjectorException(DependencyInjectorException::DEFAULT_CODE, "Method {$method} for {$className} doesn't exist)");
+                throw new DependencyInjectorException("Method {$method} for {$className} doesn't exist)");
             }
 	
 	        try {

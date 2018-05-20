@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-
 	/**
 	 * --------------------------------------------------------------------------
 	 *   @Copyright : License MIT 2017
@@ -16,26 +15,16 @@
 
 	use Luna\Bridge\Component\Dispatcher\Exception\ExceptionDispatcherBridge;
     use Luna\Component\Console\Application;
-    use Luna\Component\Console\Argument\InputArgv;
+    use Luna\Component\Console\Input\InputArgv;
 
 	require __DIR__ . '/../vendor/autoload.php';
 
 	set_time_limit(0);
 
-	try {
-	    $input = new InputArgv();
+    // Get Argv
+	$input = new InputArgv();
 
-		$application = new Application();
-		$application->run($input);
-	} catch (Throwable $throwable) {
-		try {
-			$exceptionDispatcherBridge = new ExceptionDispatcherBridge();
-			$exceptionDispatcherBridge->bridge();
-			$exceptionDispatcherBridge->dispatch($throwable);
-		} catch (Throwable $throwable) {
-			$logger = LoggerBuilder::createExceptionLogger();
-			$exceptionHandler = new ExceptionHandler($this, $logger, $throwable);
-			$exceptionHandler->onKernelException();
-		}
-	}
+    // Launch Application
+    $application = new Application();
+    $application->run($input);
 ?>

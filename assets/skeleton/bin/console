@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+
+	/**
+	 * --------------------------------------------------------------------------
+	 *   @Copyright : License MIT 2017
+	 *
+	 *   @Author : Alexandre Caillot
+	 *   @WebSite : https://www.shiros.fr
+	 *
+	 *   @File : console
+	 *   @Created_at : 16/05/2018
+     *   @Update_at : 16/05/2018
+	 * --------------------------------------------------------------------------
+	 */
+
+	use Luna\Bridge\Component\Dispatcher\Exception\ExceptionDispatcherBridge;
+    use Luna\Component\Console\Application;
+    use Luna\Component\Console\Argument\InputArgv;
+
+	require __DIR__ . '/../vendor/autoload.php';
+
+	set_time_limit(0);
+
+	try {
+	    $input = new InputArgv();
+
+		$application = new Application();
+		$application->run($input);
+	} catch (Throwable $throwable) {
+		try {
+			$exceptionDispatcherBridge = new ExceptionDispatcherBridge();
+			$exceptionDispatcherBridge->bridge();
+			$exceptionDispatcherBridge->dispatch($throwable);
+		} catch (Throwable $throwable) {
+			$logger = LoggerBuilder::createExceptionLogger();
+			$exceptionHandler = new ExceptionHandler($this, $logger, $throwable);
+			$exceptionHandler->onKernelException();
+		}
+	}
+?>

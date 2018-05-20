@@ -73,19 +73,33 @@
         }
 
         /**
-         * Add an element in the Bag
+         * Add an element in the Bag with key
          *
-         * @param mixed $key
          * @param mixed $value
          *
          * @return self
          */
-        public function set($key, $value): self
+        public function push($value): self
         {
-            $this->parameters[$key] = $value;
+            array_push($this->parameters, $value);
 
             return $this;
         }
+		
+		/**
+		 * Add an element in the Bag
+		 *
+		 * @param mixed $key
+		 * @param mixed $value
+		 *
+		 * @return self
+		 */
+		public function set($key, $value): self
+		{
+			$this->parameters[$key] = $value;
+			
+			return $this;
+		}
 
         /**
          * Returns an element of the Bag, but if doesn't exist a default value is returned
@@ -99,6 +113,18 @@
         {
             return array_key_exists($key, $this->parameters) ? $this->parameters[$key] : $default;
         }
+		
+		/**
+		 * Check if value exist in the Bag
+		 *
+		 * @param mixed $value
+		 *
+		 * @return bool
+		 */
+		public function contains($value): bool
+		{
+		    return in_array($value, $this->parameters);
+		}
 
         /**
          * Check if an element exist in the Bag
@@ -170,5 +196,91 @@
         {
             return empty($this->parameters);
         }
+		
+		/**
+		 * Sort array by key. Ascending sort.
+		 *
+		 * @return self
+		 */
+		public function keySort(): self
+        {
+	        $this->parameters = $this->keySortProcess($this->parameters);
+	
+	        return $this;
+        }
+				
+		/**
+		 * Sort array by key. Descending sort.
+		 *
+		 * @return self
+		 */
+		public function keySortDesc(): self
+		{
+			$this->parameters = $this->keySortProcess($this->parameters, true);
+			
+			return $this;
+		}
+		
+		/**
+		 * @param array $array
+		 * @param bool $desc
+		 *
+		 * @return array
+		 */
+		protected function keySortProcess(array $array, bool $desc = false)
+		{
+			foreach ($array as $key => $value) {
+				if (is_array($value)) {
+					$value = $this->keySortProcess($value, $desc);
+					$array[$key] = $value;
+				}
+			}
+			
+			($desc) ? krsort($array) : ksort($array);
+			return $array;
+		}
+		
+		/**
+		 * Sort array by value. Ascending sort.
+		 *
+		 * @return self
+		 */
+		public function valueSort(): self
+		{
+			$this->parameters = $this->valueSortProcess($this->parameters);
+			
+			return $this;
+		}
+		
+		/**
+		 * Sort array by value. Descending sort.
+		 *
+		 * @return self
+		 */
+		public function valueSortDesc(): self
+		{
+			$this->parameters = $this->valueSortProcess($this->parameters, true);
+			
+			return $this;
+		}
+		
+		/**
+		 * @param array $array
+		 * @param bool $desc
+		 *
+		 * @return array
+		 */
+		protected function valueSortProcess(array $array, bool $desc = false)
+		{
+			foreach ($array as $key => $value) {
+				if (is_array($value)) {
+					$value = $this->valueSortProcess($value, $desc);
+					$array[$key] = $value;
+				}
+			}
+			
+			($desc) ? arsort($array) : asort($array);
+			return $array;
+		}
     }
 ?>

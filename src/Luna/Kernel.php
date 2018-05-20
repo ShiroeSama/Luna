@@ -143,7 +143,7 @@
                     $this->ExceptionDispatcherBridgeModule->dispatch($throwable);
                 } catch (Throwable $throwable) {
 	                $logger = LoggerBuilder::createExceptionLogger();
-	                $exceptionHandler = new ExceptionHandler($this, $logger, $throwable);
+	                $exceptionHandler = new ExceptionHandler($logger, $throwable);
                     $exceptionHandler->onKernelException();
                 }
             }
@@ -181,7 +181,7 @@
                     $this->ExceptionDispatcherBridgeModule->dispatch($throwable);
                 } catch (Throwable $throwable) {
 	                $logger = LoggerBuilder::createExceptionLogger();
-                    $exceptionHandler = new ExceptionHandler($this, $logger, $throwable);
+                    $exceptionHandler = new ExceptionHandler($logger, $throwable);
                     $exceptionHandler->onKernelException();
                 }
             }

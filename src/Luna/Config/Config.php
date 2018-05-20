@@ -104,9 +104,14 @@
             public function get(?string $key = NULL)
             {
                 $value = $this->keyExistIn($this->settings, $key);
+	            $defaultValue = $this->keyExistIn($this->defaultSettings, $key);
 
                 if (is_null($value)) {
-                    $value = $this->keyExistIn($this->defaultSettings, $key);
+                    $value = $defaultValue;
+                } else {
+                	if (is_array($value) && is_array($defaultValue)) {
+		                $value = array_merge($defaultValue, $value);
+	                }
                 }
 
                 if (is_null($value)) {
@@ -195,10 +200,18 @@
             public function getSubscriber(?string $key = NULL)
             {
                 if(is_null($key)) {
-                    return $this->get(self::ROOT_CONFIG . '.Subscriber');
+	                return $this->get(self::ROOT_CONFIG . '.Subscriber');
                 } else {
-                    return $this->get(self::ROOT_CONFIG . '.Subscriber.' . $key);
+	                return $this->get(self::ROOT_CONFIG . '.Subscriber.' . $key);
                 }
+	
+                $defaultValues = $this->keyExistIn($this->defaultSettings, $key);
+	
+	            if (!is_null($defaultValues)) {
+		            $values = array_merge($defaultValues, $values);
+	            }
+	
+	            return $values;
             }
 		
 		

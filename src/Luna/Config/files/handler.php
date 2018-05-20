@@ -54,9 +54,19 @@
 	            'method' => 'onBridgeException',
             ],
 
+            'Command' => [
+	            'class' => \Luna\Component\Handler\Exception\Console\CommandExceptionHandler::class,
+	            'method' => 'onCommandException',
+            ],
+
             'Config' => [
 	            'class' => \Luna\Component\Handler\Exception\ConfigExceptionHandler::class,
 	            'method' => 'onConfigException',
+            ],
+
+            'Console' => [
+	            'class' => \Luna\Component\Handler\Exception\Console\ConsoleExceptionHandler::class,
+	            'method' => 'onConsoleException',
             ],
 
             'Controller' => [
@@ -72,6 +82,11 @@
             'DependencyInjector' => [
 	            'class' => \Luna\Component\Handler\Exception\DependencyInjectorExceptionHandler::class,
 	            'method' => 'onDependencyInjectorException',
+            ],
+
+            'InputArgument' => [
+	            'class' => \Luna\Component\Handler\Exception\Console\InputArgumentExceptionHandler::class,
+	            'method' => 'onInputArgumentException',
             ],
 
             'Kernel' => [

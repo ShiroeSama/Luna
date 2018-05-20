@@ -9,7 +9,7 @@
      *
      *   @File : ExceptionHandlerAbstract.php
      *   @Created_at : 21/03/2018
-     *   @Update_at : 10/05/2018
+     *   @Update_at : 19/05/2018
      * --------------------------------------------------------------------------
      */
 
@@ -22,11 +22,6 @@
 
     abstract class ExceptionHandlerAbstract
     {
-    	protected const LOGGER_NAME = 'Luna.Exception';
-    	
-        /** @var string */
-        protected $logPath;
-
         /** @var LoggerInterface */
         protected $logger;
 
@@ -37,10 +32,8 @@
          * ExceptionHandlerTrait constructor.
          * @param Throwable $throwable
          */
-        public function __construct(KernelInterface $kernel, LoggerInterface $logger, Throwable $throwable)
+        public function __construct(LoggerInterface $logger, Throwable $throwable)
         {
-	        $env = $kernel->getEnv();
-	
 	        $this->throwable = $throwable;
             $this->logger = $logger;
         }

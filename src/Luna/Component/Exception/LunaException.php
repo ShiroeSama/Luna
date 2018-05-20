@@ -20,8 +20,8 @@
 
 	class LunaException extends Exception
 	{
-        protected const DEFAULT_MESSAGE = 'Error Processing Request';
-        public const DEFAULT_CODE = HTTP::INTERNAL_SERVER_ERROR;
+		public const DEFAULT_CODE = HTTP::INTERNAL_SERVER_ERROR;
+		protected const DEFAULT_MESSAGE = 'Error Processing Request';
 
         /**
          * LunaException constructor.
@@ -30,10 +30,14 @@
          * @param int $code
          * @param Throwable|null $throwable
          */
-        public function __construct(string $message = NULL, int $code = self::DEFAULT_CODE,  Throwable $throwable = NULL)
+        public function __construct(string $message = NULL, int $code = NULL,  Throwable $throwable = NULL)
         {
+        	if (is_null($code)) {
+        		$code = static::DEFAULT_CODE;
+	        }
+        	
             if(is_null($message)) {
-                $message = self::DEFAULT_MESSAGE;
+                $message = static::DEFAULT_MESSAGE;
             }
 
             parent::__construct($message, $code, $throwable);

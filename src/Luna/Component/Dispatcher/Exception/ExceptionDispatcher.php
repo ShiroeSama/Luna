@@ -17,6 +17,9 @@
 
     use Luna\Bridge\Component\Handler\Exception\BridgeExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\ConfigExceptionHandlerBridge;
+    use Luna\Bridge\Component\Handler\Exception\Console\CommandExceptionHandlerBridge;
+    use Luna\Bridge\Component\Handler\Exception\Console\ConsoleExceptionHandlerBridge;
+    use Luna\Bridge\Component\Handler\Exception\Console\InputArgumentExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\ControllerExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\DatabaseExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\DependencyInjectorExceptionHandlerBridge;
@@ -28,6 +31,9 @@
     use Luna\Component\DI\Builder\LoggerBuilder;
     use Luna\Component\Exception\BridgeException;
     use Luna\Component\Exception\ConfigException;
+    use Luna\Component\Exception\Console\CommandException;
+    use Luna\Component\Exception\Console\ConsoleException;
+    use Luna\Component\Exception\Console\InputArgumentException;
     use Luna\Component\Exception\ControllerException;
     use Luna\Component\Exception\DatabaseException;
     use Luna\Component\Exception\DependencyInjectorException;
@@ -44,14 +50,17 @@
 
     class ExceptionDispatcher implements ExceptionDispatcherInterface
     {
-	    /** @var KernelInterface */
-	    protected $kernel;
-	    
         /** @var BridgeExceptionHandlerBridge */
         protected $bridgeExceptionHandlerBridge;
+	
+	    /** @var CommandExceptionHandlerBridge */
+	    protected $commandExceptionHandlerBridge;
 
         /** @var ConfigExceptionHandlerBridge */
         protected $configExceptionHandlerBridge;
+	
+	    /** @var ConsoleExceptionHandlerBridge */
+	    protected $consoleExceptionHandlerBridge;
 
         /** @var ControllerExceptionHandlerBridge */
         protected $controllerExceptionHandlerBridge;
@@ -61,6 +70,9 @@
 
         /** @var DependencyInjectorExceptionHandlerBridge */
         protected $dependencyInjectorExceptionHandlerBridge;
+	
+	    /** @var InputArgumentExceptionHandlerBridge */
+	    protected $inputArgumentExceptionHandlerBridge;
 	
 	    /** @var KernelExceptionHandlerBridge */
 	    protected $kernelExceptionHandlerBridge;
@@ -80,9 +92,8 @@
         /**
          * ExceptionDispatcher constructor.
          */
-        public function __construct(KernelInterface $kernel)
+        public function __construct()
         {
-        	$this->kernel = $kernel;
             $this->prepareBridge();
         }
 
@@ -91,36 +102,58 @@
             try {
                 // Bridge Exception Handler
                 $this->bridgeExceptionHandlerBridge = new BridgeExceptionHandlerBridge();
+                $this->bridgeExceptionHandlerBridge->bridge();
+	
+	            // Command Exception Handler
+	            $this->commandExceptionHandlerBridge = new CommandExceptionHandlerBridge();
+	            $this->commandExceptionHandlerBridge->bridge();
 
                 // Config Exception Handler
                 $this->configExceptionHandlerBridge = new ConfigExceptionHandlerBridge();
+	            $this->configExceptionHandlerBridge->bridge();
+	
+	            // Console Exception Handler
+	            $this->consoleExceptionHandlerBridge = new ConsoleExceptionHandlerBridge();
+	            $this->consoleExceptionHandlerBridge->bridge();
 
                 // Controller Exception Handler
                 $this->controllerExceptionHandlerBridge = new ControllerExceptionHandlerBridge();
+	            $this->controllerExceptionHandlerBridge->bridge();
 
                 // Database Exception Handler
                 $this->databaseExceptionHandlerBridge = new DatabaseExceptionHandlerBridge();
+	            $this->databaseExceptionHandlerBridge->bridge();
 
                 // Dependency Injector Exception Handler
                 $this->dependencyInjectorExceptionHandlerBridge = new DependencyInjectorExceptionHandlerBridge();
+	            $this->dependencyInjectorExceptionHandlerBridge->bridge();
+	
+	            // Input Argument Exception Handler
+	            $this->inputArgumentExceptionHandlerBridge = new InputArgumentExceptionHandlerBridge();
+	            $this->inputArgumentExceptionHandlerBridge->bridge();
 	
 	            // Kernel Component Exception Handler
 	            $this->kernelExceptionHandlerBridge = new KernelExceptionHandlerBridge();
+	            $this->kernelExceptionHandlerBridge->bridge();
 
                 // Query Component Exception Handler
                 $this->queryComponentExceptionHandlerBridge = new QueryComponentExceptionHandlerBridge();
+	            $this->queryComponentExceptionHandlerBridge->bridge();
 
                 // Repository Exception Handler
                 $this->repositoryExceptionHandlerBridge = new RepositoryExceptionHandlerBridge();
+	            $this->repositoryExceptionHandlerBridge->bridge();
 
                 // Route Exception Handler
                 $this->routeExceptionHandlerBridge = new RouteExceptionHandlerBridge();
+	            $this->routeExceptionHandlerBridge->bridge();
 
                 // Default Exception Handler
                 $this->defaultExceptionHandlerBridge = new ExceptionHandlerBridge();
+	            $this->defaultExceptionHandlerBridge->bridge();
             } catch (Throwable $throwable) {
 	            $logger = LoggerBuilder::createExceptionLogger();
-	            $handler = new ExceptionHandler($this->kernel, $logger, $throwable);
+	            $handler = new ExceptionHandler($logger, $throwable);
                 $handler->onKernelException();
             }
         }
@@ -134,12 +167,30 @@
         {
             try {
                 switch (get_class($throwable)) {
+	                // --------------------------------
                     // Other Exception
 
                     case PDOException::class:
                         $this->databaseExceptionHandlerBridge->catchException($throwable);
                         break;
-
+	
+	                // --------------------------------
+	                // Luna Console Exception
+	
+	                case CommandException::class:
+	                	$this->commandExceptionHandlerBridge->catchException($throwable);
+		                break;
+	                
+	                case ConsoleException::class:
+		                $this->consoleExceptionHandlerBridge->catchException($throwable);
+		                break;
+	
+	                case InputArgumentException::class:
+		                $this->inputArgumentExceptionHandlerBridge->catchException($throwable);
+		                break;
+	                	
+	
+	                // --------------------------------
                     // Luna Exception
 
                     case BridgeException::class:
@@ -184,7 +235,7 @@
                 }
             } catch (Throwable $throwable) {
 	            $logger = LoggerBuilder::createExceptionLogger();
-	            $handler = new ExceptionHandler($this->kernel, $logger, $throwable);
+	            $handler = new ExceptionHandler($logger, $throwable);
                 $handler->onKernelException();
             }
         }

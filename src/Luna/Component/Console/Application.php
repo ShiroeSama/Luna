@@ -115,7 +115,7 @@
 				$this->registerCommands();
 				
 				if ($input->isEmpty()) {
-					$this->display($output);
+					$this->displayHelp($output);
 					return 0;
 				} else {
 					$parameter = $input->getFirst();

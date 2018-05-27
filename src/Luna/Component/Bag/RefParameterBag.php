@@ -7,22 +7,23 @@
      *   @Author : Alexandre Caillot
      *   @WebSite : https://www.shiros.fr
      *
-     *   @File : SessionBag.php
-     *   @Created_at : 12/05/2018
+     *   @File : ParameterBag.php
+     *   @Created_at : 25/05/2018
      *   @Update_at : 25/05/2018
      * --------------------------------------------------------------------------
      */
 
     namespace Luna\Component\Bag;
-
-    class SessionBag extends RefParameterBag
+	
+	class RefParameterBag extends Bag
     {
-	    /**
-	     * SessionBag constructor.
-	     */
-	    public function __construct()
-	    {
-	        parent::__construct($_SESSION);
-	    }
+        /**
+         * @param array $parameters
+         */
+        public function __construct(array &$parameters = [])
+        {
+	        parent::__construct();
+            $this->parameters =& $parameters;
+        }
     }
 ?>

@@ -18,6 +18,8 @@
 	use Luna\Component\Bag\ParameterBag;
 	use Luna\Component\HTTP\Request\Request;
 	use Luna\Component\HTTP\Request\Builder\RequestBuilder;
+	use Luna\Component\Session\Session;
+	use Luna\Component\Session\SessionInterface;
 	use Luna\Component\Utils\ClassManager;
 	use Luna\Kernel;
 	use Luna\KernelInterface;
@@ -26,6 +28,7 @@
 	{
 		protected const KERNEL = '_kernel';
 		protected const REQUEST = '_request';
+		protected const SESSION = '_session';
 		
 		
 		/** @var LunaContainer */
@@ -112,6 +115,37 @@
 		public function setRequest(Request $request): self
 		{
 			$this->container->set(self::REQUEST, $request);
+			
+			return $this;
+		}
+		
+		
+		/* -------------------------------------------------------------------------- */
+		/* Session */
+		
+		/**
+		 * @return SessionInterface
+		 */
+		public function getSession(): SessionInterface
+		{
+			$session = $this->container->get(self::SESSION);
+			
+			if (is_null($session) || !ClassManager::is(SessionInterface::class, $session)) {
+				$session = new Session();
+				$this->setSession($session);
+			}
+			
+			return $session;
+		}
+		
+		/**
+		 * @param SessionInterface $session
+		 *
+		 * @return self
+		 */
+		public function setSession(SessionInterface $session): self
+		{
+			$this->container->set(self::SESSION, $session);
 			
 			return $this;
 		}

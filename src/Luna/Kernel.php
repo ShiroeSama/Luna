@@ -22,6 +22,8 @@
 	use Luna\Component\Handler\Exception\ExceptionHandler;
     use Luna\Component\HTTP\Request\Builder\RequestBuilder;
     use Luna\Component\HTTP\Request\ResponseInterface;
+	use Luna\Component\Session\Session;
+	use Luna\Component\Session\SessionInterface;
 	use Luna\Config\Config;
 	
 	use \Throwable;
@@ -61,6 +63,9 @@
 	    
 	    /** @var LunaContainer */
 	    protected $ContainerModule;
+	    
+	    /** @var SessionInterface */
+	    protected $SessionModule;
 
         /** @var RouterBridge */
         protected $RouterBridgeModule;
@@ -118,10 +123,21 @@
 	            $this->ContainerModule = LunaContainer::getInstance();
 	
 	
+	
+	            # ----------------------------------------------------------
+	            # Prepare Session
+	            
+	            $this->SessionModule = new Session();
+	            $this->SessionModule->init();
+	
+	
 	            # ----------------------------------------------------------
 	            # Define Kernel on Container
 	            
-	            $this->ContainerModule->setKernel($this);
+	            $this->ContainerModule
+		            ->setKernel($this)
+		            ->setSession($this->SessionModule)
+	            ;
 
 
                 # ----------------------------------------------------------

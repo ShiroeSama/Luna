@@ -29,9 +29,7 @@
 		|
 		*/
 	
-	    'Application' => [
-		    \Luna\Component\Console\Command\AssetsCommand::class,
-	    ],
+	    'Application' => [],
 
         /*
         |--------------------------------------------------------------------------
@@ -43,6 +41,7 @@
         'DependencyInjector' => [
 	        \Luna\Component\Container\LunaContainer::class       => \Luna\Component\DI\Modules\ContainerDependencyInjectorSubscriber::class,
 	        \Luna\Component\HTTP\Request\RequestInterface::class => \Luna\Component\DI\Modules\RequestDependencyInjectorSubscriber::class,
+	        \Luna\Component\Session\SessionInterface::class      => \Luna\Component\DI\Modules\SessionDependencyInjectorSubscriber::class,
 	        \Luna\Config\Config::class                           => \Luna\Component\DI\Modules\ConfigDependencyInjectorSubscriber::class,
 	        \Luna\KernelInterface::class                         => \Luna\Component\DI\Modules\KernelDependencyInjectorSubscriber::class,
 	        \Psr\Log\LoggerInterface::class                      => \Luna\Component\DI\Modules\LoggerDependencyInjectorSubscriber::class,

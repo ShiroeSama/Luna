@@ -16,7 +16,7 @@
 	namespace Luna\Component\DI\Modules;
 	
 	use Luna\Component\Bag\ParameterBag;
-	use Luna\Component\DI\Builder\LoggerBuilder;
+	use Luna\Component\Logger\Builder\LoggerBuilder;
 	use Luna\Component\Handler\Exception\ExceptionHandlerAbstract;
 	use Luna\Component\Utils\ClassManager;
 	use Luna\Kernel;

@@ -13,7 +13,7 @@
 	 * --------------------------------------------------------------------------
 	 */
 	
-	namespace Luna\Component\DI\Builder;
+	namespace Luna\Component\Logger\Builder;
 	
 	use Luna\Component\Container\LunaContainer;
 	use Luna\Kernel;

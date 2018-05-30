@@ -18,7 +18,7 @@
 	use Luna\Bridge\Component\Dispatcher\Exception\ExceptionDispatcherBridge;
 	use Luna\Bridge\Component\Routing\RouterBridge;
 	use Luna\Component\Container\LunaContainer;
-	use Luna\Component\DI\Builder\LoggerBuilder;
+	use Luna\Component\Logger\Builder\LoggerBuilder;
 	use Luna\Component\Handler\Exception\ExceptionHandler;
     use Luna\Component\HTTP\Request\Builder\RequestBuilder;
     use Luna\Component\HTTP\Request\ResponseInterface;

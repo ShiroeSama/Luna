@@ -28,7 +28,7 @@
     use Luna\Bridge\Component\Handler\Exception\QueryComponentExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\RepositoryExceptionHandlerBridge;
     use Luna\Bridge\Component\Handler\Exception\RouteExceptionHandlerBridge;
-    use Luna\Component\DI\Builder\LoggerBuilder;
+    use Luna\Component\Logger\Builder\LoggerBuilder;
     use Luna\Component\Exception\BridgeException;
     use Luna\Component\Exception\ConfigException;
     use Luna\Component\Exception\Console\CommandException;

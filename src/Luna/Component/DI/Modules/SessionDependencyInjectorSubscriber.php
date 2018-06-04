@@ -17,8 +17,6 @@
 	
 	use Luna\Component\Bag\ParameterBag;
 	use Luna\Component\Container\LunaContainer;
-	use Luna\Component\Session\Session;
-	use Luna\Config\Config;
 	
 	use \ReflectionClass;
 	
